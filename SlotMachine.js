@@ -19,6 +19,33 @@ document.addEventListener('DOMContentLoaded', function () {
     var rollersContainer = document.querySelector('.rollers');
     var rollButton = document.getElementById('rollButton');
     var prizeListDisplay = document.getElementById('prizeListDisplay');
+    var arduinoInstruction = document.getElementById('arduinoInstruction');
+    
+    // Initialize Arduino Controller
+    var arduinoController = null;
+    var arduinoUI = null;
+    
+    // Check if Arduino control is enabled in settings
+    var arduinoEnabled = localStorage.getItem('settings_enable_arduino_control') === 'true';
+    
+    if (window.ArduinoController && window.ArduinoUI && arduinoEnabled) {
+        arduinoController = new window.ArduinoController();
+        arduinoUI = new window.ArduinoUI(arduinoController);
+        arduinoUI.initialize();
+        
+        // Set up status change callback to toggle UI
+        arduinoController.onStatusChange(function(status) {
+            if (status === 'connected') {
+                // Hide manual button, show Arduino instruction
+                if (rollButton) rollButton.style.display = 'none';
+                if (arduinoInstruction) arduinoInstruction.style.display = 'block';
+            } else {
+                // Show manual button, hide Arduino instruction
+                if (rollButton) rollButton.style.display = 'block';
+                if (arduinoInstruction) arduinoInstruction.style.display = 'none';
+            }
+        });
+    }
 
     // ---- Slot machine dynamic rollers ----
     if (rollersContainer) {
@@ -225,6 +252,12 @@ document.addEventListener('DOMContentLoaded', function () {
             rollButton.disabled = true;
             rollButton.textContent = 'ROLLING...';
             
+            // Update Arduino instruction text
+            if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
+                arduinoInstruction.textContent = 'ROLLING...';
+                arduinoInstruction.style.animation = 'none'; // Stop pulsing during roll
+            }
+            
             // Add rolling animation to all rollers
             var rollers = rollersContainer.querySelectorAll('.roller');
             rollers.forEach(function (roller) {
@@ -335,10 +368,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     rollButton.textContent = 'YOU WON: ' + winningPrize.reward;
                     rollButton.style.background = 'linear-gradient(135deg, #10b981 0%, #14c794 100%)';
                     
+                    // Update Arduino instruction for win
+                    if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
+                        arduinoInstruction.textContent = 'YOU WON: ' + winningPrize.reward;
+                        arduinoInstruction.style.animation = 'none';
+                    }
+                    
+                    // Send win result to Arduino
+                    if (arduinoController && arduinoController.isConnected) {
+                        arduinoController.sendResult(true, winningPrize.reward);
+                    }
+                    
                     setTimeout(function () {
                         rollButton.disabled = false;
                         rollButton.textContent = 'ROLL';
                         rollButton.style.background = '';
+                        
+                        // Restore Arduino instruction
+                        if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
+                            arduinoInstruction.textContent = 'Press the button to roll!';
+                            arduinoInstruction.style.animation = 'pulse-glow 2s ease-in-out infinite';
+                        }
                     }, 3000);
                 } else {
                     // Increment counter
@@ -352,9 +402,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         loadAndDisplayPrizes();
                     }
                     
+                    // Send lose result to Arduino
+                    if (arduinoController && arduinoController.isConnected) {
+                        arduinoController.sendResult(false);
+                    }
+                    
                     // Re-enable button
                     rollButton.disabled = false;
                     rollButton.textContent = 'ROLL';
+                    
+                    // Restore Arduino instruction
+                    if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
+                        arduinoInstruction.textContent = 'Press the button to roll!';
+                        arduinoInstruction.style.animation = 'pulse-glow 2s ease-in-out infinite';
+                    }
                 }
             }, 4000); // Match animation duration
         }
@@ -389,6 +450,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add roll button event listener (always attach regardless of data source)
         if (rollButton) {
             rollButton.addEventListener('click', rollAllRollers);
+        }
+        
+        // Set up Arduino callback to trigger roll
+        if (arduinoController) {
+            arduinoController.onRoll(function () {
+                // Only trigger if button is enabled and rollers exist
+                if (rollButton && !rollButton.disabled && baseItems && baseItems.length > 0) {
+                    rollAllRollers();
+                }
+            });
         }
     }
 

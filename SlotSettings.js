@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var showPrizesListCheckbox = document.getElementById('showPrizesList');
     var showOddsCheckbox = document.getElementById('showOdds');
     var showOddsContainer = document.getElementById('showOddsContainer');
+    var enableArduinoControlCheckbox = document.getElementById('enableArduinoControl');
     var enablePitySystemCheckbox = document.getElementById('enablePitySystem');
     var settingsSaved = document.getElementById('settingsSaved');
     
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadSettings() {
         var showPrizesList = localStorage.getItem('settings_show_prizes_list');
         var showOdds = localStorage.getItem('settings_show_odds');
+        var enableArduinoControl = localStorage.getItem('settings_enable_arduino_control');
         var enablePitySystem = localStorage.getItem('settings_enable_pity_system');
         
         // Default to true if not set
@@ -17,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (showOdds === null) {
             showOdds = 'true';
+        }
+        if (enableArduinoControl === null) {
+            enableArduinoControl = 'false';
         }
         if (enablePitySystem === null) {
             enablePitySystem = 'false';
@@ -28,6 +33,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (showOddsCheckbox) {
             showOddsCheckbox.checked = showOdds === 'true';
+        }
+        
+        if (enableArduinoControlCheckbox) {
+            enableArduinoControlCheckbox.checked = enableArduinoControl === 'true';
         }
         
         if (enablePitySystemCheckbox) {
@@ -63,6 +72,10 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('settings_show_odds', showOddsCheckbox.checked.toString());
         }
         
+        if (enableArduinoControlCheckbox) {
+            localStorage.setItem('settings_enable_arduino_control', enableArduinoControlCheckbox.checked.toString());
+        }
+        
         if (enablePitySystemCheckbox) {
             localStorage.setItem('settings_enable_pity_system', enablePitySystemCheckbox.checked.toString());
         }
@@ -86,6 +99,12 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (showOddsCheckbox) {
         showOddsCheckbox.addEventListener('change', function () {
+            saveSettings();
+        });
+    }
+    
+    if (enableArduinoControlCheckbox) {
+        enableArduinoControlCheckbox.addEventListener('change', function () {
             saveSettings();
         });
     }

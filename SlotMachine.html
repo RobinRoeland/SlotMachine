@@ -3,6 +3,7 @@
     <head>
         <link rel="stylesheet" href="SlotMachine.css" />
         <script type="text/javascript" src="sidebar.js"></script>
+        <script type="text/javascript" src="ArduinoControl.js"></script>
         <script type="text/javascript" src="SlotMachine.js"></script>
     </head>
     <body>
@@ -17,6 +18,9 @@
                         <div class="rollers"></div>
                         <div class="roll-controls">
                             <button id="rollButton">ROLL</button>
+                            <div id="arduinoInstruction" class="arduino-instruction" style="display: none;">
+                                Press the button to roll!
+                            </div>
                         </div>
                     </div>
                     <div class="prizes-sidebar">

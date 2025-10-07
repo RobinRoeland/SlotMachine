@@ -1,0 +1,84 @@
+╔════════════════════════════════════════════════════════════════╗
+║          ARDUINO SLOT MACHINE - QUICK REFERENCE                ║
+╚════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────┐
+│ BROWSER SETUP                                                  │
+└────────────────────────────────────────────────────────────────┘
+  1. Open SlotMachine.html in Chrome/Edge/Opera
+  2. Go to Settings → Enable "Arduino Control"
+  3. Return to Prize Machine page
+  4. Click "Connect Arduino" button
+  5. Select Arduino port from popup
+  6. Wait for "Arduino Connected" status
+
+┌────────────────────────────────────────────────────────────────┐
+│ HARDWARE CONNECTIONS                                           │
+└────────────────────────────────────────────────────────────────┘
+  Pin 2  → Button (to GND)
+  Pin 11 → Yellow LED (Status) + 220Ω → GND
+  Pin 12 → Red LED (Lose) + 220Ω → GND  
+  Pin 13 → Green LED (Win) + 220Ω → GND
+
+┌────────────────────────────────────────────────────────────────┐
+│ ARDUINO COMMANDS (Send to Browser)                             │
+└────────────────────────────────────────────────────────────────┘
+  Serial.println("ROLL");    → Trigger slot roll
+  Serial.println("SPIN");    → Trigger slot roll (alternative)
+  Serial.println("START");   → Trigger slot roll (alternative)
+  Serial.println("PING");    → Test connection
+  Serial.println("STATUS");  → Request status
+
+┌────────────────────────────────────────────────────────────────┐
+│ BROWSER RESPONSES (Received by Arduino)                        │
+└────────────────────────────────────────────────────────────────┘
+  CONNECTED      → Connection successful
+  WIN:[prize]    → You won with prize details
+  WIN            → You won (simple)
+  LOSE           → Better luck next time
+  PONG           → Response to PING
+  STATUS:READY   → System ready
+
+┌────────────────────────────────────────────────────────────────┐
+│ MINIMAL CODE EXAMPLE                                           │
+└────────────────────────────────────────────────────────────────┘
+
+  void setup() {
+    Serial.begin(9600);
+    pinMode(2, INPUT_PULLUP);
+  }
+
+  void loop() {
+    if (digitalRead(2) == LOW) {
+      Serial.println("ROLL");
+      delay(200);
+    }
+    
+    if (Serial.available()) {
+      Serial.println(Serial.readStringUntil('\n'));
+    }
+  }
+
+┌────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                │
+└────────────────────────────────────────────────────────────────┘
+  ✗ No connect button? → Enable "Arduino Control" in Settings
+  ✗ Not supported?     → Use Chrome/Edge/Opera (not Firefox)
+  ✗ Can't connect?     → Close Arduino Serial Monitor first
+  ✗ No ports shown?    → Check USB cable & Arduino is plugged in
+  ✗ Button no work?    → Check wiring (pin 2 to GND)
+  ✗ LED no light?      → Check polarity & resistors (220Ω)
+
+┌────────────────────────────────────────────────────────────────┐
+│ IMPORTANT NOTES                                                │
+└────────────────────────────────────────────────────────────────┘
+  • Baud Rate: 9600
+  • Only ONE connection at a time (browser OR IDE, not both)
+  • Close Serial Monitor before connecting to browser
+  • Commands must end with newline (\n)
+  • Use supported browsers only
+
+╔════════════════════════════════════════════════════════════════╗
+║  For full documentation, see: ARDUINO_SETUP.md                 ║
+╚════════════════════════════════════════════════════════════════╝
+
