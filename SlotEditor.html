@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="SlotMachine.css" />
+        <link rel="stylesheet" href="SlotEditor.css" />
+        <script type="text/javascript" src="sidebar.js"></script>
+        <script type="text/javascript" src="SlotMachine.js"></script>
+        <script type="text/javascript" src="SlotEditor.js" defer></script>
+    </head>
+    <body>
+        <div class="page">
+            <!-- Sidebar will be injected here by sidebar.js -->
+            <div class="content">
+                <div class="header">
+                    <h1>Edit Items</h1>
+                </div>
+                <div class="editor">
+                    <div class="items-editor">
+                        <h2>Items JSON</h2>
+                        <textarea id="itemsJson" rows="16" cols="80"></textarea>
+                        <div>
+                            <button id="loadItems">Load items</button>
+                            <button id="applyItems">Apply Items</button>
+                            <button id="exportItems">Export items.json</button>
+                            <button id="addItemBtn">Add item</button>
+                            <span id="dirtyIndicator">Unsaved changes</span><br>
+                            <span id="itemsError"></span>
+                        </div>
+                    </div>
+                    <div class="roller-preview">
+                        <h3>Roller preview</h3>
+                        <div id="rollerPreview" class="roller"></div>
+                    </div>
+                    <div class="items-list">
+                        <h3>Items</h3>
+                        <div id="itemsList" class="items-grid"></div>
+                    </div>
+                </div>
+
+                <div id="addItemModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="addItemTitle" style="display:none">
+                    <div class="modal-content">
+                        <h3 id="addItemTitle">Add new item</h3>
+                        <div class="form-row">
+                            <label for="newItemName">Name</label>
+                            <input type="text" id="newItemName" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="newItemImage">Image</label>
+                            <input type="file" id="newItemImage" accept="image/*" required />
+                        </div>
+                        <div class="actions">
+                            <button id="confirmAddItem">Add</button>
+                            <button id="cancelAddItem">Cancel</button>
+                        </div>
+                        <span id="addItemError" style="color:red"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+

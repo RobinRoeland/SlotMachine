@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="SlotMachine.css" />
+        <link rel="stylesheet" href="SlotPrizes.css" />
+        <script type="text/javascript" src="sidebar.js"></script>
+        <script type="text/javascript" src="SlotMachine.js"></script>
+        <script type="text/javascript" src="SlotPrizes.js" defer></script>
+    </head>
+    <body>
+        <div class="page">
+            <!-- Sidebar will be injected here by sidebar.js -->
+            <div class="content">
+                <div class="header">
+                    <h1>Edit Prizes</h1>
+                </div>
+                <div class="prizes-editor">
+                    <div class="prizes-section">
+                        <h2>Prize Combinations</h2>
+                        <p class="info-text">Define prizes for winning combinations. Use item names or "*" for any item.</p>
+                        <div id="prizesList"></div>
+                        <button id="addPrize" class="add-button">+ Add Prize</button>
+                    </div>
+                    <div class="prizes-actions">
+                        <button id="savePrizes">Save Prizes</button>
+                        <span id="unsavedIndicator" style="color:#f59e0b;font-weight:600;margin-left:15px;display:none;">⚠ Unsaved changes</span>
+                        <span id="prizesError" style="color:red"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Prize Modal -->
+        <div id="prizeModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add Prize Combination</h2>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="pattern-section">
+                        <h3>Build Pattern (Drag items into slots)</h3>
+                        <div id="patternSlots" class="pattern-slots"></div>
+                        <div class="modal-probability-display">
+                            <span class="modal-probability-label">Chance of winning:</span>
+                            <span id="modalProbability" class="modal-probability-value">--</span>
+                        </div>
+                    </div>
+                    <div class="items-section">
+                        <h3>Available Items</h3>
+                        <div class="wildcard-option">
+                            <div class="wildcard-card" draggable="true" data-item="*">
+                                <div class="wildcard-icon">*</div>
+                                <div class="item-name">Any Item</div>
+                            </div>
+                        </div>
+                        <div id="itemsGrid" class="items-grid"></div>
+                    </div>
+                    <div class="prize-reward-section">
+                        <label for="prizeReward">Prize Reward:</label>
+                        <input type="text" id="prizeReward" placeholder="e.g., $100, Free Spin, Grand Prize!" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelPrize" class="btn-cancel">Cancel</button>
+                    <button id="confirmPrize" class="btn-confirm">Add Prize</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
