@@ -371,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Update Arduino instruction for win
                     if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
                         arduinoInstruction.textContent = 'YOU WON: ' + winningPrize.reward;
+                        arduinoInstruction.style.background = 'linear-gradient(135deg, #10b981 0%, #14c794 100%)';
                         arduinoInstruction.style.animation = 'none';
                     }
                     
@@ -387,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Restore Arduino instruction
                         if (arduinoInstruction && arduinoInstruction.style.display !== 'none') {
                             arduinoInstruction.textContent = 'Press the button to roll!';
+                            arduinoInstruction.style.background = '';
                             arduinoInstruction.style.animation = 'pulse-glow 2s ease-in-out infinite';
                         }
                     }, 3000);

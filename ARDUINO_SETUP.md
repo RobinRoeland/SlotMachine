@@ -26,21 +26,33 @@ The Arduino integration uses the **Web Serial API**, which is supported in:
 ### Basic Setup (Button Only)
 1. Connect a push button between **pin 2** and **GND** on your Arduino
 2. The sketch uses internal pull-up resistors, so no external resistor needed
+3. **For 4-pin buttons**: See [BUTTON_WIRING_GUIDE.md](BUTTON_WIRING_GUIDE.md) for detailed wiring instructions
 
 ### Full Setup (with LEDs)
 1. **Button**: Connect between pin 2 and GND
-2. **Green LED** (Win): Connect to pin 13 with 220Ω resistor
-3. **Red LED** (Lose): Connect to pin 12 with 220Ω resistor
-4. **Yellow LED** (Status): Connect to pin 11 with 220Ω resistor
+2. **Blue/Yellow LED** (Connection Status): Connect to pin 11 with 220Ω resistor
+   - **ON** = Connected to browser
+   - **OFF** = Disconnected
+3. **LED** (Button Cooldown - Optional): Connect to pin 10 with 220Ω resistor
+   - **ON** = Button on cooldown (4.2s for loss, 7.2s for win)
+   - **OFF** = Button ready (can press now)
 
 ```
 Arduino Pin Layout:
   Pin 2  → Button (with internal pull-up)
-  Pin 11 → Yellow LED (Connection Status)
-  Pin 12 → Red LED (Lose)
-  Pin 13 → Green LED (Win)
+  Pin 10 → LED (Button Cooldown - optional, ON for 4.2s/7.2s, OFF when ready)
+  Pin 11 → Blue/Yellow LED (Connection Status - ON when connected, OFF when disconnected)
   GND    → Common ground for all components
 ```
+
+### LED Behavior Summary
+
+| LED | Pin | Purpose | When ON | When OFF |
+|-----|-----|---------|---------|----------|
+| Status | 11 | Connection | Connected to browser | Disconnected |
+| Cooldown | 10 | Button ready (optional) | Cooldown active (4.2s loss, 7.2s win) | Button ready to press |
+
+**Note:** Win/loss results are displayed in the Serial Monitor, not on LEDs.
 
 ## Software Setup
 
@@ -81,7 +93,6 @@ Arduino Pin Layout:
    - Check the Arduino serial monitor:
      - If you won: "YOU WON: [prize name]"
      - If you lost: "Better luck next time!"
-   - The LEDs should light up accordingly
 6. The instruction will resume pulsing, ready for the next roll
 
 ## Communication Protocol
@@ -105,6 +116,7 @@ The browser sends these responses back to Arduino:
 | Response | Description | When Sent |
 |----------|-------------|-----------|
 | `CONNECTED` | Connection established | When Arduino first connects |
+| `DISCONNECT` | Connection closing | When user clicks disconnect button |
 | `WIN` | Roll resulted in a win | After winning roll |
 | `WIN:[prize]` | Roll won with prize name | After winning roll with prize details |
 | `LOSE` | Roll resulted in no win | After losing roll |
@@ -188,6 +200,15 @@ void loop() {
 - On Windows, check Device Manager for COM ports
 - On Linux, check `/dev/ttyUSB*` or `/dev/ttyACM*`
 
+### "Stuck on 'Connecting...' and never connects"
+- **Most common cause**: Close the Arduino Serial Monitor if it's open - only one program can connect at a time
+- **Port in use**: Make sure no other program is using the COM port (PuTTY, Tera Term, etc.)
+- **Wrong baud rate**: Verify your Arduino sketch uses `Serial.begin(9600)` (9600 baud)
+- **Arduino not responding**: Try unplugging and replugging the Arduino
+- **Connection timeout**: The browser will now timeout after 5 seconds - check browser console (F12) for error details
+- **Driver issues**: On Windows, ensure Arduino drivers are installed
+- If timeout occurs, try reconnecting - the Arduino resets when the serial port opens and needs a moment to boot up
+
 ### "Connection established but button doesn't work"
 - Open Arduino Serial Monitor (set to 9600 baud)
 - Check if "CONNECTED" message was received
@@ -201,16 +222,45 @@ void loop() {
 - Check for loose connections
 
 ### Roll button works but Arduino doesn't trigger
-- Verify button wiring (pin 2 to GND)
+- Verify button wiring (pin 2 to GND, NOT 5V with default code)
 - Check if button is working in Arduino Serial Monitor
 - Ensure code uploaded correctly
 - Try uploading the sketch again
+- See [BUTTON_WIRING_GUIDE.md](BUTTON_WIRING_GUIDE.md) for detailed wiring
 
-### Results not showing on LEDs
+### "Button press is too long" or multiple triggers
+- ✅ **Fixed in updated code**: Dynamic cooldown (4.2s for loss, 7.2s for win)
+- Cooldown matches actual roll + message display time
+- Improved 20ms debounce for consistent button detection
+- Upload the latest `arduino_example.ino` sketch
+- Check button wiring - ensure good connections
+- For 4-pin buttons, make sure you're using pins from different pairs
+
+### "Arduino serial stops working after disconnect"
+- ✅ **Fixed in updated code**: Serial buffer cleared on disconnect
+- Arduino flushes data when receiving DISCONNECT message
+- Should be able to reconnect without replugging
+- If issue persists, wait 2-3 seconds before reconnecting
+
+### "Blue LED stays on after page refresh/crash"
+- ✅ **Fixed in updated code**: Timeout-based dirty disconnect detection
+- Arduino detects disconnection after 3 seconds of no data
+- Browser sends keepalive PING every 2 seconds when connected
+- On page refresh/crash, Arduino detects within 3 seconds and turns off LED
+- Works on all Arduino boards (Uno, Nano, Leonardo, Micro, etc.)
+
+### LEDs not working
 - Check LED polarity (long leg is positive)
 - Verify resistor values (220Ω recommended)
 - Test LEDs individually with simple blink sketch
-- Check pin connections (11, 12, 13)
+- Check pin connections (10 for cooldown, 11 for status)
+
+### "Status LED stays on after disconnect"
+- ✅ **Fixed in updated code**: Arduino now receives DISCONNECT message
+- Upload the latest `arduino_example.ino` sketch
+- Status LED (pin 11) should turn OFF when you click "Disconnect Arduino" in browser
+- LED should turn ON when connected, OFF when disconnected
+- Status LED no longer blinks on button press (dedicated cooldown LED on pin 10 instead)
 
 ## Advanced Usage
 
