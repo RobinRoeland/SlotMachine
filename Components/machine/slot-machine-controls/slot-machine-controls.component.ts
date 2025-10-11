@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { StorageService } from '../../../Services/storage.service';
+import { ArduinoService } from '../../../Services/arduino.service';
 import { Item } from '../slot-machine-roller/slot-machine-roller.component';
 
 @Component({
@@ -27,8 +28,11 @@ export class SlotMachineControlsComponent {
 
   // Arduino Controller (if available)
   private arduinoController: any = null;
+  private statusSubscription: any = null;
 
-  constructor(private storage: StorageService) {}
+  constructor(private storage: StorageService, private arduinoService: ArduinoService) {
+    // constructor body intentionally empty
+  }
 
   ngOnInit(): void {
     // Only run in browser environment
@@ -38,30 +42,42 @@ export class SlotMachineControlsComponent {
 
     // Check if Arduino control is enabled in settings using StorageService
     const arduinoEnabled = this.storage.getArduinoEnabled();
-    
-    if ((window as any).ArduinoController && (window as any).ArduinoUI && arduinoEnabled) {
-      this.arduinoController = new (window as any).ArduinoController();
-      const arduinoUI = new (window as any).ArduinoUI(this.arduinoController);
-      arduinoUI.initialize();
-      
-      // Set up status change callback
-      this.arduinoController.onStatusChange((status: string) => {
-        if (status === 'connected') {
-          this.showArduinoInstruction = true;
-        } else {
-          this.showArduinoInstruction = false;
-        }
+
+    if (arduinoEnabled) {
+      // Subscribe to ArduinoService status to control instruction text
+      this.statusSubscription = this.arduinoService.status$.subscribe(statusInfo => {
+        this.showArduinoInstruction = statusInfo.status === 'connected';
+        // Keep the instruction text stable; it will be updated during roll/win/loss states
+        this.arduinoInstructionText = this.showArduinoInstruction ? 'Press the button to roll!' : 'Press the button to roll!';
+        this.arduinoInstructionClass = '';
       });
 
-      // Set up roll callback
-      this.arduinoController.onRoll(() => {
-        if (!this.rollButtonDisabled && this.items && this.items.length > 0) {
-          this.onRollClick();
-        }
-      });
+      // Legacy fallback: if window ArduinoController exists, keep hooking it but prefer service events
+      if ((window as any).ArduinoController && (window as any).ArduinoUI) {
+        this.arduinoController = new (window as any).ArduinoController();
+        const arduinoUI = new (window as any).ArduinoUI(this.arduinoController);
+        arduinoUI.initialize();
+
+        // Set up status change callback for legacy controller
+        this.arduinoController.onStatusChange((status: string) => {
+          this.showArduinoInstruction = status === 'connected';
+        });
+
+        // Set up roll callback: legacy controller forwards presses to UI only
+        this.arduinoController.onRoll(() => {
+          if (!this.rollButtonDisabled && this.items && this.items.length > 0) {
+            this.onRollClick();
+          }
+        });
+      }
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.statusSubscription && typeof this.statusSubscription.unsubscribe === 'function') {
+      this.statusSubscription.unsubscribe();
+    }
+  }
   onRollClick(): void {
     if (this.rollButtonDisabled || !this.items || this.items.length === 0) {
       return;
@@ -93,8 +109,10 @@ export class SlotMachineControlsComponent {
       this.arduinoInstructionClass = 'win-state';
     }
 
-    // Send win result to Arduino
-    if (this.arduinoController && this.arduinoController.isConnected) {
+    // Send win result to Arduino (prefer ArduinoService if available)
+    if (this.arduinoService && (this.arduinoService as any).getConnectionStatus && (this.arduinoService as any).getConnectionStatus()) {
+      this.arduinoService.sendResult(true, reward);
+    } else if (this.arduinoController && this.arduinoController.isConnected) {
       this.arduinoController.sendResult(true, reward);
     }
 
@@ -114,8 +132,10 @@ export class SlotMachineControlsComponent {
   handleLoss(): void {
     this.isRolling = false;
 
-    // Send lose result to Arduino
-    if (this.arduinoController && this.arduinoController.isConnected) {
+    // Send lose result to Arduino (prefer ArduinoService if available)
+    if (this.arduinoService && (this.arduinoService as any).getConnectionStatus && (this.arduinoService as any).getConnectionStatus()) {
+      this.arduinoService.sendResult(false);
+    } else if (this.arduinoController && this.arduinoController.isConnected) {
       this.arduinoController.sendResult(false);
     }
 

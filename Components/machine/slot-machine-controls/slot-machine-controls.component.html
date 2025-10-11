@@ -1,6 +1,6 @@
 <div class="roll-controls">
     <button 
-        id="rollButton" 
+        id="rollButton"
         *ngIf="!showArduinoInstruction"
         [disabled]="rollButtonDisabled"
         [class.win-state]="rollButtonClass === 'win-state'"
@@ -12,6 +12,7 @@
         class="arduino-instruction" 
         [class.win-state]="arduinoInstructionClass === 'win-state'"
         *ngIf="showArduinoInstruction">
+        <!-- keep for accessibility / extra info; the button now shows the instruction when connected -->
         {{ arduinoInstructionText }}
     </div>
 </div>

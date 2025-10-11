@@ -45,14 +45,16 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
     // Load items
     this.items = this.itemsService.getItems();
     
-    // Subscribe to Arduino roll requests
-    this.rollRequestSubscription = this.arduinoService.rollRequest$.subscribe(
-      (shouldRoll: boolean) => {
-        if (shouldRoll && !this.isRolling) {
-          this.onRollStart();
-        }
+    // Subscribe to Arduino roll requests (event stream)
+    this.rollRequestSubscription = this.arduinoService.rollRequest$.subscribe(() => {
+      const now = Date.now();
+      console.debug('[COMPONENT] rollRequest$ event', { now, isRolling: this.isRolling });
+      if (!this.isRolling) {
+        this.onRollStart();
+      } else {
+        console.debug('[COMPONENT] rollRequest ignored because machine is already rolling');
       }
-    );
+    });
   }
   
   ngOnDestroy(): void {
@@ -121,10 +123,15 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
         this.controlsComponent.handleLoss();
       }
     }
+
+    // Mark rolling finished so future roll requests are accepted
+    this.isRolling = false;
+    console.debug('[COMPONENT] onRollComplete, isRolling set to false', { time: Date.now() });
   }
 
   onRollStart(): void {
     this.isRolling = true;
+    console.debug('[COMPONENT] onRollStart, isRolling set to true', { time: Date.now() });
     if (this.rollersComponent) {
       this.rollersComponent.startRoll();
     }

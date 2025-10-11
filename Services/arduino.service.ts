@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export type ArduinoStatus = 'connected' | 'disconnected' | 'connecting' | 'disconnecting' | 'error' | 'unsupported';
 
@@ -19,15 +19,30 @@ export class ArduinoService {
   private readableStreamClosed: any = null;
   private writableStreamClosed: any = null;
   private keepaliveInterval: any = null;
+  private connectionMonitorInterval: any = null;
+
+  // Button debounce / cooldown settings (ms)
+  private readonly BUTTON_COOLDOWN_WIN = 7200; // matches Arduino example
+  private readonly BUTTON_COOLDOWN_LOSE = 4200;
+  // Very-short debounce to filter electrical/button bounce — increased to 60ms to avoid double-triggers
+  private readonly BUTTON_DEBOUNCE_MS = 60;
+  private readonly CONNECTION_TIMEOUT_MS = 3000; // Arduino disconnect timeout
+
+  private lastRollTime: number = 0; // timestamp of last accepted roll
+  private currentCooldown: number = this.BUTTON_COOLDOWN_LOSE;
+  private lastSerialReceiveTime: number = 0; // timestamp of last incoming data
+  private lastCommandTime: number = 0; // very-short debounce guard for electrical bounce
+  // Enable verbose per-roll logging by default temporarily to help diagnose alternating-accept behavior
+  private verboseRollLogging: boolean = true;
 
   private statusSubject = new BehaviorSubject<ArduinoStatusInfo>({
     status: 'disconnected'
   });
 
-  private rollRequestSubject = new BehaviorSubject<boolean>(false);
+  private rollRequestSubject = new Subject<void>();
 
   public status$: Observable<ArduinoStatusInfo> = this.statusSubject.asObservable();
-  public rollRequest$: Observable<boolean> = this.rollRequestSubject.asObservable();
+  public rollRequest$: Observable<void> = this.rollRequestSubject.asObservable();
 
   constructor() {
     // Set up page unload handlers
@@ -64,7 +79,7 @@ export class ArduinoService {
 
       // Clean up existing port
       if (this.port) {
-        console.log('Cleaning up existing port...');
+        console.debug('Cleaning up existing port...');
         try {
           await this.port.close();
         } catch (e) {
@@ -78,7 +93,7 @@ export class ArduinoService {
 
       // Check if port is already open
       if (this.port.readable || this.port.writable) {
-        console.log('Port appears to be open already, closing it first...');
+        console.debug('Port appears to be open already, closing it first...');
         try {
           await this.port.close();
           await new Promise(resolve => setTimeout(resolve, 800));
@@ -122,6 +137,9 @@ export class ArduinoService {
       // Start keepalive
       this.startKeepalive();
 
+  // Start connection monitor to detect Arduino-side disconnects
+  this.startConnectionMonitor();
+
       return true;
     } catch (error: any) {
       console.error('Failed to connect to Arduino:', error);
@@ -147,15 +165,15 @@ export class ArduinoService {
 
   // Open port with retry logic
   private async openPortWithRetry(port: any, retries: number = 2): Promise<void> {
-    for (let attempt = 1; attempt <= retries; attempt++) {
+      for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        console.log(`Opening port (attempt ${attempt}/${retries})...`);
+        console.debug(`Opening port (attempt ${attempt}/${retries})...`);
         await port.open({ baudRate: 9600 });
-        console.log('Port opened successfully');
+        console.debug('Port opened successfully');
         return;
       } catch (error: any) {
         if (error.message && error.message.includes('already open')) {
-          console.log(`Port still locked, waiting before retry ${attempt}/${retries}...`);
+          console.debug(`Port still locked, waiting before retry ${attempt}/${retries}...`);
           if (attempt < retries) {
             await new Promise(resolve => setTimeout(resolve, 800 * attempt));
             try {
@@ -195,8 +213,9 @@ export class ArduinoService {
       // Mark as disconnected
       this.isConnected = false;
 
-      // Stop keepalive
-      this.stopKeepalive();
+  // Stop keepalive and connection monitor
+  this.stopKeepalive();
+  this.stopConnectionMonitor();
 
       // Wait for listen loop to exit
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -289,9 +308,10 @@ export class ArduinoService {
             }
             break;
           }
-
-          // Add received data to buffer
+          
           buffer += value;
+          // update last receive timestamp for timeout detection
+          this.lastSerialReceiveTime = Date.now();
 
           // Process complete lines
           let newlineIndex;
@@ -315,7 +335,7 @@ export class ArduinoService {
           break;
         }
       }
-      console.log('Listen loop ended');
+  console.debug('Listen loop ended');
     } catch (error) {
       console.error('Listen loop error:', error);
       if (this.isConnected) {
@@ -330,18 +350,31 @@ export class ArduinoService {
 
   // Handle incoming commands
   private async handleCommand(command: string): Promise<void> {
-    console.log('Received command from Arduino:', command);
-
     const parts = command.split(':');
-    const cmd = parts[0].toUpperCase();
+    let cmd = parts[0].toUpperCase();
     const param = parts[1] || null;
 
     switch (cmd) {
       case 'ROLL':
       case 'SPIN':
       case 'START':
-        // Trigger slot roll
-        this.rollRequestSubject.next(true);
+        // Very-short debounce to guard against electrical bounce
+        const now = Date.now();
+        if (now - this.lastCommandTime < this.BUTTON_DEBOUNCE_MS) {
+          if (this.verboseRollLogging) console.info('[ARDUINO ROLL] ignored (debounce)', { now, lastCommandTime: this.lastCommandTime, delta: now - this.lastCommandTime });
+          break;
+        }
+        this.lastCommandTime = now;
+
+        // Cooldown: only accept if outside cooldown window
+        if (now - this.lastRollTime >= this.currentCooldown) {
+          this.lastRollTime = now;
+          // emit a discrete event so subscribers can react to a single pulse
+          this.rollRequestSubject.next();
+          if (this.verboseRollLogging) console.info('[ARDUINO ROLL] accepted', { now, lastRollTime: this.lastRollTime, currentCooldown: this.currentCooldown });
+        } else {
+          if (this.verboseRollLogging) console.info('[ARDUINO ROLL] ignored (cooldown)', { now, lastRollTime: this.lastRollTime, currentCooldown: this.currentCooldown, delta: now - this.lastRollTime });
+        }
         break;
 
       case 'PING':
@@ -355,10 +388,67 @@ export class ArduinoService {
         await this.send(`STATUS:${status}\n`);
         break;
 
+      case 'CONNECTED':
+        // Arduino indicates it sees the connection (or browser bootstrapped)
+        this.isConnected = true;
+        this.currentCooldown = this.BUTTON_COOLDOWN_LOSE;
+        this.lastSerialReceiveTime = Date.now();
+        this.statusSubject.next({ status: 'connected', message: 'Arduino Connected' });
+        break;
+
+      case 'WIN':
+        // Handle WIN without prize (or with prize handled in parameterized WIN:<prize>)
+        this.currentCooldown = this.BUTTON_COOLDOWN_WIN;
+        break;
+
+      case 'LOSE':
+        this.currentCooldown = this.BUTTON_COOLDOWN_LOSE;
+        break;
+
+      case 'PONG':
+        // Keepalive acknowledgment
+        this.lastSerialReceiveTime = Date.now();
+        break;
+
       default:
-        console.warn('Unknown command:', command);
-        await this.send(`UNKNOWN:${command}\n`);
+        // Unknown or parameterized commands: if command starts with WIN:prize
+        if (cmd === 'WIN' && param) {
+          // WIN:<prize>
+          this.currentCooldown = this.BUTTON_COOLDOWN_WIN;
+          // notify UI via status or other means (UI reads spins/payouts from storage)
+        } else if (cmd === 'DISCONNECT' || cmd === 'DISCONNECTED') {
+          this.isConnected = false;
+          this.statusSubject.next({ status: 'disconnected', message: 'Arduino Disconnected' });
+        }
     }
+  }
+
+  // Start connection monitor which checks for Arduino timeout (no data received)
+  private startConnectionMonitor(): void {
+    this.stopConnectionMonitor();
+    this.connectionMonitorInterval = setInterval(() => {
+      if (this.isConnected) {
+        const now = Date.now();
+        if (this.lastSerialReceiveTime && now - this.lastSerialReceiveTime > this.CONNECTION_TIMEOUT_MS) {
+          console.warn('Connection monitor: no data received recently, marking disconnected');
+          this.isConnected = false;
+          this.statusSubject.next({ status: 'disconnected', message: 'Connection lost (timeout)' });
+        }
+      }
+    }, 500);
+  }
+
+  private stopConnectionMonitor(): void {
+    if (this.connectionMonitorInterval) {
+      clearInterval(this.connectionMonitorInterval);
+      this.connectionMonitorInterval = null;
+    }
+  }
+
+  // Enable verbose per-roll logging for debugging (call from console)
+  public enableVerboseRollLogging(enabled: boolean = true): void {
+    this.verboseRollLogging = enabled;
+    console.info('ArduinoService: verboseRollLogging set to', enabled);
   }
 
   // Send data to Arduino
@@ -381,6 +471,13 @@ export class ArduinoService {
   async sendResult(isWin: boolean, prize?: string): Promise<void> {
     if (!this.isConnected) return;
 
+    // Update cooldown locally so incoming rolls from Arduino are blocked for the proper duration
+    if (isWin) {
+      this.currentCooldown = this.BUTTON_COOLDOWN_WIN;
+    } else {
+      this.currentCooldown = this.BUTTON_COOLDOWN_LOSE;
+    }
+
     if (isWin && prize) {
       await this.send(`WIN:${prize}\n`);
     } else if (isWin) {
@@ -399,7 +496,7 @@ export class ArduinoService {
         });
       }
     }, 2000);
-    console.log('Keepalive started (2s interval)');
+    console.debug('Keepalive started (2s interval)');
   }
 
   // Stop keepalive
@@ -407,8 +504,10 @@ export class ArduinoService {
     if (this.keepaliveInterval) {
       clearInterval(this.keepaliveInterval);
       this.keepaliveInterval = null;
-      console.log('Keepalive stopped');
+      console.debug('Keepalive stopped');
     }
+    // Also stop connection monitor when keepalive stops
+    this.stopConnectionMonitor();
   }
 
   // Handle page unload
