@@ -3,9 +3,9 @@
   flex-direction: column;
   gap: 12px;
   padding: 20px;
-  border: 2px solid rgba(139, 124, 213, 0.15);
+  border: 2px solid var(--border-color);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--card-background);
   backdrop-filter: blur(5px);
   margin-bottom: 15px;
   transition: all 0.3s ease;
@@ -25,8 +25,8 @@
 }
 
 .prize-item:hover {
-  border-color: rgba(139, 124, 213, 0.4);
-  box-shadow: 0 2px 10px rgba(139, 124, 213, 0.15);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 10px var(--border-color);
 }
 
 .prize-pattern-display {
@@ -38,18 +38,18 @@
 .pattern-display-slot {
   width: 60px;
   height: 60px;
-  border: 2px solid rgba(139, 124, 213, 0.3);
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  background: var(--card-background-solid);
   transition: all 0.3s ease;
 }
 
 .pattern-display-slot:hover {
-  border-color: #8B7CD5;
-  box-shadow: 0 2px 8px rgba(139, 124, 213, 0.2);
+  border-color: var(--color-secondary);
+  box-shadow: 0 2px 8px var(--border-color);
 }
 
 .pattern-display-slot img {
@@ -61,13 +61,13 @@
 .pattern-display-slot .wildcard-icon {
   font-size: 32px;
   font-weight: bold;
-  color: #8b5cf6;
+  color: var(--color-secondary);
 }
 
 .pattern-display-slot .item-text {
   font-size: 11px;
   text-align: center;
-  color: #6b7280;
+  color: var(--text-secondary);
   padding: 4px;
 }
 
@@ -80,7 +80,7 @@
 .prize-reward-label {
   font-weight: 600;
   font-size: 14px;
-  color: #374151;
+  color: var(--text-primary);
   min-width: 60px;
 }
 
@@ -88,18 +88,19 @@
   flex: 1;
   max-width: 400px;
   padding: 10px 14px;
-  border: 2px solid rgba(139, 124, 213, 0.3);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
+  color: var(--text-primary);
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--card-background);
   width: unset !important;
 }
 
 .prize-reward input:focus {
   outline: none;
-  border-color: #8B7CD5;
-  box-shadow: 0 0 0 3px rgba(139, 124, 213, 0.15);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px var(--border-color);
 }
 
 .prize-probability {
@@ -110,16 +111,16 @@
 
 .prize-probability-label {
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 14px;
   min-width: 60px;
 }
 
 .prize-probability-value {
   font-weight: 600;
-  color: #8B7CD5;
+  color: var(--color-secondary);
   padding: 6px 14px;
-  background: rgba(139, 124, 213, 0.15);
+  background: var(--border-color);
   border-radius: 6px;
   font-size: 14px;
 }
@@ -129,7 +130,7 @@
   gap: 10px;
   align-items: center;
   padding: 10px 0 0 0;
-  border-top: 1px solid rgba(139, 124, 213, 0.15);
+  border-top: 1px solid var(--border-color);
   margin-top: 4px;
 }
 
@@ -163,7 +164,7 @@
     border-radius: 50%;
     background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     cursor: pointer;
-    border: 3px solid white;
+    border: 3px solid var(--card-background-solid);
     box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
     transition: all 0.2s ease;
 
@@ -179,7 +180,7 @@
     border-radius: 50%;
     background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     cursor: pointer;
-    border: 3px solid white;
+    border: 3px solid var(--card-background-solid);
     box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
     transition: all 0.2s ease;
 

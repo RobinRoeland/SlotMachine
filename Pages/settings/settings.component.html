@@ -79,6 +79,30 @@
     </app-setting-item>
     </app-settings-section>
 
+    <!-- Color Theme Section -->
+    <app-settings-section
+    title="Color Theme"
+    description="Choose the color theme for the application."
+    >
+    <div class="theme-settings">
+        <p class="helper-text">Select a color theme to change the appearance of the application.</p>
+        
+        <!-- Theme Options Grid -->
+        <div class="theme-grid">
+        <div 
+            *ngFor="let theme of availableThemes"
+            class="theme-option"
+            [class.selected]="isThemeSelected(theme.name)"
+            (click)="selectTheme(theme.name)"
+        >
+            <div class="theme-preview" [style.background]="theme.colors.previewGradient"></div>
+            <div class="theme-name">{{ theme.displayName }}</div>
+            <div class="selected-indicator">✓</div>
+        </div>
+        </div>
+    </div>
+    </app-settings-section>
+
     <!-- Company Branding Section -->
     <app-settings-section
     title="Company Branding"

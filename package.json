@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --open",
+    "dev": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:SlotMachine": "node dist/slot-machine/server/server.mjs"
+    "serve:ssr:SlotMachine": "node dist/slot-machine/server/server.mjs",
+    "setup": "npm install && npm start"
   },
   "private": true,
   "dependencies": {

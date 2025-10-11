@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { SettingsService, AppSettings } from '../../Services/settings.service';
+import { ThemeService } from '../../Services/theme.service';
 import { BaseComponent } from '../../Services/base.component';
 import { SettingsSectionComponent } from '../../Components/settings/settings-section/settings-section.component';
 import { SettingItemComponent } from '../../Components/settings/setting-item/setting-item.component';
@@ -42,7 +43,13 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     'assets/images/slot-machine-colorful-neon-sign.jpg',
   ];
 
-  constructor(private settingsService: SettingsService) {
+  // Available themes
+  availableThemes = this.themeService.themes;
+
+  constructor(
+    private settingsService: SettingsService,
+    private themeService: ThemeService
+  ) {
     super();
     // Initialize with current settings from service
     this.settings = this.settingsService.getSettings();
@@ -201,5 +208,20 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   switchLogoType(type: 'regular' | 'small'): void {
     this.selectedLogoType = type;
+  }
+
+  /**
+   * Select a theme
+   */
+  selectTheme(themeName: 'light' | 'medium-dark' | 'dark'): void {
+    this.settingsService.updateSetting('colorTheme', themeName);
+    this.themeService.applyTheme(themeName);
+  }
+
+  /**
+   * Check if a theme is currently selected
+   */
+  isThemeSelected(themeName: 'light' | 'medium-dark' | 'dark'): boolean {
+    return this.settings.colorTheme === themeName;
   }
 }

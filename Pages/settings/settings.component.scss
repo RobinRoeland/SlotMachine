@@ -14,27 +14,27 @@
   h4 {
     font-size: 15px;
     font-weight: 600;
-    color: #2D3E8E;
+    color: var(--text-accent);
     margin: 0 0 12px 0;
   }
 
   .helper-text {
     font-size: 13px;
-    color: #6b7280;
+    color: var(--text-secondary);
     margin: 8px 0 0 0;
   }
 
   .section-subtitle {
     font-size: 17px;
     font-weight: 700;
-    color: #2D3E8E;
+    color: var(--text-accent);
     margin: 8px 0;
     padding-top: 8px;
   }
 
   .logo-divider {
     border: none;
-    border-top: 2px solid #e5e7eb;
+    border-top: 2px solid var(--border-color);
     margin: 16px 0;
   }
 }
@@ -47,12 +47,12 @@
   .toggle-btn {
     flex: 1;
     padding: 12px 20px;
-    border: 2px solid #e5e7eb;
-    background: white;
+    border: 2px solid var(--border-color);
+    background: var(--card-background-solid);
     border-radius: 8px;
     font-size: 15px;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -67,15 +67,15 @@
     }
 
     &:hover {
-      border-color: #4759B4;
-      color: #2D3E8E;
+      border-color: var(--color-primary-light);
+      color: var(--text-accent);
       transform: translateY(-1px);
     }
 
     &.active {
-      background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
       color: white;
-      border-color: #2D3E8E;
+      border-color: var(--color-primary);
       box-shadow: 0 4px 12px rgba(45, 62, 142, 0.3);
 
       .btn-subtitle {
@@ -86,12 +86,12 @@
 }
 
 .logo-usage-hint {
-  background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
-  border-left: 4px solid #4759B4;
+  background: var(--card-background);
+  border-left: 4px solid var(--color-primary-light);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 13px;
-  color: #2D3E8E;
+  color: var(--text-accent);
   margin: 0 0 16px 0;
   font-weight: 500;
 }
@@ -119,10 +119,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
+    background: var(--card-background);
     border-radius: 12px;
     padding: 20px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--border-color);
     min-height: 120px;
 
     img {
@@ -144,7 +144,7 @@
 .logo-input-section {
   .logo-path-input {
     padding: 10px 14px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 14px;
     font-family: 'Courier New', monospace;
@@ -152,7 +152,7 @@
 
     &:focus {
       outline: none;
-      border-color: #4759B4;
+      border-color: var(--color-primary-light);
     }
   }
 }
@@ -163,7 +163,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     color: white;
     border-radius: 8px;
     cursor: pointer;
@@ -190,8 +190,8 @@
 
   .logo-option {
     position: relative;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
-    border: 2px solid #e5e7eb;
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     padding: 20px;
     cursor: pointer;
@@ -225,7 +225,88 @@
     }
 
     &:hover {
-      border-color: #4759B4;
+      border-color: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 62, 142, 0.2);
+    }
+
+    &.selected {
+      border-color: #10b981;
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+
+      .selected-indicator {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Theme Settings Styles
+.theme-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 0;
+
+  .helper-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .theme-option {
+    position: relative;
+    background: var(--card-background-solid);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .theme-preview {
+      width: 100%;
+      height: 80px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-name {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-accent);
+    }
+
+    .selected-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #10b981;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    &:hover {
+      border-color: var(--color-primary-light);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(45, 62, 142, 0.2);
     }
@@ -303,6 +384,23 @@
     }
   }
 
+  .theme-settings {
+    .theme-grid {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .theme-option {
+      .theme-preview {
+        height: 60px;
+      }
+
+      .theme-name {
+        font-size: 13px;
+      }
+    }
+  }
+
   .settings-actions {
     margin-top: 16px;
 
@@ -363,6 +461,37 @@
     }
   }
 
+  .theme-settings {
+    gap: 12px;
+
+    .helper-text {
+      font-size: 12px;
+    }
+
+    .theme-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .theme-option {
+      padding: 10px;
+
+      .theme-preview {
+        height: 50px;
+      }
+
+      .theme-name {
+        font-size: 12px;
+      }
+
+      .selected-indicator {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+      }
+    }
+  }
+
   .settings-actions {
     margin-top: 12px;
 
@@ -378,3 +507,5 @@
     padding: 0 4px 16px;
   }
 }
+
+

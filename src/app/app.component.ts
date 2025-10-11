@@ -3,6 +3,8 @@ import { SideBarComponent } from '../../Components/side-bar/side-bar.component'
 import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from "@angular/router";
 import { filter, map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../Services/theme.service';
+import { SettingsService } from '../../Services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -20,8 +22,14 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private themeService: ThemeService,
+    private settingsService: SettingsService
   ) {
+    // Initialize theme on app startup
+    const currentTheme = this.settingsService.getSettings().colorTheme;
+    this.themeService.applyTheme(currentTheme);
+
     // Subscribe to router events to get the current route's title
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),

@@ -2,18 +2,18 @@ button {
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
-  background: linear-gradient(135deg, #8B7CD5 0%, #9B8CE5 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(139, 124, 213, 0.3);
+  box-shadow: 0 2px 10px var(--border-color);
 
   &:hover {
-    background: linear-gradient(135deg, #7A6BC4 0%, #8B7CD5 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(139, 124, 213, 0.4);
+    box-shadow: 0 4px 15px var(--border-color);
   }
 
   &:active {
@@ -21,7 +21,7 @@ button {
   }
 
   &:disabled {
-    background: #ccc !important;
+    background: var(--border-color) !important;
     cursor: not-allowed !important;
     opacity: 0.6;
     transform: none !important;
@@ -63,17 +63,17 @@ button {
 
 .odds-section {
   padding: 25px;
-  border: 2px solid rgba(139, 124, 213, 0.2);
+  border: 2px solid var(--border-color);
   border-radius: 16px;
   margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--card-background-solid);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
   h2 {
     margin-top: 0;
     margin-bottom: 15px;
-    color: #2D3E8E;
+    color: var(--text-accent);
     font-weight: 400;
 
     // Mobile responsive heading

@@ -2,26 +2,26 @@
     padding: 15px 40px;
     font-size: 20px;
     font-weight: 600;
-    background: linear-gradient(135deg, #8B7CD5 0%, #9B8CE5 100%);
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
     color: white;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(139, 124, 213, 0.4);
+    box-shadow: 0 4px 15px var(--border-color);
     letter-spacing: 1px;
     animation: pulse-glow 2s ease-in-out infinite;
     z-index: 10;
 }
 
 #rollButton:hover {
-    background: linear-gradient(135deg, #7A6BC4 0%, #8B7CD5 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(139, 124, 213, 0.5);
+    box-shadow: 0 6px 20px var(--border-color);
 }
 
 #rollButton:disabled {
-    background: #ccc;
+    background: var(--border-color);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -37,11 +37,11 @@
     padding: 15px 40px;
     font-size: 20px;
     font-weight: 600;
-    background: linear-gradient(135deg, #8B7CD5 0%, #9B8CE5 100%);
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
     color: white;
     border: none;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(139, 124, 213, 0.4);
+    box-shadow: 0 4px 15px var(--border-color);
     letter-spacing: 1px;
     text-align: center;
     animation: pulse-glow 2s ease-in-out infinite;
@@ -56,12 +56,12 @@
 @keyframes pulse-glow {
     0%, 100% {
         transform: scale(1);
-        box-shadow: 0 4px 15px rgba(139, 124, 213, 0.4);
+        box-shadow: 0 4px 15px var(--border-color);
         opacity: 1;
     }
     50% {
         transform: scale(1.05);
-        box-shadow: 0 8px 25px rgba(139, 124, 213, 0.6);
+        box-shadow: 0 8px 25px var(--border-color);
         opacity: 0.9;
     }
 }

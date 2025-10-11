@@ -9,16 +9,16 @@
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-background);
   backdrop-filter: blur(10px);
   padding: 24px;
   border-radius: 16px;
   min-width: 360px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--card-background);
 
   h3 {
-    color: #2D3E8E;
+    color: var(--text-accent);
     margin-top: 0;
   }
 }
@@ -31,22 +31,24 @@
 
   label {
     font-weight: 600;
-    color: #2D3E8E;
+    color: var(--text-accent);
   }
 
   input[type="text"], 
   input[type="file"] {
-    border: 2px solid rgba(139, 124, 213, 0.3);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 10px 12px;
     font-family: inherit;
     font-size: 14px;
+    color: var(--text-primary);
+    background: var(--card-background-solid);
     transition: all 0.3s ease;
 
     &:focus {
       outline: none;
-      border-color: #8B7CD5;
-      box-shadow: 0 0 0 3px rgba(139, 124, 213, 0.15);
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px var(--hover-overlay);
     }
   }
 }
@@ -60,18 +62,18 @@
     padding: 10px 20px;
     font-size: 14px;
     font-weight: 600;
-    background: linear-gradient(135deg, #8B7CD5 0%, #9B8CE5 100%);
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(139, 124, 213, 0.3);
+    box-shadow: 0 2px 10px var(--border-color);
 
     &:hover {
-      background: linear-gradient(135deg, #7A6BC4 0%, #8B7CD5 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(139, 124, 213, 0.4);
+      box-shadow: 0 4px 15px var(--border-color);
     }
 
     &:active {

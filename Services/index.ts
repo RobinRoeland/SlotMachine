@@ -12,6 +12,7 @@ export * from './items.service';
 export * from './odds.service';
 export * from './prize.service';
 export * from './settings.service';
+export * from './theme.service';
 
 // Utility services
 export * from './validation.service';

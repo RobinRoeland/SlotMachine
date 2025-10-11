@@ -30,7 +30,8 @@ export class StorageService {
     SHOW_PRIZES_LIST: 'settings_show_prizes_list',
     ARDUINO_ENABLED: 'settings_enable_arduino_control',
     COMPANY_LOGO: 'settings_company_logo',
-    COMPANY_LOGO_SMALL: 'settings_company_logo_small'
+    COMPANY_LOGO_SMALL: 'settings_company_logo_small',
+    COLOR_THEME: 'settings_color_theme'
   };
 
   // Subjects for each key to notify subscribers of changes
@@ -384,6 +385,21 @@ export class StorageService {
   watchCompanyLogoSmall(): Observable<string> {
     return this.watch<string>(this.KEYS.COMPANY_LOGO_SMALL).pipe(
       map(value => value || '')
+    );
+  }
+
+  getColorTheme(): 'light' | 'medium-dark' | 'dark' {
+    const value = this.getItem<'light' | 'medium-dark' | 'dark'>(this.KEYS.COLOR_THEME);
+    return value || 'light';
+  }
+
+  setColorTheme(theme: 'light' | 'medium-dark' | 'dark'): void {
+    this.setItem(this.KEYS.COLOR_THEME, theme);
+  }
+
+  watchColorTheme(): Observable<'light' | 'medium-dark' | 'dark'> {
+    return this.watch<'light' | 'medium-dark' | 'dark'>(this.KEYS.COLOR_THEME).pipe(
+      map(value => value || 'light')
     );
   }
 }

@@ -14,6 +14,7 @@ export interface AppSettings {
   showPityWarning: boolean;
   companyLogo: string;
   companyLogoSmall: string;
+  colorTheme: 'light' | 'medium-dark' | 'dark';
 }
 
 /**
@@ -32,7 +33,8 @@ export class SettingsService {
     enablePitySystem: false,
     showPityWarning: true,
     companyLogo: '',
-    companyLogoSmall: ''
+    companyLogoSmall: '',
+    colorTheme: 'light'
   };
 
   // BehaviorSubject to track settings changes
@@ -58,16 +60,18 @@ export class SettingsService {
       this.storageService.watchPityEnabled(),
       this.storageService.watchShowPityWarning(),
       this.storageService.watchCompanyLogo(),
-      this.storageService.watchCompanyLogoSmall()
+      this.storageService.watchCompanyLogoSmall(),
+      this.storageService.watchColorTheme()
     ]).pipe(
-      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall]) => ({
+      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme]) => ({
         showPrizesList,
         showOdds,
         enableArduinoControl,
         enablePitySystem,
         showPityWarning,
         companyLogo,
-        companyLogoSmall
+        companyLogoSmall,
+        colorTheme
       }))
     ).subscribe(settings => {
       this.settingsSubject.next(settings);
@@ -85,7 +89,8 @@ export class SettingsService {
       enablePitySystem: this.storageService.getPityEnabled(),
       showPityWarning: this.storageService.getShowPityWarning(),
       companyLogo: this.storageService.getCompanyLogo(),
-      companyLogoSmall: this.storageService.getCompanyLogoSmall()
+      companyLogoSmall: this.storageService.getCompanyLogoSmall(),
+      colorTheme: this.storageService.getColorTheme()
     };
     return settings;
   }
@@ -101,6 +106,7 @@ export class SettingsService {
     this.storageService.setShowPityWarning(settings.showPityWarning);
     this.storageService.setCompanyLogo(settings.companyLogo);
     this.storageService.setCompanyLogoSmall(settings.companyLogoSmall);
+    this.storageService.setColorTheme(settings.colorTheme);
   }
 
   /**

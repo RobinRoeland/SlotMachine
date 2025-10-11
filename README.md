@@ -2,16 +2,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
 
-## 📚 Documentation
-
-### Arduino Integration
-- **[Arduino Setup Guide](documentation/ARDUINO_SETUP.md)** - Complete guide for connecting and controlling the slot machine with Arduino
-  - Hardware setup instructions
-  - Software configuration
-  - Communication protocol
-  - Troubleshooting tips
-  - Example code snippets
-- **[Arduino Quick Reference](documentation/ARDUINO_QUICK_REFERENCE.txt)** - Quick reference for Arduino commands and responses
+**New to our project?** Please check out the wiki to get started!
 
 ### Features
 - ✅ Control slot machine via Arduino (button press, sensors, etc.)

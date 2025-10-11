@@ -13,22 +13,22 @@
 }
 
 .prize-list::-webkit-scrollbar-track {
-    background: rgba(139, 124, 213, 0.1);
+    background: var(--hover-overlay);
     border-radius: 4px;
 }
 
 .prize-list::-webkit-scrollbar-thumb {
-    background: rgba(139, 124, 213, 0.4);
+    background: var(--border-color);
     border-radius: 4px;
 }
 
 .prize-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(139, 124, 213, 0.6);
+    background: var(--color-secondary);
 }
 
 .prize-list-empty {
     text-align: center;
-    color: #999;
+    color: var(--text-secondary);
     font-style: italic;
     padding: 20px;
 }
