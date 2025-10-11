@@ -1,0 +1,16 @@
+<div id="prizeListDisplay" class="prize-list" >
+    <div class="pity-roll-warning" *ngIf="isPityRollNext && showPityWarning"><strong>Next roll is guaranteed win!</strong></div>
+    @if (filteredPrizes.length > 0) {
+        <prize-display-item 
+            *ngFor="let prizeItem of filteredPrizes" 
+            [prizeItem]="prizeItem"
+            [items]="items"
+            [isPityRollNext]="isPityRollNext"
+            [showPityWarning]="showPityWarning"
+            [groupIndices]="getGroupIndices()">
+        </prize-display-item>
+    }
+    @else{
+        <div class="prize-list-empty">No prizes configured (roller count: {{ currentRollerCount }})</div>
+    }
+</div>

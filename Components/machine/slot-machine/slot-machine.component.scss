@@ -1,0 +1,43 @@
+.slot-machine {
+    height: auto;
+    max-height: 50vh;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin: 0 auto;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .slot-machine {
+        height: 45vh;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 768px) {
+    .slot-machine {
+        height: 40vh;
+        gap: 8px;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+    .slot-machine {
+        height: auto;
+        max-height: 40vh;
+        gap: 5px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .slot-machine {
+        height: auto;
+        max-height: 35vh;
+        gap: 4px;
+    }
+}

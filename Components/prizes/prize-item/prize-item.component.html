@@ -1,0 +1,49 @@
+<div class="prize-item">
+  <div class="prize-item-top">
+    <div class="prize-pattern-display">
+      <div class="pattern-display-slot" *ngFor="let itemName of prize.pattern">
+        <div *ngIf="itemName === '*'" class="wildcard-icon">*</div>
+        <img 
+          *ngIf="itemName !== '*' && getItemObject(itemName)"
+          [src]="getItemObject(itemName)!.imageSrc" 
+          [alt]="itemName" />
+        <span *ngIf="itemName !== '*' && !getItemObject(itemName)" class="item-text">
+          {{ itemName }}
+        </span>
+      </div>
+    </div>
+    <button class="delete-prize" (click)="onDelete()">Delete</button>
+  </div>
+
+  <div class="prize-item-details">
+    <div class="prize-reward">
+      <span class="prize-reward-label">Prize:</span>
+      <input 
+        type="text" 
+        class="reward-input" 
+        [value]="prize.reward"
+        (input)="onRewardChange($any($event.target).value)"
+        placeholder="e.g., $100 or Free Spin"
+        disabled />
+    </div>
+
+    <div class="prize-probability">
+      <span class="prize-probability-label">Chance:</span>
+      <span class="prize-probability-value">{{ probabilityText }}</span>
+    </div>
+
+    <div class="prize-pity-odds">
+      <span class="pity-odds-label">Pity Roll Weight (in group):</span>
+      <input 
+        type="range" 
+        class="pity-odds-slider" 
+        [(ngModel)]="pityWeight"
+        (input)="onWeightChange()"
+        min="0.1" 
+        max="10" 
+        step="0.1" />
+      <div class="pity-odds-value">{{ pityWeight.toFixed(1) }}</div>
+      <div class="pity-percentage">{{ pityPercentage.toFixed(1) }}%</div>
+    </div>
+  </div>
+</div>

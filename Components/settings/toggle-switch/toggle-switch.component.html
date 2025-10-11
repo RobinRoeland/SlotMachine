@@ -1,0 +1,9 @@
+<label class="toggle-switch" [class.disabled]="disabled">
+  <input 
+    type="checkbox" 
+    [checked]="checked" 
+    [disabled]="disabled"
+    (change)="toggle()" 
+  />
+  <span class="toggle-slider"></span>
+</label>

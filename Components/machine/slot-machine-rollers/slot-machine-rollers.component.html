@@ -1,0 +1,7 @@
+<div class="rollers">
+    <slot-machine-roller 
+        *ngFor="let i of rollerCount | range" 
+        [items]="items"
+        [isRolling]="isRolling">
+    </slot-machine-roller>
+</div>

@@ -1,0 +1,14 @@
+<div class="prizes-sidebar" [class.expanded]="isExpanded">
+    <!-- Mobile Toggle Bar (only visible on small screens) -->
+    <button class="prizes-toggle-bar" (click)="togglePrizes()" [attr.aria-expanded]="isExpanded">
+        <span class="toggle-icon">{{ isExpanded ? '▼' : '▲' }}</span>
+        <span class="toggle-text">Available Prizes</span>
+        <span class="toggle-icon">{{ isExpanded ? '▼' : '▲' }}</span>
+    </button>
+    
+    <!-- Prizes Content -->
+    <div class="prizes-content">
+        <h3 class="desktop-title">Available Prizes</h3>
+        <prizelist-display></prizelist-display>
+    </div>
+</div>

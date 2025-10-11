@@ -1,0 +1,40 @@
+<div class="settings-section">
+  <h2>Settings</h2>
+  <div class="setting-item">
+    <label for="rollerCount">Number of Rollers:</label>
+    <input 
+      type="number" 
+      id="rollerCount" 
+      [(ngModel)]="rollerCount"
+      (input)="onRollerCountChange()"
+      min="1" 
+      max="10" />
+    <button (click)="saveRollerCount()">Save</button>
+    <span 
+      *ngIf="hasUnsavedRollerCount$ | async" 
+      class="unsaved">
+      ⚠ Unsaved
+    </span>
+  </div>
+  <div class="setting-item" [class.disabled]="!pityEnabled">
+    <label for="pityValue">Pity System Threshold:</label>
+    <input 
+      type="number" 
+      id="pityValue" 
+      [(ngModel)]="pityValue"
+      (input)="onPityValueChange()"
+      [disabled]="!pityEnabled"
+      min="1" 
+      max="1000" />
+    <span class="setting-description">Spins without a win</span>
+    <button (click)="savePityValue()" [disabled]="!pityEnabled">Save</button>
+    <span 
+      *ngIf="hasUnsavedPityValue$ | async" 
+      class="unsaved">
+      ⚠ Unsaved
+    </span>
+  </div>
+  <div *ngIf="!pityEnabled" class="pity-disabled-note">
+    ⚠ Enable Pity System in Settings to use this feature
+  </div>
+</div>

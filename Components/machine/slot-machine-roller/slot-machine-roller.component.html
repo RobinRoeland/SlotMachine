@@ -1,0 +1,10 @@
+<div class="roller" [class.rolling]="currentlyRolling">
+  <div class="roller-content" #rollerContent>
+    <img *ngFor="let item of displayItems; let i = index"
+         [src]="item.imageSrc"
+         [alt]="item.name"
+         [draggable]="false"
+         [class.center-item]="i === 2"
+         [class.edge-item]="i !== 2">
+  </div>
+</div>

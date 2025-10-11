@@ -1,0 +1,39 @@
+.rollers {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .rollers {
+        gap: 8px;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 768px) {
+    .rollers {
+        gap: 6px;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+    .rollers {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .rollers {
+        gap: 3px;
+        flex-wrap: wrap;
+    }
+}

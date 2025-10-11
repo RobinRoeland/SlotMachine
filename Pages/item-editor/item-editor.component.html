@@ -1,0 +1,33 @@
+<div class="editor">
+  <!-- Items JSON Editor -->
+  <items-json-editor
+    [itemsJson]="itemsJson"
+    [isDirty]="isDirty"
+    [errorMessage]="itemsError"
+    (jsonChange)="onJsonChange($event)"
+    (apply)="applyItems()"
+    (load)="loadItems()"
+    (export)="exportItems()"
+    (addItem)="openAddModal()">
+  </items-json-editor>
+  
+  <!-- Roller Preview -->
+  <div class="roller-preview-container">
+    <h3>Roller preview</h3>
+      <slot-machine-roller 
+        [items]="items" 
+        [isRolling]="false">
+      </slot-machine-roller>
+  </div>
+  
+  <!-- Items Grid -->
+  <items-grid [items]="items"></items-grid>
+</div>
+
+<!-- Add Item Modal -->
+<add-item-modal
+  [show]="showAddModal"
+  [errorMessage]="addItemError"
+  (close)="closeAddModal()"
+  (confirm)="confirmAddItem($event)">
+</add-item-modal>

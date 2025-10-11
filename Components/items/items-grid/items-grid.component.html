@@ -1,0 +1,12 @@
+<div class="items-list">
+  <h3>Items</h3>
+  <div class="items-grid">
+    <div *ngFor="let item of items" class="item-card">
+      <img 
+        [src]="item.imageSrc"
+        [alt]="item.name"
+        draggable="false">
+      <div class="item-name">{{ item.name }}</div>
+    </div>
+  </div>
+</div>

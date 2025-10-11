@@ -1,0 +1,380 @@
+.settings-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+// Logo Settings Styles
+.logo-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 12px 0;
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2D3E8E;
+    margin: 0 0 12px 0;
+  }
+
+  .helper-text {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 8px 0 0 0;
+  }
+
+  .section-subtitle {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2D3E8E;
+    margin: 8px 0;
+    padding-top: 8px;
+  }
+
+  .logo-divider {
+    border: none;
+    border-top: 2px solid #e5e7eb;
+    margin: 16px 0;
+  }
+}
+
+.logo-type-toggle {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .toggle-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    .btn-subtitle {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      border-color: #4759B4;
+      color: #2D3E8E;
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+      color: white;
+      border-color: #2D3E8E;
+      box-shadow: 0 4px 12px rgba(45, 62, 142, 0.3);
+
+      .btn-subtitle {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+.logo-usage-hint {
+  background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
+  border-left: 4px solid #4759B4;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2D3E8E;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+.logo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-preview-section {
+  .logo-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e5e7eb;
+    min-height: 120px;
+
+    img {
+      max-width: 100%;
+      max-height: 100px;
+      object-fit: contain;
+    }
+  }
+
+  .logo-preview-small {
+    min-height: 80px;
+    
+    img {
+      max-height: 60px;
+    }
+  }
+}
+
+.logo-input-section {
+  .logo-path-input {
+    padding: 10px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #4759B4;
+    }
+  }
+}
+
+.logo-upload-section {
+  .upload-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 62, 142, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.logo-presets-section {
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .logo-option {
+    position: relative;
+    background: linear-gradient(135deg, #E8F4F8 0%, #F0E8FF 100%);
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+
+    img {
+      max-height: 80px;
+      object-fit: contain;
+    }
+
+    .selected-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #10b981;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    &:hover {
+      border-color: #4759B4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 62, 142, 0.2);
+    }
+
+    &.selected {
+      border-color: #10b981;
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+
+      .selected-indicator {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin-top: 20px;
+
+  .saved-indicator {
+    color: #10b981;
+    font-weight: 600;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &.visible {
+      opacity: 1;
+    }
+  }
+}
+
+// Responsive design for tablets (portrait and landscape)
+@media (max-width: 1024px) {
+    .settings-container {
+    padding: 0 16px 32px;
+  }
+}
+
+// Responsive design for tablets (portrait)
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 0 12px 24px;
+  }
+
+  .logo-settings {
+    gap: 20px;
+
+    .logo-presets-section .logo-grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .logo-option {
+      min-height: 80px;
+      padding: 16px;
+
+      img {
+        max-height: 60px;
+      }
+    }
+
+    .logo-type-toggle {
+      gap: 8px;
+
+      .toggle-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .settings-actions {
+    margin-top: 16px;
+
+    .saved-indicator {
+      font-size: 15px;
+    }
+  }
+}
+
+// Responsive design for mobile phones
+@media (max-width: 480px) {
+  .settings-container {
+    padding: 0 8px 20px;
+  }
+
+  .logo-settings {
+    gap: 16px;
+
+    h4 {
+      font-size: 14px;
+    }
+
+    .helper-text {
+      font-size: 12px;
+    }
+
+    .logo-preview-section .logo-preview {
+      min-height: 100px;
+      padding: 16px;
+
+      img {
+        max-height: 80px;
+      }
+    }
+
+    .logo-presets-section .logo-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .logo-option {
+      min-height: 70px;
+      padding: 12px;
+
+      img {
+        max-height: 50px;
+      }
+    }
+
+    .logo-type-toggle {
+      gap: 6px;
+      flex-direction: column;
+
+      .toggle-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .settings-actions {
+    margin-top: 12px;
+
+    .saved-indicator {
+      font-size: 14px;
+    }
+  }
+}
+
+// Extra small phones
+@media (max-width: 360px) {
+  .settings-container {
+    padding: 0 4px 16px;
+  }
+}

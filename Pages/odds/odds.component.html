@@ -1,0 +1,26 @@
+<div class="page">
+  <div class="content">
+    <div class="odds-editor">
+      <app-odds-settings></app-odds-settings>
+      
+      <div class="odds-section">
+        <h2>Item Probabilities</h2>
+        <app-odds-list></app-odds-list>
+        <div class="odds-controls">
+          <button (click)="resetOdds()">Reset to Equal</button>
+          <button (click)="saveOdds()">Save Odds</button>
+          <span 
+            *ngIf="hasUnsavedChanges$ | async" 
+            class="unsaved-indicator">
+            ⚠ Unsaved changes
+          </span>
+          <span 
+            *ngIf="errorMessage$ | async as error" 
+            class="odds-error">
+            {{ error }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

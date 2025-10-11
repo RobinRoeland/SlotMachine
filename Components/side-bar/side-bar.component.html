@@ -1,0 +1,28 @@
+<button 
+  id="toggleSidebar"
+  [attr.aria-expanded]="!isCollapsed"
+  aria-controls="sidebar"
+  (click)="onToggleClick()"
+  (mouseenter)="onSidebarMouseEnter()">
+  <img [src]="companyLogoSmall$ | async" class="toggle-logo" alt="Toggle Logo">
+</button>
+
+<div 
+  class="sidebar" 
+  id="sidebar"
+  (mouseenter)="onSidebarMouseEnter()"
+  (mouseleave)="onSidebarMouseLeave()"
+  [class.sidebar-collapsed]="isCollapsed">
+  <div class="header">
+    <div class="logo-container">
+      <img [src]="companyLogo$ | async" class="sidebar-logo" alt="Company Logo">
+    </div>
+  </div>
+  <nav class="nav">
+    <a routerLink="/game" routerLinkActive="active">Play</a>
+    <a routerLink="/edit-items" routerLinkActive="active">Edit Items</a>
+    <a routerLink="/edit-odds" routerLinkActive="active">Edit Odds</a>
+    <a routerLink="/edit-prizes" routerLinkActive="active">Edit Prizes</a>
+    <a routerLink="/settings" routerLinkActive="active">Settings</a>
+  </nav>
+</div>

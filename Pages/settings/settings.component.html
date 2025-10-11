@@ -1,0 +1,219 @@
+
+<div class="settings-container">
+     <!-- Saved Indicator -->
+    <div class="settings-actions">
+    <span class="saved-indicator" [class.visible]="showSaved">
+        ✓ Settings saved
+    </span>
+    </div>
+
+    <!-- Display Settings Section -->
+    <app-settings-section
+    title="Display Settings"
+    description="Configure what is displayed on the play page."
+    >
+    <app-setting-item
+        title="Show Prizes List"
+        description="Display the list of available prizes on the right side of the play page."
+    >
+        <app-toggle-switch
+        [checked]="settings.showPrizesList"
+        (checkedChange)="onShowPrizesListChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <app-setting-item
+        title="Show Win Chances"
+        description="Display the probability of winning each prize in the prizes list."
+        [disabled]="isOddsDisabled"
+    >
+        <app-toggle-switch
+        [checked]="settings.showOdds"
+        [disabled]="isOddsDisabled"
+        (checkedChange)="onShowOddsChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+    </app-settings-section>
+
+    <!-- Pity System Section -->
+    <app-settings-section
+    title="Pity System"
+    description="Guarantee a win after a certain number of spins without winning."
+    >
+    <app-setting-item
+        title="Enable Pity System"
+        description="Automatically grant a win after reaching the pity threshold set in Edit Odds."
+    >
+        <app-toggle-switch
+        [checked]="settings.enablePitySystem"
+        (checkedChange)="onEnablePitySystemChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <app-setting-item
+        title="Show Pity Warning"
+        description="Display a warning message when the next roll is guaranteed to be a win."
+        [disabled]="!settings.enablePitySystem"
+    >
+        <app-toggle-switch
+        [checked]="settings.showPityWarning"
+        [disabled]="!settings.enablePitySystem"
+        (checkedChange)="onShowPityWarningChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+    </app-settings-section>
+
+    <!-- Arduino Control Section -->
+    <app-settings-section
+    title="Arduino Control"
+    description="Enable external Arduino control for the slot machine."
+    >
+    <app-setting-item
+        title="Enable Arduino Control"
+        description="Allow triggering rolls via Arduino board connected through USB. Requires a supported browser (Chrome, Edge, Opera)."
+    >
+        <app-toggle-switch
+        [checked]="settings.enableArduinoControl"
+        (checkedChange)="onEnableArduinoControlChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+    </app-settings-section>
+
+    <!-- Company Branding Section -->
+    <app-settings-section
+    title="Company Branding"
+    description="Customize the company logo displayed throughout the application."
+    >
+    <div class="logo-settings">
+        <!-- Logo Type Toggle -->
+        <div class="logo-type-toggle">
+        <button 
+            class="toggle-btn"
+            [class.active]="selectedLogoType === 'regular'"
+            (click)="switchLogoType('regular')"
+        >
+            📄 Regular Logo
+        </button>
+        <button 
+            class="toggle-btn"
+            [class.active]="selectedLogoType === 'small'"
+            (click)="switchLogoType('small')"
+        >
+            🔘 Small Logo
+        </button>
+        </div>
+
+        <!-- Regular Logo Section -->
+        <div *ngIf="selectedLogoType === 'regular'" class="logo-content">
+        <p class="logo-usage-hint">This logo is displayed in the sidebar header (inside the expanded sidebar)</p>
+        <!-- Current Logo Preview -->
+        <div class="logo-preview-section">
+        <h4>Current Logo</h4>
+        <div class="logo-preview">
+            <img [src]="settings.companyLogo" alt="Company Logo" />
+        </div>
+        </div>
+
+        <!-- Logo Path Input -->
+        <div class="logo-input-section">
+        <h4>Logo Path</h4>
+        <input 
+            type="text" 
+            class="logo-path-input"
+            [value]="settings.companyLogo"
+            (change)="onLogoPathChange($any($event.target).value)"
+            placeholder="assets/images/your-logo.png"
+        />
+        <p class="helper-text">Enter the path to your logo file, or upload/select one below.</p>
+        </div>
+
+        <!-- File Upload -->
+        <div class="logo-upload-section">
+        <h4>Upload Custom Logo</h4>
+        <label class="upload-button">
+            <input 
+            type="file" 
+            accept="image/*"
+            (change)="onLogoFileUpload($event)"
+            hidden
+            />
+            <span>📁 Choose File</span>
+        </label>
+        <p class="helper-text">Upload a custom logo image (PNG, JPG, SVG, etc.)</p>
+        </div>
+
+        <!-- Preset Logos -->
+        <div class="logo-presets-section">
+        <h4>Or Select a Preset</h4>
+        <div class="logo-grid">
+            <div 
+            *ngFor="let logo of presetLogos"
+            class="logo-option"
+            [class.selected]="isLogoSelected(logo)"
+            (click)="selectPresetLogo(logo)"
+            >
+            <img [src]="logo" [alt]="logo" />
+            <div class="selected-indicator">✓</div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+        <!-- Small Logo Section -->
+        <div *ngIf="selectedLogoType === 'small'" class="logo-content">
+        <p class="logo-usage-hint">This logo is displayed in the collapse/expand toggle button (top-left corner)</p>
+        <!-- Current Small Logo Preview -->
+        <div class="logo-preview-section">
+        <h4>Current Small Logo</h4>
+        <div class="logo-preview logo-preview-small">
+            <img [src]="settings.companyLogoSmall" alt="Company Small Logo" />
+        </div>
+        </div>
+
+        <!-- Small Logo Path Input -->
+        <div class="logo-input-section">
+        <h4>Small Logo Path</h4>
+        <input 
+            type="text" 
+            class="logo-path-input"
+            [value]="settings.companyLogoSmall"
+            (change)="onLogoSmallPathChange($any($event.target).value)"
+            placeholder="assets/images/your-small-logo.png"
+        />
+        <p class="helper-text">Enter the path to your small logo file, or upload/select one below.</p>
+        </div>
+
+        <!-- Small Logo File Upload -->
+        <div class="logo-upload-section">
+        <h4>Upload Custom Small Logo</h4>
+        <label class="upload-button">
+            <input 
+            type="file" 
+            accept="image/*"
+            (change)="onLogoSmallFileUpload($event)"
+            hidden
+            />
+            <span>📁 Choose File</span>
+        </label>
+        <p class="helper-text">Upload a custom small logo image (PNG, JPG, SVG, etc.)</p>
+        </div>
+
+        <!-- Preset Small Logos -->
+        <div class="logo-presets-section">
+        <h4>Or Select a Preset</h4>
+        <div class="logo-grid">
+            <div 
+            *ngFor="let logo of presetLogosSmall"
+            class="logo-option"
+            [class.selected]="isLogoSmallSelected(logo)"
+            (click)="selectPresetLogoSmall(logo)"
+            >
+            <img [src]="logo" [alt]="logo" />
+            <div class="selected-indicator">✓</div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>
+    </app-settings-section>
+</div>

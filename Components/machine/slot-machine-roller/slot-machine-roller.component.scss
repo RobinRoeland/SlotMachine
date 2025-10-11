@@ -1,0 +1,219 @@
+.roller {
+    padding: 20px 0;
+    height: 100%;
+    max-height: 450px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(240, 240, 255, 0.8) 50%, 
+        rgba(255, 255, 255, 0.7) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+    justify-content: center;
+    min-width: 220px;
+    width: 220px;
+    flex-shrink: 0;
+}
+
+.roller-content img {
+    user-select: none;
+}
+
+.roller-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    will-change: transform;
+}
+
+.roller::before,
+.roller::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.roller::before {
+    top: 0;
+    background: linear-gradient(to bottom, 
+        rgba(0, 26, 255, 0.1) 0%, 
+        rgba(0, 26, 255, 0.05) 30%, 
+        rgba(0, 26, 255, 0) 100%);
+    border-radius: 8px 8px 0 0;
+}
+
+.roller::after {
+    bottom: 0;
+    background: linear-gradient(to top, 
+        rgba(0, 26, 255, 0.1) 0%, 
+        rgba(0, 26, 255, 0.05) 30%, 
+        rgba(0, 26, 255, 0) 100%);
+    border-radius: 0 0 8px 8px;
+}
+
+.roller img {
+    width: 90px;
+    height: 90px;
+    padding: 3%;
+    align-self: center;
+    transition: all 0.3s ease;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.roller img.center-item {
+    transform: scale(1.2);
+    z-index: 3;
+    position: relative;
+    filter: brightness(1.1);
+    opacity: 1 !important;
+}
+
+.roller img.edge-item {
+    opacity: 0.15;
+    transform: scale(0.8);
+}
+
+.roller.rolling img {
+    transition: none !important;
+}
+
+.roller.rolling img.center-item {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    filter: none !important;
+    z-index: 3;
+}
+
+.roller.rolling img.edge-item {
+    opacity: 0.15 !important;
+    transform: scale(0.8) !important;
+    filter: none !important;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .roller {
+        min-width: 180px;
+        width: 180px;
+        max-height: 350px;
+        padding: 15px 0;
+        gap: 14px;
+    }
+    
+    .roller-content {
+        gap: 14px;
+    }
+    
+    .roller img,
+    .roller img.center-item,
+    .roller img.edge-item {
+        width: 75px;
+        height: 75px;
+        max-width: 75px;
+        max-height: 75px;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 768px) {
+    .roller {
+        min-width: 110px;
+        width: 110px;
+        max-height: 240px;
+        padding: 10px 0;
+        gap: 10px;
+        border-radius: 12px;
+    }
+    
+    .roller-content {
+        gap: 10px;
+    }
+    
+    .roller img,
+    .roller img.center-item,
+    .roller img.edge-item {
+        width: 48px;
+        height: 48px;
+        max-width: 48px;
+        max-height: 48px;
+    }
+    
+    .roller::before,
+    .roller::after {
+        height: 30%;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+    .roller {
+        min-width: 70px;
+        width: 70px;
+        max-height: 200px;
+        padding: 8px 0;
+        gap: 7px;
+        border-radius: 10px;
+    }
+    
+    .roller-content {
+        gap: 7px;
+    }
+    
+    .roller img,
+    .roller img.center-item,
+    .roller img.edge-item {
+        width: 36px;
+        height: 36px;
+        max-width: 36px;
+        max-height: 36px;
+        padding: 2%;
+    }
+    
+    .roller::before,
+    .roller::after {
+        height: 30%;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .roller {
+        min-width: 60px;
+        width: 60px;
+        max-height: 170px;
+        padding: 6px 0;
+        gap: 6px;
+        border-radius: 8px;
+    }
+    
+    .roller-content {
+        gap: 6px;
+    }
+    
+    .roller img,
+    .roller img.center-item,
+    .roller img.edge-item {
+        width: 30px;
+        height: 30px;
+        max-width: 30px;
+        max-height: 30px;
+        padding: 1%;
+    }
+    
+    .roller::before,
+    .roller::after {
+        height: 25%;
+    }
+}
+

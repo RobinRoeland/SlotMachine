@@ -1,0 +1,33 @@
+<div class="prize-display-item">
+  <div class="prize-pattern-mini">
+    <div class="pattern-mini-slot" *ngFor="let itemName of prizeItem.prize.pattern">
+      
+      <!-- Wildcard -->
+      <div *ngIf="itemName === '*'" class="wildcard-icon">*</div>
+
+      <!-- Image if available -->
+      <ng-container *ngIf="itemName !== '*'">
+        <ng-container *ngFor="let item of items">
+          <img *ngIf="item.name === itemName" [src]="item.imageSrc" [alt]="item.name"/>
+        </ng-container>
+      </ng-container>
+
+      <!-- Fallback name -->
+      <span *ngIf="itemName !== '*' && !getItemImage(itemName)" style="font-size:10px;">
+        {{ itemName }}
+      </span>
+
+    </div>
+  </div>
+
+  <div class="prize-reward-text">{{ prizeItem.prize.reward }}</div>
+
+  <div class="prize-probability-text" *ngIf="showOdds">
+    <ng-container *ngIf="isPityRollNext && showPityWarning; else normalChance">
+      <span class="pity-chance-label">Pity Chance: {{ getPityChance() }}</span>
+    </ng-container>
+    <ng-template #normalChance>
+      Chance: {{ calculateProbability() }}
+    </ng-template>
+  </div>
+</div>

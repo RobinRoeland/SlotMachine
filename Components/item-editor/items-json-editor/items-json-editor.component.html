@@ -1,0 +1,27 @@
+<div class="items-editor">
+  <h2>Items JSON</h2>
+  <textarea 
+    [value]="itemsJson"
+    (input)="onJsonChange($any($event.target).value)"
+    rows="16" 
+    cols="80">
+  </textarea>
+  <div class="button-group">
+    <button (click)="onLoad()">Load items</button>
+    <button 
+      (click)="onApply()"
+      [class.apply-dirty]="isDirty">
+      Apply Items
+    </button>
+    <button (click)="onExport()">Export items.json</button>
+    <button (click)="onAddItem()">Add item</button>
+    <span 
+      class="dirty-indicator" 
+      [style.display]="isDirty ? 'inline' : 'none'">
+      Unsaved changes
+    </span>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>

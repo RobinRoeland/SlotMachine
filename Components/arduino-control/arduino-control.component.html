@@ -1,0 +1,12 @@
+<div class="arduino-control-panel">
+    <div class="arduino-status">
+        <div [ngClass]="getStatusIndicatorClass()"></div>
+        <span class="arduino-status-text">{{ getStatusText() }}</span>
+    </div>
+    <button 
+        class="arduino-connect-button"
+        [disabled]="isButtonDisabled()"
+        (click)="toggleConnection()">
+        {{ getButtonText() }}
+    </button>
+</div>

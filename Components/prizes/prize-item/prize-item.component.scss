@@ -1,0 +1,353 @@
+.prize-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 2px solid rgba(139, 124, 213, 0.15);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(5px);
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.prize-item-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.prize-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prize-item:hover {
+  border-color: rgba(139, 124, 213, 0.4);
+  box-shadow: 0 2px 10px rgba(139, 124, 213, 0.15);
+}
+
+.prize-pattern-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pattern-display-slot {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(139, 124, 213, 0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.pattern-display-slot:hover {
+  border-color: #8B7CD5;
+  box-shadow: 0 2px 8px rgba(139, 124, 213, 0.2);
+}
+
+.pattern-display-slot img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.pattern-display-slot .wildcard-icon {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8b5cf6;
+}
+
+.pattern-display-slot .item-text {
+  font-size: 11px;
+  text-align: center;
+  color: #6b7280;
+  padding: 4px;
+}
+
+.prize-reward {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.prize-reward-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  min-width: 60px;
+}
+
+.prize-reward input {
+  flex: 1;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: 2px solid rgba(139, 124, 213, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+  width: unset !important;
+}
+
+.prize-reward input:focus {
+  outline: none;
+  border-color: #8B7CD5;
+  box-shadow: 0 0 0 3px rgba(139, 124, 213, 0.15);
+}
+
+.prize-probability {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.prize-probability-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+  min-width: 60px;
+}
+
+.prize-probability-value {
+  font-weight: 600;
+  color: #8B7CD5;
+  padding: 6px 14px;
+  background: rgba(139, 124, 213, 0.15);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.prize-pity-odds {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0 0 0;
+  border-top: 1px solid rgba(139, 124, 213, 0.15);
+  margin-top: 4px;
+}
+
+.pity-odds-label {
+  font-weight: 600;
+  color: #059669;
+  font-size: 14px;
+  min-width: 185px;
+}
+
+.pity-odds-slider {
+  flex: 1;
+  margin: 0 8px;
+  width: unset !important;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, 
+    rgba(5, 150, 105, 0.3) 0%, 
+    rgba(5, 150, 105, 0.6) 50%, 
+    #059669 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.6);
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.6);
+    }
+  }
+}
+
+.pity-odds-value {
+  min-width: 50px;
+  text-align: center;
+  font-weight: 600;
+  color: #059669;
+}
+
+.pity-percentage {
+  min-width: 70px;
+  text-align: right;
+  color: #059669;
+  font-weight: 600;
+}
+
+.delete-prize {
+  padding: 10px 20px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.delete-prize:hover {
+  background: #dc2626;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .prize-item-top {
+    flex-wrap: wrap;
+  }
+
+  .pattern-display-slot {
+    width: 50px;
+    height: 50px;
+  }
+
+  .pattern-display-slot img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pattern-display-slot .wildcard-icon {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .prize-item {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .prize-item-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .prize-pattern-display {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pattern-display-slot {
+    width: 45px;
+    height: 45px;
+  }
+
+  .pattern-display-slot img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .pattern-display-slot .wildcard-icon {
+    font-size: 24px;
+  }
+
+  .delete-prize {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .prize-reward,
+  .prize-probability,
+  .prize-pity-odds {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .prize-reward-label,
+  .prize-probability-label,
+  .pity-odds-label {
+    min-width: auto;
+  }
+
+  .prize-reward input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .pity-odds-slider {
+    width: 100%;
+  }
+
+  .prize-pity-odds {
+    padding-top: 12px;
+  }
+
+  .pity-odds-value,
+  .pity-percentage {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .prize-item {
+    padding: 12px;
+  }
+
+  .pattern-display-slot {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pattern-display-slot img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pattern-display-slot .wildcard-icon {
+    font-size: 20px;
+  }
+
+  .pattern-display-slot .item-text {
+    font-size: 9px;
+  }
+
+  .prize-reward-label,
+  .prize-probability-label,
+  .pity-odds-label {
+    font-size: 13px;
+  }
+
+  .prize-reward input {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .delete-prize {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}

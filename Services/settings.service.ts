@@ -1,0 +1,176 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { StorageService } from './storage.service';
+
+/**
+ * Settings model
+ */
+export interface AppSettings {
+  showPrizesList: boolean;
+  showOdds: boolean;
+  enableArduinoControl: boolean;
+  enablePitySystem: boolean;
+  showPityWarning: boolean;
+  companyLogo: string;
+  companyLogoSmall: string;
+}
+
+/**
+ * Service to manage application settings
+ * Integrates with StorageService for centralized localStorage management
+ */
+@Injectable({
+  providedIn: 'root'
+})
+export class SettingsService {
+  // Default settings
+  private readonly DEFAULT_SETTINGS: AppSettings = {
+    showPrizesList: true,
+    showOdds: true,
+    enableArduinoControl: false,
+    enablePitySystem: false,
+    showPityWarning: true,
+    companyLogo: '',
+    companyLogoSmall: ''
+  };
+
+  // BehaviorSubject to track settings changes
+  private settingsSubject: BehaviorSubject<AppSettings>;
+  public settings$: Observable<AppSettings>;
+
+  // Saved indicator subject
+  private savedSubject = new BehaviorSubject<boolean>(false);
+  public saved$ = this.savedSubject.asObservable();
+
+  constructor(private storageService: StorageService) {
+    const initialSettings = this.loadSettings();
+    this.settingsSubject = new BehaviorSubject<AppSettings>(initialSettings);
+    
+    // Expose the subject as an observable
+    this.settings$ = this.settingsSubject.asObservable();
+    
+    // Subscribe to storage changes to keep our subject in sync
+    combineLatest([
+      this.storageService.watchShowPrizesList(),
+      this.storageService.watchShowOdds(),
+      this.storageService.watchArduinoEnabled(),
+      this.storageService.watchPityEnabled(),
+      this.storageService.watchShowPityWarning(),
+      this.storageService.watchCompanyLogo(),
+      this.storageService.watchCompanyLogoSmall()
+    ]).pipe(
+      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall]) => ({
+        showPrizesList,
+        showOdds,
+        enableArduinoControl,
+        enablePitySystem,
+        showPityWarning,
+        companyLogo,
+        companyLogoSmall
+      }))
+    ).subscribe(settings => {
+      this.settingsSubject.next(settings);
+    });
+  }
+
+  /**
+   * Load settings from StorageService
+   */
+  private loadSettings(): AppSettings {
+    const settings = {
+      showPrizesList: this.storageService.getShowPrizesList(),
+      showOdds: this.storageService.getShowOdds(),
+      enableArduinoControl: this.storageService.getArduinoEnabled(),
+      enablePitySystem: this.storageService.getPityEnabled(),
+      showPityWarning: this.storageService.getShowPityWarning(),
+      companyLogo: this.storageService.getCompanyLogo(),
+      companyLogoSmall: this.storageService.getCompanyLogoSmall()
+    };
+    return settings;
+  }
+
+  /**
+   * Save settings to StorageService
+   */
+  private saveSettings(settings: AppSettings): void {
+    this.storageService.setShowPrizesList(settings.showPrizesList);
+    this.storageService.setShowOdds(settings.showOdds);
+    this.storageService.setArduinoEnabled(settings.enableArduinoControl);
+    this.storageService.setPityEnabled(settings.enablePitySystem);
+    this.storageService.setShowPityWarning(settings.showPityWarning);
+    this.storageService.setCompanyLogo(settings.companyLogo);
+    this.storageService.setCompanyLogoSmall(settings.companyLogoSmall);
+  }
+
+  /**
+   * Get current settings
+   */
+  getSettings(): AppSettings {
+    return this.settingsSubject.value;
+  }
+
+  /**
+   * Update a specific setting
+   */
+  updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]): void {
+    const currentSettings = this.settingsSubject.value;
+    const newSettings = { ...currentSettings, [key]: value };
+    
+    // If prizes list is disabled, also disable odds
+    if (key === 'showPrizesList' && !value) {
+      newSettings.showOdds = false;
+    }
+    
+    // Save to storage service (this will trigger the observables)
+    this.saveSettings(newSettings);
+    
+    // Show saved indicator
+    this.showSavedIndicator();
+  }
+
+  /**
+   * Update multiple settings at once
+   */
+  updateSettings(partialSettings: Partial<AppSettings>): void {
+    const currentSettings = this.settingsSubject.value;
+    const newSettings = { ...currentSettings, ...partialSettings };
+    
+    // If prizes list is disabled, also disable odds
+    if ('showPrizesList' in partialSettings && !partialSettings.showPrizesList) {
+      newSettings.showOdds = false;
+    }
+    
+    // Save to storage service (this will trigger the observables)
+    this.saveSettings(newSettings);
+    
+    // Show saved indicator
+    this.showSavedIndicator();
+  }
+
+  /**
+   * Check if odds should be disabled (when prizes list is not shown)
+   */
+  isOddsDisabled(): boolean {
+    return !this.settingsSubject.value.showPrizesList;
+  }
+
+  /**
+   * Show saved indicator for 2 seconds
+   */
+  private showSavedIndicator(): void {
+    this.savedSubject.next(true);
+    setTimeout(() => {
+      this.savedSubject.next(false);
+    }, 2000);
+  }
+
+  /**
+   * Reset all settings to defaults
+   */
+  resetToDefaults(): void {
+    // Save to storage service (this will trigger the observables)
+    this.saveSettings(this.DEFAULT_SETTINGS);
+    this.showSavedIndicator();
+  }
+}

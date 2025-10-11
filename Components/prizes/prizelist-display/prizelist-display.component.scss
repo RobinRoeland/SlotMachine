@@ -1,0 +1,99 @@
+.prize-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px;
+}
+
+.prize-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.prize-list::-webkit-scrollbar-track {
+    background: rgba(139, 124, 213, 0.1);
+    border-radius: 4px;
+}
+
+.prize-list::-webkit-scrollbar-thumb {
+    background: rgba(139, 124, 213, 0.4);
+    border-radius: 4px;
+}
+
+.prize-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 124, 213, 0.6);
+}
+
+.prize-list-empty {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+.pity-roll-warning {
+    background: linear-gradient(135deg, #10b981 0%, #14c794 100%);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+    margin: 0 15px 5px 15px;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.6);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .prize-list {
+        gap: 10px;
+    }
+
+    .prize-list-empty {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .pity-roll-warning {
+        padding: 10px;
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .prize-list {
+        gap: 8px;
+        padding-right: 3px;
+    }
+
+    .prize-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .prize-list-empty {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .pity-roll-warning {
+        padding: 8px;
+        font-size: 12px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+}

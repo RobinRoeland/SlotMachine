@@ -1,0 +1,50 @@
+<div class="modal active" (click)="onBackdropClick($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add Prize Combination</h2>
+      <button class="modal-close" (click)="onCancel()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="roller-count-selector">
+        <label for="rollerCount">Number of Rollers:</label>
+        <div class="roller-count-controls">
+          <input 
+            type="range" 
+            id="rollerCount" 
+            [(ngModel)]="rollerCount"
+            min="1" 
+            max="5" 
+            step="1"
+            class="roller-count-slider" />
+          <span class="roller-count-value">{{ rollerCount }}</span>
+        </div>
+      </div>
+
+      <app-prize-pattern-builder
+        [rollerCount]="rollerCount"
+        [items]="items"
+        (patternChange)="onPatternChange($event)">
+      </app-prize-pattern-builder>
+
+      <div class="modal-probability-display">
+        <span class="modal-probability-label">Chance of winning:</span>
+        <span class="modal-probability-value">{{ probabilityText }}</span>
+      </div>
+
+      <div class="prize-reward-section">
+        <label for="prizeReward">Prize Reward:</label>
+        <input 
+          type="text" 
+          id="prizeReward" 
+          [(ngModel)]="prizeReward"
+          placeholder="e.g., $100, Free Spin, Grand Prize!" />
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-confirm" (click)="onConfirm()">Add Prize</button>
+    </div>
+  </div>
+</div>

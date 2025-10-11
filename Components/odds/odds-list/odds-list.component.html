@@ -1,0 +1,7 @@
+<div class="odds-list">
+  <app-odds-item 
+    *ngFor="let item of items"
+    [item]="item"
+    [percentage]="getPercentage(item.name)">
+  </app-odds-item>
+</div>

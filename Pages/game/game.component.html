@@ -1,0 +1,7 @@
+<arduino-control *ngIf="enableArduinoControl"></arduino-control>
+<div class="game-layout">
+    <div class="game-container">
+        <slot-machine></slot-machine>
+    </div>
+    <prizes-sidebar *ngIf="showPrizesSidebar"></prizes-sidebar>
+</div>

@@ -1,0 +1,139 @@
+.arduino-control-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.arduino-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(139, 124, 213, 0.2);
+}
+
+.arduino-status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ccc;
+    transition: all 0.3s ease;
+}
+
+.arduino-status-indicator.connected {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    animation: pulse-indicator 2s ease-in-out infinite;
+}
+
+.arduino-status-indicator.disconnected {
+    background: #6b7280;
+}
+
+.arduino-status-indicator.connecting {
+    background: #f59e0b;
+    animation: pulse-indicator 1s ease-in-out infinite;
+}
+
+.arduino-status-indicator.disconnecting {
+    background: #f59e0b;
+    animation: pulse-indicator 1s ease-in-out infinite;
+}
+
+.arduino-status-indicator.error {
+    background: #ef4444;
+}
+
+.arduino-status-indicator.unsupported {
+    background: #ef4444;
+}
+
+@keyframes pulse-indicator {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.arduino-status-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2D3E8E;
+}
+
+.arduino-connect-button {
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(45, 62, 142, 0.3);
+}
+
+.arduino-connect-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1f2d6b 0%, #2D3E8E 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(45, 62, 142, 0.4);
+}
+
+.arduino-connect-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .arduino-control-panel {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .arduino-status {
+        padding: 6px 12px;
+        gap: 6px;
+    }
+
+    .arduino-status-text {
+        font-size: 13px;
+    }
+
+    .arduino-connect-button {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .arduino-control-panel {
+        gap: 10px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .arduino-status {
+        padding: 8px 12px;
+        justify-content: center;
+    }
+
+    .arduino-status-text {
+        font-size: 12px;
+    }
+
+    .arduino-connect-button {
+        padding: 8px 16px;
+        font-size: 12px;
+        width: 100%;
+    }
+}

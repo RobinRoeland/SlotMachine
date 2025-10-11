@@ -1,0 +1,212 @@
+/* Prizes Sidebar */
+:host {
+    display: block;
+}
+
+.prizes-sidebar {
+    position: fixed;
+    right: 20px;
+    top: 33%;
+    width: 300px;
+    max-height: calc(100vh - 60%);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    user-select: none;
+    overflow: hidden;
+}
+
+/* Hide toggle bar on desktop */
+.prizes-toggle-bar {
+    display: none;
+}
+
+.prizes-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.desktop-title {
+    margin: 0 0 15px 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: #2D3E8E;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+prizelist-display {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Bottom drawer for screens 1600px and below */
+@media (max-width: 1600px) {
+    .prizes-sidebar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto;
+        width: 100vw !important;
+        max-width: none !important;
+        height: auto;
+        min-height: 48px;
+        max-height: 60vh;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        z-index: 150;
+        transition: all 0.3s ease;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        box-sizing: border-box !important;
+    }
+
+    .prizes-sidebar.expanded {
+        height: 60vh;
+    }
+
+    /* Show toggle bar on mobile */
+    .prizes-toggle-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 48px;
+        padding: 0 20px;
+        background: linear-gradient(135deg, #2D3E8E 0%, #4759B4 100%);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(45, 62, 142, 0.3);
+    }
+
+    .prizes-toggle-bar:hover {
+        background: linear-gradient(135deg, #1f2d6b 0%, #2D3E8E 100%);
+    }
+
+    .toggle-text {
+        flex: 1;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    .toggle-icon {
+        font-size: 14px;
+        transition: transform 0.3s ease;
+    }
+
+    /* Hide desktop title on mobile */
+    .desktop-title {
+        display: none;
+    }
+
+    .prizes-content {
+        padding: 15px;
+        flex: 1;
+        overflow-y: auto;
+        max-height: calc(60vh - 48px);
+    }
+
+    /* When collapsed, hide content */
+    .prizes-sidebar:not(.expanded) .prizes-content {
+        display: none;
+    }
+}
+
+/* Adjust for tablets and small screens */
+@media (max-width: 768px) {
+    .prizes-sidebar {
+        min-height: 48px;
+        max-height: 60vh;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .prizes-sidebar.expanded {
+        height: 60vh;
+    }
+
+    .prizes-toggle-bar {
+        height: 48px;
+        padding: 0 20px;
+        font-size: 16px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .prizes-content {
+        padding: 15px;
+        max-height: calc(60vh - 48px);
+    }
+
+    .toggle-icon {
+        font-size: 14px;
+    }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+    .prizes-sidebar {
+        min-height: 44px;
+        max-height: 70vh;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .prizes-sidebar.expanded {
+        height: 70vh;
+    }
+
+    .prizes-toggle-bar {
+        height: 44px;
+        padding: 0 16px;
+        font-size: 15px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .prizes-content {
+        padding: 12px;
+        max-height: calc(70vh - 44px);
+    }
+
+    .toggle-icon {
+        font-size: 12px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .prizes-sidebar {
+        min-height: 40px;
+        max-height: 75vh;
+    }
+
+    .prizes-sidebar.expanded {
+        height: 75vh;
+    }
+
+    .prizes-toggle-bar {
+        height: 40px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+
+    .prizes-content {
+        padding: 10px;
+        max-height: calc(75vh - 40px);
+    }
+}

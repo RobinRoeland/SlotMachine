@@ -1,0 +1,17 @@
+<div class="roll-controls">
+    <button 
+        id="rollButton" 
+        *ngIf="!showArduinoInstruction"
+        [disabled]="rollButtonDisabled"
+        [class.win-state]="rollButtonClass === 'win-state'"
+        (click)="onRollClick()">
+        {{ rollButtonText }}
+    </button>
+    <div 
+        id="arduinoInstruction" 
+        class="arduino-instruction" 
+        [class.win-state]="arduinoInstructionClass === 'win-state'"
+        *ngIf="showArduinoInstruction">
+        {{ arduinoInstructionText }}
+    </div>
+</div>

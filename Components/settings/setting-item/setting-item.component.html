@@ -1,0 +1,9 @@
+<div class="setting-item" [class.disabled]="disabled">
+  <div class="setting-info">
+    <h3>{{ title }}</h3>
+    <p>{{ description }}</p>
+  </div>
+  <div class="setting-control">
+    <ng-content></ng-content>
+  </div>
+</div>

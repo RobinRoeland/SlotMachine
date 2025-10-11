@@ -1,0 +1,84 @@
+/* Prize Groups */
+.prize-group {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 3px solid rgba(139, 124, 213, 0.3);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(139, 124, 213, 0.05) 0%, rgba(155, 140, 229, 0.05) 100%);
+  box-shadow: 0 4px 15px rgba(139, 124, 213, 0.1);
+  transition: all 0.3s ease;
+}
+
+.prize-group:hover {
+  border-color: rgba(139, 124, 213, 0.5);
+  box-shadow: 0 6px 20px rgba(139, 124, 213, 0.15);
+}
+
+.prize-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(139, 124, 213, 0.2);
+}
+
+.prize-group-header h3 {
+  margin: 0;
+  color: #2D3E8E;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.prize-group-header .prize-count {
+  color: #8B7CD5;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 14px;
+  background: rgba(139, 124, 213, 0.15);
+  border-radius: 20px;
+}
+
+.prize-group-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .prize-group {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .prize-group-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .prize-group-header h3 {
+    font-size: 18px;
+  }
+
+  .prize-group-header .prize-count {
+    font-size: 13px;
+    padding: 5px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .prize-group {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .prize-group-header h3 {
+    font-size: 16px;
+  }
+
+  .prize-group-content {
+    gap: 10px;
+  }
+}
