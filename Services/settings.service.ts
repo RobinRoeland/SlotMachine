@@ -44,21 +44,29 @@ export class SettingsService {
   // Saved indicator subject
   private savedSubject = new BehaviorSubject<boolean>(false);
   public saved$ = this.savedSubject.asObservable();
-  public hasSettings: boolean = false;
 
   constructor(private storageService: StorageService) {
-    // Check if settings exist in storage, if not, initialize with defaults
-    this.hasSettings = this.storageService.getShowPrizesList() !== undefined
-      || this.storageService.getShowOdds() !== undefined
-      || this.storageService.getArduinoEnabled() !== undefined
-      || this.storageService.getPityEnabled() !== undefined
-      || this.storageService.getShowPityWarning() !== undefined
-      || this.storageService.getCompanyLogo() !== undefined
-      || this.storageService.getCompanyLogoSmall() !== undefined
-      || this.storageService.getColorTheme() !== undefined;
 
-    if (!this.hasSettings) {
+    const hasSettings = Object.values(storageService.keys).every((key: string) => {
+      const item = storageService.getItem(key);
+      if (item === null || item === undefined) {
+        console.warn(`Storage key ${key} is missing`);
+        return false;
+      }
+      return true;
+    });
+
+    // Check if settings exist in storage, if not, initialize with defaults
+    if (!hasSettings) {
       this.saveSettings(this.DEFAULT_SETTINGS);
+      storageService.setItem(storageService.keys.ITEMS_DRAFT, []); // Ensure items are initialized
+      storageService.setItem(storageService.keys.ODDS, []); // Ensure items history is initialized
+      storageService.setItem(storageService.keys.PITY_ODDS, []); // Ensure pity items are initialized
+      storageService.setItem(storageService.keys.PRIZES, []); // Ensure prizes are initialized
+      storageService.setItem(storageService.keys.PITY_VALUE, 5); // Ensure pity value is initialized
+      storageService.setItem(storageService.keys.ROLLER_COUNT, 4); // Ensure roller count is initialized
+      storageService.setItem(storageService.keys.SPINS_WITHOUT_WIN, 0); // Ensure spins without win is initialized
+      console.warn("Settings were undefined, resetting to defaults.");
     }
 
     const initialSettings = this.loadSettings();
@@ -76,7 +84,8 @@ export class SettingsService {
       this.storageService.watchShowPityWarning(),
       this.storageService.watchCompanyLogo(),
       this.storageService.watchCompanyLogoSmall(),
-      this.storageService.watchColorTheme()
+      this.storageService.watchColorTheme(),
+
     ]).pipe(
       map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme]) => ({
         showPrizesList,
@@ -105,7 +114,9 @@ export class SettingsService {
       showPityWarning: this.storageService.getShowPityWarning(),
       companyLogo: this.storageService.getCompanyLogo(),
       companyLogoSmall: this.storageService.getCompanyLogoSmall(),
-      colorTheme: this.storageService.getColorTheme()
+      colorTheme: this.storageService.getColorTheme(),
+      slotRollerCount: this.storageService.getRollerCount(),
+      slotPityValue: this.storageService.getPityValue()
     };
     return settings;
   }

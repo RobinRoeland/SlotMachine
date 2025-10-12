@@ -4,7 +4,6 @@ import { SlotMachineComponent } from '../../Components/machine/slot-machine/slot
 import { PrizesSidebarComponent } from '../../Components/prizes/prizes-sidebar/prizes-sidebar.component';
 import { ArduinoControlComponent } from '../../Components/arduino-control/arduino-control.component';
 import { SettingsService } from '../../Services/settings.service';
-import { StorageService } from '../../Services/storage.service';
 
 @Component({
   selector: 'game',
@@ -23,17 +22,10 @@ export class GameComponent {
   public enableArduinoControl: boolean;
 
   constructor(
-    private settingsService: SettingsService,
-    private storage: StorageService
+    private settingsService: SettingsService
   ) {
     // Load current settings
     const settings = this.settingsService.getSettings();
-
-    if(this.settingsService.hasSettings) {
-      this.settingsService.resetToDefaults();
-      this.storage.setItems([]);
-      console.warn("Settings were undefined, resetting to defaults.");
-    }
 
     // Apply settings to component state
     this.showPrizesSidebar = settings.showPrizesList;
