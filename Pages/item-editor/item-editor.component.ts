@@ -9,6 +9,7 @@ import { ItemsJsonEditorComponent } from '../../Components/item-editor/items-jso
 import { SlotMachineRollerComponent, Item } from '../../Components/machine/slot-machine-roller/slot-machine-roller.component';
 import { ItemsGridComponent } from '../../Components/items/items-grid/items-grid.component';
 import { AddItemModalComponent, AddItemData } from '../../Components/item-editor/add-item-modal/add-item-modal.component';
+import { DeleteItemModalComponent } from '../../Components/item-editor/delete-item-modal/delete-item-modal.component';
 
 @Component({
   selector: 'app-item-editor',
@@ -18,7 +19,8 @@ import { AddItemModalComponent, AddItemData } from '../../Components/item-editor
     ItemsJsonEditorComponent,
     SlotMachineRollerComponent,
     ItemsGridComponent,
-    AddItemModalComponent
+    AddItemModalComponent,
+    DeleteItemModalComponent
   ],
   templateUrl: './item-editor.component.html',
   styleUrl: './item-editor.component.scss'
@@ -29,11 +31,11 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
 
   items: Item[] = [];
   itemsJson: string = '[]';
-  isDirty: boolean = false;
   itemsError: string = '';
-  private originalJson: string = '[]';
+  showSaved: boolean = false;
 
   showAddModal: boolean = false;
+  showDeleteModal: boolean = false;
   addItemError: string = '';
 
   private destroy$ = new Subject<void>();
@@ -45,10 +47,10 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Load draft from ItemsService
-    const draft = this.itemsService.getItems();
-    this.itemsJson = JSON.stringify(draft, null, 2);
-    this.originalJson = this.itemsJson;
+    // Load items from ItemsService
+    const items = this.itemsService.getItems();
+    // Ensure we display '[]' instead of 'null' when localStorage is empty
+    this.itemsJson = JSON.stringify(items || [], null, 2);
     this.parseItems();
 
     // Watch for changes from other components
@@ -56,24 +58,21 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(items => {
         const newJson = JSON.stringify(items, null, 2);
-        // Only update if not currently editing
-        if (!this.isDirty && this.itemsJson !== newJson) {
-          this.itemsJson = newJson;
-          this.originalJson = newJson;
-          this.parseItems();
-        }
+        this.itemsJson = newJson;
+        this.parseItems();
+      });
+
+    // Subscribe to saved indicator
+    this.itemsService.saved$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(saved => {
+        this.showSaved = saved;
       });
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  onJsonChange(value: string) {
-    this.itemsJson = value;
-    this.isDirty = this.itemsJson !== this.originalJson;
-    this.parseItems();
   }
 
   parseItems() {
@@ -93,25 +92,6 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  applyItems() {
-    this.itemsError = '';
-    
-    const result = this.validationService.validateAndParseItems(this.itemsJson);
-    
-    if (!result.valid) {
-      this.itemsError = result.error || 'Validation failed';
-      return;
-    }
-
-    // Save normalized items
-    const jsonString = JSON.stringify(result.data, null, 2);
-    this.itemsService.setItems(result.data);
-    this.originalJson = jsonString;
-    this.itemsJson = jsonString;
-    this.isDirty = false;
-    this.parseItems();
-  }
-
   async loadItems() {
     this.itemsError = '';
     try {
@@ -123,9 +103,10 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
         throw new Error(result.error);
       }
       
+      // Auto-save the loaded items
+      this.itemsService.setItems(data);
       this.itemsJson = JSON.stringify(data, null, 2);
       this.parseItems();
-      this.isDirty = this.itemsJson !== this.originalJson;
     } catch (err: any) {
       this.itemsError = err.message || String(err);
     }
@@ -174,21 +155,17 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       try {
-        let current = [];
-        try {
-          current = JSON.parse(this.itemsJson || '[]');
-        } catch (err) {
-          current = [];
-        }
+        const current = this.itemsService.getItems();
         
         current.push({
           name: data.name,
           imageSrc: e.target.result
         });
         
+        // Auto-save the new item
+        this.itemsService.setItems(current);
         this.itemsJson = JSON.stringify(current, null, 2);
         this.parseItems();
-        this.isDirty = this.itemsJson !== this.originalJson;
         this.showAddModal = false;
       } catch (err: any) {
         this.addItemError = err.message || String(err);
@@ -196,5 +173,24 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
     };
     
     reader.readAsDataURL(data.imageFile);
+  }
+
+  openDeleteModal() {
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+  }
+
+  deleteItem(itemName: string) {
+    const current = this.itemsService.getItems();
+    const filtered = current.filter(item => item.name !== itemName);
+    
+    // Auto-save after deletion
+    this.itemsService.setItems(filtered);
+    this.itemsJson = JSON.stringify(filtered, null, 2);
+    this.parseItems();
+    this.closeDeleteModal();
   }
 }

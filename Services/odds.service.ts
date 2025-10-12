@@ -21,16 +21,12 @@ export class OddsService {
   public pityEnabled$: Observable<boolean>;
   public errorMessage$ = this.errorMessageSubject.asObservable();
 
-  public hasUnsavedChanges$: Observable<boolean>;
-  public hasUnsavedRollerCount$: Observable<boolean>;
-  public hasUnsavedPityValue$: Observable<boolean>;
-
-  private savedOdds: OddsMap = {};
-  private savedRollerCount: number = 4;
-  private savedPityValue: number = 10;
+  // Saved indicator subjects - separate for odds and settings
+  private savedOddsSubject = new BehaviorSubject<boolean>(false);
+  public savedOdds$ = this.savedOddsSubject.asObservable();
   
-  private savedRollerCountSubject: BehaviorSubject<number>;
-  private savedPityValueSubject: BehaviorSubject<number>;
+  private savedSettingsSubject = new BehaviorSubject<boolean>(false);
+  public savedSettings$ = this.savedSettingsSubject.asObservable();
 
   constructor(
     private storage: StorageService,
@@ -42,42 +38,13 @@ export class OddsService {
     this.rollerCount$ = this.storage.watchRollerCount();
     this.pityValue$ = this.storage.watchPityValue();
     this.pityEnabled$ = this.storage.watchPityEnabled();
-
-    // Initialize saved values with proper null handling
-    this.savedOdds = this.storage.getOdds() || {};
-    this.savedRollerCount = this.storage.getRollerCount() || 4;
-    this.savedPityValue = this.storage.getPityValue() || 10;
-    
-    this.savedRollerCountSubject = new BehaviorSubject<number>(this.savedRollerCount);
-    this.savedPityValueSubject = new BehaviorSubject<number>(this.savedPityValue);
-
-    // Set up observables for unsaved changes
-    this.hasUnsavedChanges$ = this.odds$.pipe(
-      map(odds => JSON.stringify(odds || {}) !== JSON.stringify(this.savedOdds)),
-      distinctUntilChanged()
-    );
-
-    this.hasUnsavedRollerCount$ = combineLatest([
-      this.rollerCount$,
-      this.savedRollerCountSubject
-    ]).pipe(
-      map(([current, saved]) => current !== saved),
-      distinctUntilChanged()
-    );
-
-    this.hasUnsavedPityValue$ = combineLatest([
-      this.pityValue$,
-      this.savedPityValueSubject
-    ]).pipe(
-      map(([current, saved]) => current !== saved),
-      distinctUntilChanged()
-    );
   }
 
   public updateOdds(itemName: string, weight: number): void {
     const currentOdds = { ...(this.storage.getOdds() || {}) };
     currentOdds[itemName] = weight;
     this.storage.setOdds(currentOdds);
+    this.showSavedOddsIndicator();
   }
 
   public normalizeOdds(): { [itemName: string]: number } {
@@ -111,27 +78,13 @@ export class OddsService {
       newOdds[item.name] = 1;
     });
     this.storage.setOdds(newOdds);
-  }
-
-  public saveOdds(): void {
-    try {
-      const odds = this.storage.getOdds() || {};
-      this.savedOdds = JSON.parse(JSON.stringify(odds));
-      this.errorMessageSubject.next('');
-    } catch (err: any) {
-      this.errorMessageSubject.next('Failed to save odds: ' + err.message);
-    }
+    this.showSavedOddsIndicator();
   }
 
   public updateRollerCount(count: number): void {
-    this.storage.setRollerCount(count);
-  }
-
-  public saveRollerCount(): void {
-    const count = this.storage.getRollerCount() || 4;
     if (count >= 1 && count <= 10) {
-      this.savedRollerCount = count;
-      this.savedRollerCountSubject.next(count);
+      this.storage.setRollerCount(count);
+      this.showSavedSettingsIndicator();
       this.errorMessageSubject.next('');
     } else {
       this.errorMessageSubject.next('Roller count must be between 1 and 10');
@@ -139,14 +92,9 @@ export class OddsService {
   }
 
   public updatePityValue(value: number): void {
-    this.storage.setPityValue(value);
-  }
-
-  public savePityValue(): void {
-    const value = this.storage.getPityValue() || 10;
     if (value >= 1 && value <= 1000) {
-      this.savedPityValue = value;
-      this.savedPityValueSubject.next(value);
+      this.storage.setPityValue(value);
+      this.showSavedSettingsIndicator();
       this.errorMessageSubject.next('');
     } else {
       this.errorMessageSubject.next('Pity value must be between 1 and 1000');
@@ -156,5 +104,25 @@ export class OddsService {
   public getOddsForItem(itemName: string): number {
     const odds = this.storage.getOdds() || {};
     return odds[itemName] || 1;
+  }
+
+  /**
+   * Show saved odds indicator for 2 seconds
+   */
+  private showSavedOddsIndicator(): void {
+    this.savedOddsSubject.next(true);
+    setTimeout(() => {
+      this.savedOddsSubject.next(false);
+    }, 2000);
+  }
+
+  /**
+   * Show saved settings indicator for 2 seconds
+   */
+  private showSavedSettingsIndicator(): void {
+    this.savedSettingsSubject.next(true);
+    setTimeout(() => {
+      this.savedSettingsSubject.next(false);
+    }, 2000);
   }
 }

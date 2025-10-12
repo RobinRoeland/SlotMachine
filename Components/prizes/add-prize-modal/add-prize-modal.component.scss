@@ -70,7 +70,7 @@
 .roller-count-selector {
   margin-bottom: 25px;
   padding: 20px;
-  background: linear-gradient(135deg, var(--border-color) 0%, rgba(155, 140, 229, 0.08) 100%);
+  background: var(--card-background-solid);
   border-radius: 12px;
   border: 2px solid var(--border-color);
 }
@@ -93,10 +93,7 @@
   flex: 1;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, 
-    var(--border-color) 0%, 
-    var(--border-color) 50%, 
-    var(--color-secondary) 100%);
+  background: var(--scrollbar-thumb-hover);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -109,7 +106,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
+  background: var(--scrollbar-thumb);
   cursor: pointer;
   border: 3px solid var(--card-background-solid);
   box-shadow: 0 2px 8px var(--border-color);
@@ -205,7 +202,7 @@
   justify-content: center;
   margin-top: 15px;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--border-color) 0%, rgba(155, 140, 229, 0.15) 100%);
+  background: var(--card-background-solid);
   border-radius: 10px;
   border: 2px solid var(--border-color);
 }

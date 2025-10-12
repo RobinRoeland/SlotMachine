@@ -2,17 +2,15 @@
   <div class="content">
     <div class="prizes-editor">
       <div class="prizes-section">
-        <h2>Prize Combinations</h2>
+        <div class="section-header">
+          <h2>Prize Combinations</h2>
+          <span class="saved-indicator" [class.visible]="showSaved">
+            ✓ Prizes saved
+          </span>
+        </div>
         <p class="info-text">Define prizes for winning combinations. Use item names or "*" for any item.</p>
         <app-prize-list></app-prize-list>
         <button class="add-button" (click)="openAddPrizeModal()">+ Add Prize</button>
-      </div>
-      <div class="prizes-actions">
-        <button (click)="savePrizes()">Save Prizes</button>
-        <span *ngIf="hasUnsavedChanges$ | async" class="unsaved-indicator">
-          ⚠ Unsaved changes
-        </span>
-        <span *ngIf="errorMessage" class="error-message">{{ errorMessage }}</span>
       </div>
     </div>
   </div>

@@ -17,7 +17,7 @@
   padding: 10px;
 
   .item-card {
-    background: var(--card-background);
+    background: var(--card-background-solid);
     backdrop-filter: blur(10px);
     border: 2px solid var(--border-color);
     border-radius: 12px;
@@ -34,7 +34,6 @@
       transform: translateY(-4px);
       box-shadow: 0 6px 20px var(--border-color);
       border-color: var(--color-secondary);
-      background: var(--card-background-solid);
     }
 
     img {

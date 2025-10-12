@@ -20,6 +20,8 @@ export class PrizePatternBuilderComponent implements OnInit, OnChanges {
   @Output() patternChange = new EventEmitter<(SlotItem | '*' | null)[]>();
   
   slots: PatternSlot[] = [];
+  showItemPicker = false;
+  selectedSlot: PatternSlot | null = null;
 
   ngOnInit(): void {
     this.initializeSlots();
@@ -39,45 +41,28 @@ export class PrizePatternBuilderComponent implements OnInit, OnChanges {
     this.emitPattern();
   }
 
-  onDragStart(event: DragEvent, item: SlotItem | '*'): void {
-    if (event.dataTransfer) {
-      event.dataTransfer.effectAllowed = 'copy';
-      event.dataTransfer.setData('application/json', JSON.stringify(item));
-    }
+  onSlotClick(slot: PatternSlot): void {
+    this.selectedSlot = slot;
+    this.showItemPicker = true;
   }
 
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'copy';
-    }
-  }
-
-  onDragEnter(event: DragEvent, slot: PatternSlot): void {
-    event.preventDefault();
-    const target = event.currentTarget as HTMLElement;
-    target.classList.add('drag-over');
-  }
-
-  onDragLeave(event: DragEvent): void {
-    const target = event.currentTarget as HTMLElement;
-    target.classList.remove('drag-over');
-  }
-
-  onDrop(event: DragEvent, slot: PatternSlot): void {
-    event.preventDefault();
-    const target = event.currentTarget as HTMLElement;
-    target.classList.remove('drag-over');
-
-    const data = event.dataTransfer?.getData('application/json');
-    if (data) {
-      const item = JSON.parse(data);
-      slot.item = item;
+  onItemSelect(item: SlotItem | '*'): void {
+    if (this.selectedSlot) {
+      this.selectedSlot.item = item;
       this.emitPattern();
     }
+    this.closeItemPicker();
   }
 
-  clearSlot(slot: PatternSlot): void {
+  closeItemPicker(): void {
+    this.showItemPicker = false;
+    this.selectedSlot = null;
+  }
+
+  clearSlot(slot: PatternSlot, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     slot.item = null;
     this.emitPattern();
   }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OddsService } from '../../../Services/odds.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-odds-settings',
@@ -14,39 +15,41 @@ export class OddsSettingsComponent implements OnInit {
   rollerCount = 4;
   pityValue = 10;
   pityEnabled = false;
+  showSaved = false;
   
-  hasUnsavedRollerCount$ = this.oddsService.hasUnsavedRollerCount$;
-  hasUnsavedPityValue$ = this.oddsService.hasUnsavedPityValue$;
+  private destroy$ = new Subject<void>();
 
   constructor(private oddsService: OddsService) {}
 
   ngOnInit(): void {
-    this.oddsService.rollerCount$.subscribe(count => {
+    this.oddsService.rollerCount$.pipe(takeUntil(this.destroy$)).subscribe(count => {
       this.rollerCount = count || 4;
     });
 
-    this.oddsService.pityValue$.subscribe(value => {
+    this.oddsService.pityValue$.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.pityValue = value || 10;
     });
 
-    this.oddsService.pityEnabled$.subscribe(enabled => {
+    this.oddsService.pityEnabled$.pipe(takeUntil(this.destroy$)).subscribe(enabled => {
       this.pityEnabled = enabled || false;
     });
+
+    // Subscribe to saved indicator for settings
+    this.oddsService.savedSettings$.pipe(takeUntil(this.destroy$)).subscribe(saved => {
+      this.showSaved = saved;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onRollerCountChange(): void {
     this.oddsService.updateRollerCount(this.rollerCount);
   }
 
-  saveRollerCount(): void {
-    this.oddsService.saveRollerCount();
-  }
-
   onPityValueChange(): void {
     this.oddsService.updatePityValue(this.pityValue);
-  }
-
-  savePityValue(): void {
-    this.oddsService.savePityValue();
   }
 }

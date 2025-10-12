@@ -14,12 +14,14 @@ export class ArduinoControlComponent implements OnInit, OnDestroy {
   statusInfo: ArduinoStatusInfo = { status: 'disconnected' };
   isConnecting: boolean = false;
   isSupported: boolean = false;
+  isMobile: boolean = false;
   
   private statusSubscription?: Subscription;
 
   constructor(public arduinoService: ArduinoService) {}
 
   ngOnInit(): void {
+    this.isMobile = this.isMobileDevice();
     this.isSupported = this.arduinoService.isSupported();
     
     // Subscribe to status changes
@@ -37,6 +39,14 @@ export class ArduinoControlComponent implements OnInit, OnDestroy {
         message: 'Web Serial API not supported. Use Chrome, Edge, or Opera.'
       };
     }
+  }
+
+  isMobileDevice(): boolean {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+    const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+    const isMobileScreen = window.innerWidth <= 768;
+    return isMobileUA || isMobileScreen;
   }
 
   ngOnDestroy(): void {
@@ -102,6 +112,6 @@ export class ArduinoControlComponent implements OnInit, OnDestroy {
   }
 
   isButtonDisabled(): boolean {
-    return this.isConnecting || !this.isSupported;
+    return this.isConnecting || !this.isSupported || this.isMobile;
   }
 }

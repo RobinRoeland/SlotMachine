@@ -5,7 +5,7 @@
   padding: 20px;
   border: 2px solid var(--border-color);
   border-radius: 12px;
-  background: var(--card-background);
+  background: var(--card-background-solid);
   backdrop-filter: blur(5px);
   margin-bottom: 15px;
   transition: all 0.3s ease;
@@ -93,7 +93,7 @@
   font-size: 14px;
   color: var(--text-primary);
   transition: all 0.3s ease;
-  background: var(--card-background);
+  background: var(--card-background-solid);
   width: unset !important;
 }
 
@@ -120,9 +120,10 @@
   font-weight: 600;
   color: var(--color-secondary);
   padding: 6px 14px;
-  background: var(--border-color);
+  background: var(--card-background-solid);
   border-radius: 6px;
   font-size: 14px;
+  border: 2px solid var(--border-color);
 }
 
 .prize-pity-odds {

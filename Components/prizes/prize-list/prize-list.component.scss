@@ -4,7 +4,7 @@
   padding: 20px;
   border: 3px solid var(--border-color);
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--border-color) 0%, rgba(155, 140, 229, 0.05) 100%);
+  background: var(--card-background);
   box-shadow: 0 4px 15px var(--border-color);
   transition: all 0.3s ease;
 }

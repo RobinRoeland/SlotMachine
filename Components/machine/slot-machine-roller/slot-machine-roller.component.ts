@@ -22,8 +22,9 @@ export class SlotMachineRollerComponent {
   @ViewChild('rollerContent', { static: false }) rollerContent?: ElementRef;
 
   displayItems: Item[] = [];
-  currentlyRolling: boolean = false;
+  currentlyRolling: boolean = this.isRolling;
   private updateInterval: any;
+  private animationTimeout: any; // Track the animation setTimeout
   private forcedCenterItem: Item | null = null; // Track forced item for pity wins
 
   constructor(private storage: StorageService) {}
@@ -36,8 +37,9 @@ export class SlotMachineRollerComponent {
   }
 
   ngOnChanges(): void {
-    // Regenerate display items whenever items input changes
-    if (this.items.length > 0) {
+    // Only regenerate display items if we're not currently rolling
+    // This prevents overwriting the final state after stopRolling()
+    if (this.items.length > 0 && !this.currentlyRolling && this.displayItems.length === 0) {
       this.generateDisplayItems();
     }
   }
@@ -126,7 +128,12 @@ export class SlotMachineRollerComponent {
         contentEl.style.transform = `translateY(-20%)`;
         
         // After the slide animation completes, update the items array
-        setTimeout(() => {
+        this.animationTimeout = setTimeout(() => {
+          // Check if we should still be rolling (stopRolling might have been called)
+          if (!this.currentlyRolling) {
+            return;
+          }
+          
           // Remove transition temporarily to snap back to position
           contentEl.style.transition = 'none';
           contentEl.style.transform = 'translateY(0)';
@@ -172,10 +179,15 @@ export class SlotMachineRollerComponent {
   stopRolling(): void {
     this.currentlyRolling = false;
     
-    // Clear any pending updates
+    // Clear any pending updates (both timeouts)
     if (this.updateInterval) {
       clearTimeout(this.updateInterval);
       this.updateInterval = null;
+    }
+    
+    if (this.animationTimeout) {
+      clearTimeout(this.animationTimeout);
+      this.animationTimeout = null;
     }
     
     // Reset animation

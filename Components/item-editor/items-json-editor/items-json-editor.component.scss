@@ -7,18 +7,39 @@
     
     display: flex;
     flex-direction: column;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
   h2 {
     color: var(--text-accent);
     font-weight: 400;
-    margin-bottom: 15px;
+    margin: 0;
     font-size: 22px;
+  }
+
+  .saved-indicator {
+    color: #10b981;
+    font-weight: 600;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    
+    &.visible {
+      opacity: 1;
+    }
   }
 
   textarea {
     width: 100%;
     box-sizing: border-box;
     min-height: 300px;
-    background: var(--card-background);
+    background: var(--card-background-solid);
     backdrop-filter: blur(5px);
     font-family: 'Courier New', monospace;
     border: 2px solid var(--border-color);
@@ -29,13 +50,14 @@
     color: var(--text-primary);
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    resize: vertical;
+    resize: none;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    opacity: 0.9;
 
     &:focus {
       outline: none;
       border-color: var(--color-secondary);
       box-shadow: 0 0 0 3px var(--border-color);
-      background: var(--card-background);
     }
   }
 
@@ -69,10 +91,20 @@
       transform: translateY(0px);
     }
 
-    &.apply-dirty {
-      outline: 2px solid #d97706;
-      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.25);
-      animation: pulse 2s infinite;
+    &.btn-add {
+      background: linear-gradient(135deg, #10b981 0%, #14c794 100%);
+      
+      &:hover {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      }
+    }
+
+    &.btn-delete {
+      background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+      
+      &:hover {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      }
     }
   }
 

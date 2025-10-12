@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PrizeService } from '../../Services/prize.service';
 import { PrizeListComponent } from '../../Components/prizes/prize-list/prize-list.component';
 import { AddPrizeModalComponent } from '../../Components/prizes/add-prize-modal/add-prize-modal.component';
+import { BaseComponent } from '../../Services/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-prizes',
@@ -11,12 +13,22 @@ import { AddPrizeModalComponent } from '../../Components/prizes/add-prize-modal/
   templateUrl: './prizes.component.html',
   styleUrl: './prizes.component.scss'
 })
-export class PrizesComponent {
-  hasUnsavedChanges$ = this.prizeService.hasUnsavedChanges$;
-  errorMessage = '';
+export class PrizesComponent extends BaseComponent {
   showModal = false;
+  showSaved = false;
 
-  constructor(private prizeService: PrizeService) {}
+  constructor(private prizeService: PrizeService) {
+    super();
+  }
+
+  ngOnInit(): void {
+    // Subscribe to saved indicator
+    this.prizeService.saved$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(saved => {
+        this.showSaved = saved;
+      });
+  }
 
   openAddPrizeModal(): void {
     this.showModal = true;
@@ -24,14 +36,5 @@ export class PrizesComponent {
 
   closeModal(): void {
     this.showModal = false;
-  }
-
-  savePrizes(): void {
-    try {
-      this.prizeService.savePrizes();
-      this.errorMessage = '';
-    } catch (err: any) {
-      this.errorMessage = 'Failed to save prizes: ' + err.message;
-    }
   }
 }

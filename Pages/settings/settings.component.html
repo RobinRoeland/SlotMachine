@@ -71,12 +71,17 @@
     <app-setting-item
         title="Enable Arduino Control"
         description="Allow triggering rolls via Arduino board connected through USB. Requires a supported browser (Chrome, Edge, Opera)."
+        [class.disabled]="isMobile"
     >
         <app-toggle-switch
         [checked]="settings.enableArduinoControl"
+        [disabled]="isMobile"
         (checkedChange)="onEnableArduinoControlChange($event)"
         ></app-toggle-switch>
     </app-setting-item>
+    <div *ngIf="isMobile" class="arduino-disabled-note">
+        ⚠ Arduino control is not available on mobile devices
+    </div>
     </app-settings-section>
 
     <!-- Color Theme Section -->

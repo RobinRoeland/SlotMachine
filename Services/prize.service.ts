@@ -18,11 +18,10 @@ export interface PityOdds {
 export class PrizeService {
   prizes$: Observable<Prize[]>;
   pityOdds$: Observable<PityOdds>;
-  hasUnsavedChanges$: Observable<boolean>;
 
-  private savedPrizes: Prize[] = [];
-  private savedPityOdds: PityOdds = {};
-  private hasUnsavedChangesSubject = new BehaviorSubject<boolean>(false);
+  // Saved indicator subject
+  private savedSubject = new BehaviorSubject<boolean>(false);
+  public saved$ = this.savedSubject.asObservable();
 
   constructor(
     private storage: StorageService,
@@ -31,11 +30,6 @@ export class PrizeService {
     // Use observables directly from storage service
     this.prizes$ = this.storage.watchPrizes();
     this.pityOdds$ = this.storage.watchPityOdds();
-    this.hasUnsavedChanges$ = this.hasUnsavedChangesSubject.asObservable();
-
-    // Initialize saved values with null handling
-    this.savedPrizes = JSON.parse(JSON.stringify(this.storage.getPrizes() || []));
-    this.savedPityOdds = JSON.parse(JSON.stringify(this.storage.getPityOdds() || {}));
 
     // Initialize pity odds for prizes that don't have them
     const prizes = this.storage.getPrizes() || [];
@@ -50,10 +44,6 @@ export class PrizeService {
     if (updated) {
       this.storage.setPityOdds(pityOdds);
     }
-
-    // Watch for changes to update unsaved status
-    this.prizes$.subscribe(() => this.checkForChanges());
-    this.pityOdds$.subscribe(() => this.checkForChanges());
   }
 
   getPrizes(): Prize[] {
@@ -72,14 +62,14 @@ export class PrizeService {
     pityOdds[prizes.length - 1] = 1;
     this.storage.setPityOdds(pityOdds);
 
-    this.checkForChanges();
+    this.showSavedIndicator();
   }
 
   updatePrize(index: number, prize: Prize): void {
     const prizes = [...(this.storage.getPrizes() || [])];
     prizes[index] = prize;
     this.storage.setPrizes(prizes);
-    this.checkForChanges();
+    this.showSavedIndicator();
   }
 
   deletePrize(index: number): void {
@@ -100,35 +90,24 @@ export class PrizeService {
     });
     this.storage.setPityOdds(newPityOdds);
 
-    this.checkForChanges();
+    this.showSavedIndicator();
   }
 
   updatePityOdds(index: number, value: number): void {
     const pityOdds = { ...(this.storage.getPityOdds() || {}) };
     pityOdds[index] = value;
     this.storage.setPityOdds(pityOdds);
-    this.checkForChanges();
+    this.showSavedIndicator();
   }
 
-  savePrizes(): void {
-    try {
-      const prizes = this.storage.getPrizes() || [];
-      const pityOdds = this.storage.getPityOdds() || {};
-      
-      this.savedPrizes = JSON.parse(JSON.stringify(prizes));
-      this.savedPityOdds = JSON.parse(JSON.stringify(pityOdds));
-      
-      this.hasUnsavedChangesSubject.next(false);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  private checkForChanges(): void {
-    const hasChanges = 
-      JSON.stringify(this.storage.getPrizes() || []) !== JSON.stringify(this.savedPrizes) ||
-      JSON.stringify(this.storage.getPityOdds() || {}) !== JSON.stringify(this.savedPityOdds);
-    this.hasUnsavedChangesSubject.next(hasChanges);
+  /**
+   * Show saved indicator for 2 seconds
+   */
+  private showSavedIndicator(): void {
+    this.savedSubject.next(true);
+    setTimeout(() => {
+      this.savedSubject.next(false);
+    }, 2000);
   }
 
   /**

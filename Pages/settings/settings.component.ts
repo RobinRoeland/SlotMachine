@@ -29,6 +29,7 @@ import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/t
 export class SettingsComponent extends BaseComponent implements OnInit {
   settings: AppSettings;
   showSaved = false;
+  isMobile = false;
   
   // Logo toggle state: 'regular' or 'small'
   selectedLogoType: 'regular' | 'small' = 'regular';
@@ -56,6 +57,16 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isMobile = this.isMobileDevice();
+    
+    // Auto-select first preset logos if none are set
+    if (!this.settings.companyLogo && this.presetLogos.length > 0) {
+      this.settingsService.updateSetting('companyLogo', this.presetLogos[0]);
+    }
+    if (!this.settings.companyLogoSmall && this.presetLogosSmall.length > 0) {
+      this.settingsService.updateSetting('companyLogoSmall', this.presetLogosSmall[0]);
+    }
+    
     // Subscribe to settings changes
     this.settingsService.settings$
       .pipe(takeUntil(this.destroy$))
@@ -69,6 +80,17 @@ export class SettingsComponent extends BaseComponent implements OnInit {
       .subscribe(saved => {
         this.showSaved = saved;
       });
+  }
+
+  /**
+   * Check if device is mobile
+   */
+  isMobileDevice(): boolean {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+    const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+    const isMobileScreen = window.innerWidth <= 768;
+    return isMobileUA || isMobileScreen;
   }
 
   /**
@@ -97,6 +119,11 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   onEnablePitySystemChange(value: boolean): void {
     this.settingsService.updateSetting('enablePitySystem', value);
+    
+    // If disabling pity system, also disable show pity warning
+    if (!value) {
+      this.settingsService.updateSetting('showPityWarning', false);
+    }
   }
 
   /**
@@ -110,6 +137,10 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Handle enable Arduino control toggle
    */
   onEnableArduinoControlChange(value: boolean): void {
+    // Prevent enabling on mobile devices
+    if (value && this.isMobile) {
+      return;
+    }
     this.settingsService.updateSetting('enableArduinoControl', value);
   }
 

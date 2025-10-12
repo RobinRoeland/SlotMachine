@@ -1,4 +1,4 @@
-<div class="arduino-control-panel">
+<div class="arduino-control-panel" [class.disabled]="isMobile">
     <div class="arduino-status">
         <div [ngClass]="getStatusIndicatorClass()"></div>
         <span class="arduino-status-text">{{ getStatusText() }}</span>
@@ -9,4 +9,7 @@
         (click)="toggleConnection()">
         {{ getButtonText() }}
     </button>
+</div>
+<div *ngIf="isMobile" class="arduino-disabled-note">
+    ⚠ Arduino control is not available on mobile devices
 </div>

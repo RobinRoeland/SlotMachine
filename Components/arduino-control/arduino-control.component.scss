@@ -3,13 +3,18 @@
     align-items: center;
     justify-content: center;
     gap: 15px;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 }
 
 .arduino-status {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: var(--card-background);
+    background: var(--card-background-solid);
     backdrop-filter: blur(10px);
     padding: 8px 15px;
     border-radius: 20px;
@@ -135,5 +140,24 @@
         padding: 8px 16px;
         font-size: 12px;
         width: 100%;
+    }
+}
+
+.arduino-disabled-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    margin-top: 10px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+
+    @media (max-width: 480px) {
+        font-size: 12px;
+        padding: 10px;
     }
 }

@@ -1,0 +1,19 @@
+<div class="modal-overlay" *ngIf="show" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="onClose()">×</button>
+    <h2>Delete Item</h2>
+    <p class="modal-description">Select an item to delete:</p>
+    
+    <div class="items-list">
+      <div class="item-card" *ngFor="let item of items" (click)="onDeleteItem(item.name)">
+        <img [src]="item.imageSrc" [alt]="item.name" class="item-image" />
+        <div class="item-name">{{ item.name }}</div>
+        <button class="btn-delete-item">Delete</button>
+      </div>
+    </div>
+
+    <div class="no-items" *ngIf="items.length === 0">
+      No items to delete
+    </div>
+  </div>
+</div>

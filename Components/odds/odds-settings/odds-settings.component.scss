@@ -7,20 +7,25 @@
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
   h2 {
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 0;
     color: var(--text-accent);
     font-weight: 400;
 
     @media (max-width: 768px) {
       font-size: 1.3rem;
-      margin-bottom: 12px;
     }
 
     @media (max-width: 480px) {
       font-size: 1.1rem;
-      margin-bottom: 10px;
     }
   }
 
@@ -35,6 +40,27 @@
     border-radius: 10px;
     margin-bottom: 12px;
     border-width: 1px;
+  }
+}
+
+.saved-indicator {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  
+  &.visible {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
   }
 }
 

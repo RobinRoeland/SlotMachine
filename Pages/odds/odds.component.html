@@ -4,16 +4,15 @@
       <app-odds-settings></app-odds-settings>
       
       <div class="odds-section">
-        <h2>Item Probabilities</h2>
+        <div class="section-header">
+          <h2>Item Probabilities</h2>
+          <span class="saved-indicator" [class.visible]="showSaved">
+            ✓ Odds saved
+          </span>
+        </div>
         <app-odds-list></app-odds-list>
         <div class="odds-controls">
           <button (click)="resetOdds()">Reset to Equal</button>
-          <button (click)="saveOdds()">Save Odds</button>
-          <span 
-            *ngIf="hasUnsavedChanges$ | async" 
-            class="unsaved-indicator">
-            ⚠ Unsaved changes
-          </span>
           <span 
             *ngIf="errorMessage$ | async as error" 
             class="odds-error">

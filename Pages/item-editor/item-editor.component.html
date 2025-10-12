@@ -2,13 +2,12 @@
   <!-- Items JSON Editor -->
   <items-json-editor
     [itemsJson]="itemsJson"
-    [isDirty]="isDirty"
+    [showSaved]="showSaved"
     [errorMessage]="itemsError"
-    (jsonChange)="onJsonChange($event)"
-    (apply)="applyItems()"
     (load)="loadItems()"
     (export)="exportItems()"
-    (addItem)="openAddModal()">
+    (addItem)="openAddModal()"
+    (deleteItem)="openDeleteModal()">
   </items-json-editor>
   
   <!-- Roller Preview -->
@@ -31,3 +30,11 @@
   (close)="closeAddModal()"
   (confirm)="confirmAddItem($event)">
 </add-item-modal>
+
+<!-- Delete Item Modal -->
+<delete-item-modal
+  [show]="showDeleteModal"
+  [items]="items"
+  (close)="closeDeleteModal()"
+  (confirm)="deleteItem($event)">
+</delete-item-modal>

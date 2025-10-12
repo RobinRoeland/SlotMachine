@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { StorageService } from './storage.service';
 
 export interface SlotItem {
@@ -18,6 +18,10 @@ export class ItemsService {
   // Observable stream of items
   public items$: Observable<SlotItem[]>;
 
+  // Saved indicator subject
+  private savedSubject = new BehaviorSubject<boolean>(false);
+  public saved$ = this.savedSubject.asObservable();
+
   constructor(private storage: StorageService) {
     this.items$ = this.storage.watchItems();
   }
@@ -34,6 +38,7 @@ export class ItemsService {
    */
   setItems(items: SlotItem[]): void {
     this.storage.setItems(items);
+    this.showSavedIndicator();
   }
 
   /**
@@ -62,5 +67,15 @@ export class ItemsService {
    */
   getItemNames(): string[] {
     return this.getItems().map(item => item.name);
+  }
+
+  /**
+   * Show saved indicator for 2 seconds
+   */
+  private showSavedIndicator(): void {
+    this.savedSubject.next(true);
+    setTimeout(() => {
+      this.savedSubject.next(false);
+    }, 2000);
   }
 }

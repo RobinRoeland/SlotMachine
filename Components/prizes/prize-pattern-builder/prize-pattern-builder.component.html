@@ -1,19 +1,16 @@
 <div class="pattern-section">
-  <h3>Build Pattern (Drag items into slots)</h3>
+  <h3>Build Pattern (Click on slots to select items)</h3>
   <div class="pattern-slots">
     <div 
       *ngFor="let slot of slots" 
       class="pattern-slot" 
       [class.filled]="slot.item !== null"
-      (dragover)="onDragOver($event)"
-      (dragenter)="onDragEnter($event, slot)"
-      (dragleave)="onDragLeave($event)"
-      (drop)="onDrop($event, slot)">
+      (click)="onSlotClick(slot)">
       
       <div class="slot-number">{{ slot.index + 1 }}</div>
       
       <div *ngIf="slot.item === null" class="placeholder-text">
-        Drag<br/>item here
+        Click to<br/>select item
       </div>
       
       <div *ngIf="isWildcard(slot.item)" class="wildcard-icon">*</div>
@@ -26,32 +23,40 @@
       <button 
         *ngIf="slot.item !== null" 
         class="clear-slot" 
-        (click)="clearSlot(slot)">
+        (click)="clearSlot(slot, $event)">
         &times;
       </button>
     </div>
   </div>
 </div>
 
-<div class="items-section">
-  <h3>Available Items</h3>
-  <div class="wildcard-option">
-    <div 
-      class="wildcard-card" 
-      draggable="true"
-      (dragstart)="onDragStart($event, '*')">
-      <div class="wildcard-icon">*</div>
-      <div class="item-name">Any Item</div>
+<!-- Item Picker Modal -->
+<div class="item-picker-modal" [class.active]="showItemPicker" (click)="closeItemPicker()">
+  <div class="item-picker-content" (click)="$event.stopPropagation()">
+    <div class="item-picker-header">
+      <h3>Select an Item</h3>
+      <button class="modal-close" (click)="closeItemPicker()">&times;</button>
     </div>
-  </div>
-  <div class="items-grid">
-    <div 
-      *ngFor="let item of items" 
-      class="item-card" 
-      draggable="true"
-      (dragstart)="onDragStart($event, item)">
-      <img [src]="item.imageSrc" [alt]="item.name" />
-      <div class="item-name">{{ item.name }}</div>
+    
+    <div class="item-picker-body">
+      <div class="wildcard-option">
+        <div 
+          class="wildcard-card" 
+          (click)="onItemSelect('*')">
+          <div class="wildcard-icon">*</div>
+          <div class="item-name">Any Item</div>
+        </div>
+      </div>
+      
+      <div class="items-grid">
+        <div 
+          *ngFor="let item of items" 
+          class="item-card" 
+          (click)="onItemSelect(item)">
+          <img [src]="item.imageSrc" [alt]="item.name" />
+          <div class="item-name">{{ item.name }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

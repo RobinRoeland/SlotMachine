@@ -74,10 +74,7 @@
   margin: 0 12px;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, 
-    var(--border-color) 0%, 
-    var(--border-color) 50%, 
-    var(--color-secondary) 100%);
+  background: var(--scrollbar-thumb);
   outline: none;
   -webkit-appearance: none;
   appearance: none;

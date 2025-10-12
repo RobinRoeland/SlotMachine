@@ -11,22 +11,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class ItemsJsonEditorComponent {
   @Input() itemsJson: string = '[]';
-  @Input() isDirty: boolean = false;
+  @Input() showSaved: boolean = false;
   @Input() errorMessage: string = '';
   
-  @Output() jsonChange = new EventEmitter<string>();
-  @Output() apply = new EventEmitter<void>();
   @Output() load = new EventEmitter<void>();
   @Output() export = new EventEmitter<void>();
   @Output() addItem = new EventEmitter<void>();
-
-  onJsonChange(value: string) {
-    this.jsonChange.emit(value);
-  }
-
-  onApply() {
-    this.apply.emit();
-  }
+  @Output() deleteItem = new EventEmitter<void>();
 
   onLoad() {
     this.load.emit();
@@ -38,5 +29,9 @@ export class ItemsJsonEditorComponent {
 
   onAddItem() {
     this.addItem.emit();
+  }
+
+  onDeleteItem() {
+    this.deleteItem.emit();
   }
 }
