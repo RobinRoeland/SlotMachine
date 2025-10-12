@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { SettingsService, AppSettings } from '../../Services/settings.service';
 import { ThemeService } from '../../Services/theme.service';
+import { TutorialService } from '../../Services/tutorial.service';
 import { BaseComponent } from '../../Services/base.component';
 import { SettingsSectionComponent } from '../../Components/settings/settings-section/settings-section.component';
 import { SettingItemComponent } from '../../Components/settings/setting-item/setting-item.component';
 import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/toggle-switch.component';
+import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial-modal.component';
 
 /**
  * Settings page component
@@ -21,7 +23,8 @@ import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/t
     FormsModule,
     SettingsSectionComponent,
     SettingItemComponent,
-    ToggleSwitchComponent
+    ToggleSwitchComponent,
+    TutorialModalComponent
   ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
@@ -30,6 +33,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   settings: AppSettings;
   showSaved = false;
   isMobile = false;
+  showTutorialModal = false;
   
   // Logo toggle state: 'regular' or 'small'
   selectedLogoType: 'regular' | 'small' = 'regular';
@@ -49,7 +53,8 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   constructor(
     private settingsService: SettingsService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private tutorialService: TutorialService
   ) {
     super();
     // Initialize with current settings from service
@@ -58,14 +63,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.isMobile = this.isMobileDevice();
-    
-    // Auto-select first preset logos if none are set
-    if (!this.settings.companyLogo && this.presetLogos.length > 0) {
-      this.settingsService.updateSetting('companyLogo', this.presetLogos[0]);
-    }
-    if (!this.settings.companyLogoSmall && this.presetLogosSmall.length > 0) {
-      this.settingsService.updateSetting('companyLogoSmall', this.presetLogosSmall[0]);
-    }
     
     // Subscribe to settings changes
     this.settingsService.settings$
@@ -254,5 +251,21 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   isThemeSelected(themeName: 'light' | 'medium-dark' | 'dark'): boolean {
     return this.settings.colorTheme === themeName;
+  }
+
+  /**
+   * Show the tutorial modal
+   */
+  showTutorial(): void {
+    // Reset tutorial state to allow it to be shown again
+    this.tutorialService.resetTutorial();
+    this.showTutorialModal = true;
+  }
+
+  /**
+   * Close the tutorial modal
+   */
+  closeTutorial(): void {
+    this.showTutorialModal = false;
   }
 }

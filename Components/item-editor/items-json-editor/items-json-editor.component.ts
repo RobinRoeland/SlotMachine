@@ -19,6 +19,13 @@ export class ItemsJsonEditorComponent {
   @Output() addItem = new EventEmitter<void>();
   @Output() deleteItem = new EventEmitter<void>();
 
+  /**
+   * Get the items JSON to display, ensuring it never shows 'null'
+   */
+  get displayJson(): string {
+    return this.itemsJson || '[]';
+  }
+
   onLoad() {
     this.load.emit();
   }

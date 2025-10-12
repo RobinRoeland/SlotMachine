@@ -13,6 +13,8 @@ export * from './odds.service';
 export * from './prize.service';
 export * from './settings.service';
 export * from './theme.service';
+export * from './tutorial.service';
+export * from './arduino.service';
 
 // Utility services
 export * from './validation.service';

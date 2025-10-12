@@ -5,6 +5,8 @@ import { filter, map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../../Services/theme.service';
 import { SettingsService } from '../../Services/settings.service';
+import { TutorialService } from '../../Services/tutorial.service';
+import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -12,19 +14,22 @@ import { SettingsService } from '../../Services/settings.service';
   imports: [
     CommonModule,
     SideBarComponent,
-    RouterOutlet
+    RouterOutlet,
+    TutorialModalComponent
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   pageTitle: string = '';
+  showTutorial: boolean = false;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private themeService: ThemeService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private tutorialService: TutorialService
   ) {
     // Initialize theme on app startup
     const currentTheme = this.settingsService.getSettings().colorTheme;
@@ -53,5 +58,17 @@ export class AppComponent {
       route = route.firstChild;
     }
     this.pageTitle = route.snapshot.data['title'] || route.snapshot.title || '';
+
+    // Show tutorial if not completed
+    if (!this.tutorialService.isTutorialCompleted()) {
+      // Show tutorial after a short delay for better UX
+      setTimeout(() => {
+        this.showTutorial = true;
+      }, 500);
+    }
+  }
+
+  closeTutorial() {
+    this.showTutorial = false;
   }
 }

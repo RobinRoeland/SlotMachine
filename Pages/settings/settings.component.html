@@ -245,4 +245,22 @@
         </div>
     </div>
     </app-settings-section>
+
+    <!-- Tutorial Section -->
+    <app-settings-section
+    title="Help & Tutorial"
+    description="Access the interactive tutorial to learn how to use the application."
+    >
+    <app-setting-item
+        title="Show Tutorial"
+        description="Reopen the getting started tutorial that guides you through adding items and prizes."
+    >
+        <button class="tutorial-button" (click)="showTutorial()">
+        📚 Start Tutorial
+        </button>
+    </app-setting-item>
+    </app-settings-section>
 </div>
+
+<!-- Tutorial Modal -->
+<tutorial-modal *ngIf="showTutorialModal" (close)="closeTutorial()"></tutorial-modal>

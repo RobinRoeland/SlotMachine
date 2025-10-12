@@ -1,0 +1,68 @@
+<div class="modal-backdrop">
+  <!-- Dark overlay (always visible) -->
+  <div class="spotlight-overlay"></div>
+  
+  <!-- Spotlight cutout (only when highlighting specific element) -->
+  <div class="spotlight-cutout" *ngIf="showSpotlight" [ngStyle]="spotlightStyle"></div>
+
+  <!-- Tutorial tooltip -->
+  <div class="tutorial-tooltip" 
+       [ngClass]="{'centered': !showSpotlight}"
+       [ngStyle]="tooltipPosition">
+    
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progress"></div>
+    </div>
+
+    <!-- Skip Button -->
+    <button class="skip-button" (click)="skipTutorial()" title="Skip Tutorial">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/>
+      </svg>
+    </button>
+
+    <!-- Content -->
+    <div class="tutorial-content">
+      <div class="step-indicator">
+        <span class="step-number">{{ currentStep + 1 }}</span>
+        <span class="step-divider">/</span>
+        <span class="step-total">{{ totalSteps }}</span>
+      </div>
+      <h2 class="tutorial-title">{{ currentStepData.title }}</h2>
+      <div class="tutorial-text" [innerHTML]="currentStepData.content | safeHtml"></div>
+      
+      <!-- Waiting indicator -->
+      <div class="waiting-indicator" *ngIf="currentStepData.waitForAction">
+        <div class="pulse-dot"></div>
+        <span>{{ currentStepData.action }}</span>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="tutorial-actions">
+      <button 
+        class="btn btn-primary" 
+        (click)="onActionClick()"
+        *ngIf="!currentStepData.waitForAction"
+        [class.btn-success]="isLastStep">
+        {{ currentStepData.action }}
+        <span *ngIf="!isLastStep"> →</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Pointer arrow (shows where to click) -->
+  <div class="pointer-arrow" 
+       *ngIf="showSpotlight && currentStepData.waitForAction"
+       [style.top]="arrowStyle.top"
+       [style.left]="arrowStyle.left">
+    <svg width="40" height="40" viewBox="0 0 40 40">
+      <path d="M20 5 L20 30 M20 30 L15 25 M20 30 L25 25" 
+            stroke="currentColor" 
+            stroke-width="3" 
+            fill="none" 
+            stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>

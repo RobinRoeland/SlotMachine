@@ -31,9 +31,9 @@ export class SettingsService {
     showOdds: true,
     enableArduinoControl: false,
     enablePitySystem: false,
-    showPityWarning: true,
-    companyLogo: '',
-    companyLogoSmall: '',
+    showPityWarning: false,
+    companyLogo: 'assets/images/Slotmachine-Logo.png',
+    companyLogoSmall: 'assets/images/slot-machine-colorful-neon-sign.jpg',
     colorTheme: 'light'
   };
 
@@ -44,14 +44,29 @@ export class SettingsService {
   // Saved indicator subject
   private savedSubject = new BehaviorSubject<boolean>(false);
   public saved$ = this.savedSubject.asObservable();
+  public hasSettings: boolean = false;
 
   constructor(private storageService: StorageService) {
+    // Check if settings exist in storage, if not, initialize with defaults
+    this.hasSettings = this.storageService.getShowPrizesList() !== undefined
+      || this.storageService.getShowOdds() !== undefined
+      || this.storageService.getArduinoEnabled() !== undefined
+      || this.storageService.getPityEnabled() !== undefined
+      || this.storageService.getShowPityWarning() !== undefined
+      || this.storageService.getCompanyLogo() !== undefined
+      || this.storageService.getCompanyLogoSmall() !== undefined
+      || this.storageService.getColorTheme() !== undefined;
+
+    if (!this.hasSettings) {
+      this.saveSettings(this.DEFAULT_SETTINGS);
+    }
+
     const initialSettings = this.loadSettings();
     this.settingsSubject = new BehaviorSubject<AppSettings>(initialSettings);
-    
+
     // Expose the subject as an observable
     this.settings$ = this.settingsSubject.asObservable();
-    
+
     // Subscribe to storage changes to keep our subject in sync
     combineLatest([
       this.storageService.watchShowPrizesList(),
