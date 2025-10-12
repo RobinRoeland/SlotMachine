@@ -1,5 +1,7 @@
 # SlotMachine
 
+**Check out a demo of our project at: [Github Pages](https://robinroeland.github.io/SlotMachine/)!**
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
 
 **New to our project?** Please check out the wiki to get started!
