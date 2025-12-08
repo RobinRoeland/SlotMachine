@@ -92,7 +92,7 @@ export class OddsService {
   }
 
   public updatePityValue(value: number): void {
-    if (value >= 1 && value <= 1000) {
+    if (value >= 0 && value <= 1000) {
       this.storage.setPityValue(value);
       this.showSavedSettingsIndicator();
       this.errorMessageSubject.next('');

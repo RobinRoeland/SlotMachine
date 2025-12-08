@@ -225,16 +225,16 @@ export class StorageService {
 
   getPityValue(): number {
     const value = this.getItem<string>(this.KEYS.PITY_VALUE);
-    return value ? parseInt(value as string, 10) : 10;
+    return value ? parseInt(value as string, 10) : 0;
   }
 
   setPityValue(value: number): void {
-    this.setItem(this.KEYS.PITY_VALUE, value.toString());
+    this.setItem(this.KEYS.PITY_VALUE, value?.toString() ?? '0');
   }
 
   watchPityValue(): Observable<number> {
     return this.watch<string>(this.KEYS.PITY_VALUE).pipe(
-      map(value => value ? parseInt(value as string, 10) : 10)
+      map(value => value ? parseInt(value as string, 10) : 0)
     );
   }
 

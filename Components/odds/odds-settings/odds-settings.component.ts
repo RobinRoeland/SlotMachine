@@ -13,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class OddsSettingsComponent implements OnInit {
   rollerCount = 4;
-  pityValue = 10;
+  pityValue = 0;
   pityEnabled = false;
   showSaved = false;
   
@@ -23,15 +23,15 @@ export class OddsSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.oddsService.rollerCount$.pipe(takeUntil(this.destroy$)).subscribe(count => {
-      this.rollerCount = count || 4;
+      this.rollerCount = count ?? 4;
     });
 
     this.oddsService.pityValue$.pipe(takeUntil(this.destroy$)).subscribe(value => {
-      this.pityValue = value || 10;
+      this.pityValue = value ?? 0;
     });
 
     this.oddsService.pityEnabled$.pipe(takeUntil(this.destroy$)).subscribe(enabled => {
-      this.pityEnabled = enabled || false;
+      this.pityEnabled = enabled ?? false;
     });
 
     // Subscribe to saved indicator for settings
