@@ -142,6 +142,93 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Handle button text roll change
+   */
+  onButtonTextRollChange(value: string): void {
+    if (value && value.trim()) {
+      this.settingsService.updateSetting('buttonTextRoll', value.trim());
+    }
+  }
+
+  /**
+   * Handle notification rolling text change
+   */
+  onNotificationRollingChange(value: string): void {
+    if (value && value.trim()) {
+      this.settingsService.updateSetting('notificationRolling', value.trim());
+    }
+  }
+
+  /**
+   * Handle notification win text change
+   */
+  onNotificationWinChange(value: string): void {
+    if (value && value.trim()) {
+      this.settingsService.updateSetting('notificationWin', value.trim());
+    }
+  }
+
+  /**
+   * Handle button text Arduino change
+   */
+  onButtonTextArduinoChange(value: string): void {
+    if (value && value.trim()) {
+      this.settingsService.updateSetting('buttonTextArduino', value.trim());
+    }
+  }
+
+  /**
+   * Handle show button text toggle
+   */
+  onShowButtonTextChange(value: boolean): void {
+    this.settingsService.updateSetting('showButtonTextRoll', value);
+  }
+
+  /**
+   * Handle show button text roll toggle
+   */
+  onShowButtonTextRollChange(value: boolean): void {
+    this.settingsService.updateSetting('showButtonTextRoll', value);
+  }
+
+  /**
+   * Handle show notification rolling toggle
+   */
+  onShowNotificationRollingChange(value: boolean): void {
+    this.settingsService.updateSetting('showNotificationRolling', value);
+  }
+
+  /**
+   * Handle show notification win toggle
+   */
+  onShowNotificationWinChange(value: boolean): void {
+    this.settingsService.updateSetting('showNotificationWin', value);
+  }
+
+  /**
+   * Handle show button text Arduino toggle
+   */
+  onShowButtonTextArduinoChange(value: boolean): void {
+    this.settingsService.updateSetting('showButtonTextArduino', value);
+  }
+
+  /**
+   * Handle notification after roll text change
+   */
+  onNotificationAfterRollChange(value: string): void {
+    if (value && value.trim()) {
+      this.settingsService.updateSetting('notificationAfterRoll', value.trim());
+    }
+  }
+
+  /**
+   * Handle show notification after roll toggle
+   */
+  onShowNotificationAfterRollChange(value: boolean): void {
+    this.settingsService.updateSetting('showNotificationAfterRoll', value);
+  }
+
+  /**
    * Handle logo path input change
    */
   onLogoPathChange(newPath: string): void {

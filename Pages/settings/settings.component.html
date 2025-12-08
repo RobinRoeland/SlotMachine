@@ -108,6 +108,157 @@
     </div>
     </app-settings-section>
 
+    <!-- Text Customization Section -->
+    <app-settings-section
+    title="Text Customization"
+    description="Customize what text and notifications appear during each game state. Toggle to show/hide text for each state."
+    >
+    <!-- Ready State Text -->
+    <app-setting-item
+        title="Ready to Roll State"
+        description="Show text when the game is ready and waiting for you to click roll."
+    >
+        <app-toggle-switch
+        [checked]="settings.showButtonTextRoll"
+        (checkedChange)="onShowButtonTextRollChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <div class="button-text-settings" *ngIf="settings.showButtonTextRoll">
+        <div class="text-input-group">
+        <label for="buttonTextRoll">Text to Display</label>
+        <input 
+            type="text" 
+            id="buttonTextRoll"
+            class="text-input"
+            [value]="settings.buttonTextRoll"
+            (blur)="onButtonTextRollChange($any($event.target).value)"
+            placeholder="ROLL"
+        />
+        <p class="input-hint">💡 Appears on the button when you can click to start rolling</p>
+        </div>
+    </div>
+
+    <hr class="button-text-divider" *ngIf="settings.showButtonTextRoll" />
+
+    <!-- Rolling State Text -->
+    <app-setting-item
+        title="Currently Rolling State"
+        description="Show text while the slot machine reels are actively spinning."
+    >
+        <app-toggle-switch
+        [checked]="settings.showNotificationRolling"
+        (checkedChange)="onShowNotificationRollingChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <div class="button-text-settings" *ngIf="settings.showNotificationRolling">
+        <div class="text-input-group">
+        <label for="notificationRolling">Text to Display</label>
+        <input 
+            type="text" 
+            id="notificationRolling"
+            class="text-input"
+            [value]="settings.notificationRolling"
+            (blur)="onNotificationRollingChange($any($event.target).value)"
+            placeholder="ROLLING..."
+        />
+        <p class="input-hint">💡 Appears while the reels are in motion (button is disabled)</p>
+        </div>
+    </div>
+
+    <hr class="button-text-divider" *ngIf="settings.showNotificationRolling" />
+
+    <!-- Win Notification -->
+    <app-setting-item
+        title="Win Result State"
+        description="Show a notification when a winning combination is hit and a prize is won."
+    >
+        <app-toggle-switch
+        [checked]="settings.showNotificationWin"
+        (checkedChange)="onShowNotificationWinChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <div class="button-text-settings" *ngIf="settings.showNotificationWin">
+        <div class="text-input-group">
+        <label for="notificationWin">Text to Display</label>
+        <input 
+            type="text" 
+            id="notificationWin"
+            class="text-input"
+            [value]="settings.notificationWin"
+            (blur)="onNotificationWinChange($any($event.target).value)"
+            placeholder="YOU WON: {reward}"
+        />
+        <p class="input-hint">💡 Appears as a notification when you win. Use "{{ '{reward}' }}" to dynamically show the prize name.</p>
+        </div>
+    </div>
+
+    <hr class="button-text-divider" *ngIf="settings.showNotificationWin" />
+
+    <!-- After Roll Notification -->
+    <app-setting-item
+        title="After Roll Notification"
+        description="Show a notification message after every roll is complete (win or loss)."
+    >
+        <app-toggle-switch
+        [checked]="settings.showNotificationAfterRoll"
+        (checkedChange)="onShowNotificationAfterRollChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <div class="button-text-settings" *ngIf="settings.showNotificationAfterRoll">
+        <div class="text-input-group">
+        <label for="notificationAfterRoll">Notification Text</label>
+        <input 
+            type="text" 
+            id="notificationAfterRoll"
+            class="text-input"
+            [value]="settings.notificationAfterRoll"
+            (blur)="onNotificationAfterRollChange($any($event.target).value)"
+            placeholder="Thanks for playing!"
+        />
+        <p class="input-hint">💡 Appears as a notification after every roll completes, regardless of the outcome</p>
+        </div>
+    </div>
+
+    <hr class="button-text-divider" *ngIf="settings.showNotificationAfterRoll" />
+
+    <!-- Arduino Instruction Text -->
+    <app-setting-item
+        title="Arduino Control State"
+        description="Show instruction text when external Arduino hardware control is active."
+        [disabled]="!settings.enableArduinoControl"
+    >
+        <app-toggle-switch
+        [checked]="settings.showButtonTextArduino"
+        [disabled]="!settings.enableArduinoControl"
+        (checkedChange)="onShowButtonTextArduinoChange($event)"
+        ></app-toggle-switch>
+    </app-setting-item>
+
+    <div class="button-text-settings" *ngIf="settings.showButtonTextArduino" [class.disabled]="!settings.enableArduinoControl">
+        <div class="text-input-group">
+        <label for="buttonTextArduino">Text to Display</label>
+        <input 
+            type="text" 
+            id="buttonTextArduino"
+            class="text-input"
+            [value]="settings.buttonTextArduino"
+            [disabled]="!settings.enableArduinoControl"
+            (blur)="onButtonTextArduinoChange($any($event.target).value)"
+            placeholder="Press the button to roll!"
+        />
+        <p class="input-hint">💡 Appears when waiting for Arduino physical button press</p>
+        </div>
+    </div>
+
+    <div *ngIf="!settings.enableArduinoControl" class="arduino-disabled-note">
+        ⚠ Enable Arduino Control in settings above to customize this text
+    </div>
+    </app-settings-section>
+
     <!-- Company Branding Section -->
     <app-settings-section
     title="Company Branding"

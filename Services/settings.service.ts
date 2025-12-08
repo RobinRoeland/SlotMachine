@@ -15,6 +15,16 @@ export interface AppSettings {
   companyLogo: string;
   companyLogoSmall: string;
   colorTheme: 'light' | 'medium-dark' | 'dark';
+  showButtonTextRoll: boolean;
+  showNotificationRolling: boolean;
+  showNotificationWin: boolean;
+  showButtonTextArduino: boolean;
+  showNotificationAfterRoll: boolean;
+  buttonTextRoll: string;
+  notificationRolling: string;
+  notificationWin: string;
+  buttonTextArduino: string;
+  notificationAfterRoll: string;
 }
 
 /**
@@ -34,7 +44,17 @@ export class SettingsService {
     showPityWarning: false,
     companyLogo: 'assets/images/Slotmachine-Logo.png',
     companyLogoSmall: 'assets/images/slot-machine-colorful-neon-sign.jpg',
-    colorTheme: 'light'
+    colorTheme: 'light',
+    showButtonTextRoll: true,
+    showNotificationRolling: true,
+    showNotificationWin: true,
+    showButtonTextArduino: true,
+    showNotificationAfterRoll: false,
+    buttonTextRoll: 'ROLL',
+    notificationRolling: 'ROLLING...',
+    notificationWin: 'YOU WON: {reward}',
+    buttonTextArduino: 'Press the button to roll!',
+    notificationAfterRoll: 'Thanks for playing!'
   };
 
   // BehaviorSubject to track settings changes
@@ -85,9 +105,18 @@ export class SettingsService {
       this.storageService.watchCompanyLogo(),
       this.storageService.watchCompanyLogoSmall(),
       this.storageService.watchColorTheme(),
-
+      this.storageService.watchShowButtonTextRoll(),
+      this.storageService.watchShowNotificationRolling(),
+      this.storageService.watchShowNotificationWin(),
+      this.storageService.watchShowButtonTextArduino(),
+      this.storageService.watchShowNotificationAfterRoll(),
+      this.storageService.watchButtonTextRoll(),
+      this.storageService.watchNotificationRolling(),
+      this.storageService.watchNotificationWin(),
+      this.storageService.watchButtonTextArduino(),
+      this.storageService.watchNotificationAfterRoll(),
     ]).pipe(
-      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme]) => ({
+      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme, showButtonTextRoll, showNotificationRolling, showNotificationWin, showButtonTextArduino, showNotificationAfterRoll, buttonTextRoll, notificationRolling, notificationWin, buttonTextArduino, notificationAfterRoll]) => ({
         showPrizesList,
         showOdds,
         enableArduinoControl,
@@ -95,7 +124,17 @@ export class SettingsService {
         showPityWarning,
         companyLogo,
         companyLogoSmall,
-        colorTheme
+        colorTheme,
+        showButtonTextRoll,
+        showNotificationRolling,
+        showNotificationWin,
+        showButtonTextArduino,
+        showNotificationAfterRoll,
+        buttonTextRoll,
+        notificationRolling,
+        notificationWin,
+        buttonTextArduino,
+        notificationAfterRoll
       }))
     ).subscribe(settings => {
       this.settingsSubject.next(settings);
@@ -115,6 +154,16 @@ export class SettingsService {
       companyLogo: this.storageService.getCompanyLogo(),
       companyLogoSmall: this.storageService.getCompanyLogoSmall(),
       colorTheme: this.storageService.getColorTheme(),
+      showButtonTextRoll: this.storageService.getShowButtonTextRoll(),
+      showNotificationRolling: this.storageService.getShowNotificationRolling(),
+      showNotificationWin: this.storageService.getShowNotificationWin(),
+      showButtonTextArduino: this.storageService.getShowButtonTextArduino(),
+      showNotificationAfterRoll: this.storageService.getShowNotificationAfterRoll(),
+      buttonTextRoll: this.storageService.getButtonTextRoll(),
+      notificationRolling: this.storageService.getNotificationRolling(),
+      notificationWin: this.storageService.getNotificationWin(),
+      buttonTextArduino: this.storageService.getButtonTextArduino(),
+      notificationAfterRoll: this.storageService.getNotificationAfterRoll(),
       slotRollerCount: this.storageService.getRollerCount(),
       slotPityValue: this.storageService.getPityValue()
     };
@@ -133,6 +182,16 @@ export class SettingsService {
     this.storageService.setCompanyLogo(settings.companyLogo);
     this.storageService.setCompanyLogoSmall(settings.companyLogoSmall);
     this.storageService.setColorTheme(settings.colorTheme);
+    this.storageService.setShowButtonTextRoll(settings.showButtonTextRoll);
+    this.storageService.setShowNotificationRolling(settings.showNotificationRolling);
+    this.storageService.setShowNotificationWin(settings.showNotificationWin);
+    this.storageService.setShowButtonTextArduino(settings.showButtonTextArduino);
+    this.storageService.setShowNotificationAfterRoll(settings.showNotificationAfterRoll);
+    this.storageService.setButtonTextRoll(settings.buttonTextRoll);
+    this.storageService.setNotificationRolling(settings.notificationRolling);
+    this.storageService.setNotificationWin(settings.notificationWin);
+    this.storageService.setButtonTextArduino(settings.buttonTextArduino);
+    this.storageService.setNotificationAfterRoll(settings.notificationAfterRoll);
   }
 
   /**

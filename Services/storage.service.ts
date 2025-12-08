@@ -31,7 +31,17 @@ export class StorageService {
     ARDUINO_ENABLED: 'settings_enable_arduino_control',
     COMPANY_LOGO: 'settings_company_logo',
     COMPANY_LOGO_SMALL: 'settings_company_logo_small',
-    COLOR_THEME: 'settings_color_theme'
+    COLOR_THEME: 'settings_color_theme',
+    BUTTON_TEXT_ROLL: 'settings_button_text_roll',
+    NOTIFICATION_ROLLING: 'settings_notification_rolling',
+    NOTIFICATION_WIN: 'settings_notification_win',
+    BUTTON_TEXT_ARDUINO: 'settings_button_text_arduino',
+    NOTIFICATION_AFTER_ROLL: 'settings_notification_after_roll',
+    SHOW_BUTTON_TEXT_ROLL: 'settings_show_button_text_roll',
+    SHOW_NOTIFICATION_ROLLING: 'settings_show_notification_rolling',
+    SHOW_NOTIFICATION_WIN: 'settings_show_notification_win',
+    SHOW_BUTTON_TEXT_ARDUINO: 'settings_show_button_text_arduino',
+    SHOW_NOTIFICATION_AFTER_ROLL: 'settings_show_notification_after_roll'
   };
 
   // Subjects for each key to notify subscribers of changes
@@ -400,6 +410,172 @@ export class StorageService {
   watchColorTheme(): Observable<'light' | 'medium-dark' | 'dark'> {
     return this.watch<'light' | 'medium-dark' | 'dark'>(this.KEYS.COLOR_THEME).pipe(
       map(value => value || 'light')
+    );
+  }
+
+  // Button Text Methods
+  getButtonTextRoll(): string {
+    const value = this.getItem<string>(this.KEYS.BUTTON_TEXT_ROLL);
+    return value || 'ROLL';
+  }
+
+  setButtonTextRoll(text: string): void {
+    this.setItem(this.KEYS.BUTTON_TEXT_ROLL, text);
+  }
+
+  watchButtonTextRoll(): Observable<string> {
+    return this.watch<string>(this.KEYS.BUTTON_TEXT_ROLL).pipe(
+      map(value => value || 'ROLL')
+    );
+  }
+
+  getNotificationRolling(): string {
+    const value = this.getItem<string>(this.KEYS.NOTIFICATION_ROLLING);
+    return value || 'ROLLING...';
+  }
+
+  setNotificationRolling(text: string): void {
+    this.setItem(this.KEYS.NOTIFICATION_ROLLING, text);
+  }
+
+  watchNotificationRolling(): Observable<string> {
+    return this.watch<string>(this.KEYS.NOTIFICATION_ROLLING).pipe(
+      map(value => value || 'ROLLING...')
+    );
+  }
+
+  getNotificationWin(): string {
+    const value = this.getItem<string>(this.KEYS.NOTIFICATION_WIN);
+    return value || 'YOU WON: {reward}';
+  }
+
+  setNotificationWin(text: string): void {
+    this.setItem(this.KEYS.NOTIFICATION_WIN, text);
+  }
+
+  watchNotificationWin(): Observable<string> {
+    return this.watch<string>(this.KEYS.NOTIFICATION_WIN).pipe(
+      map(value => value || 'YOU WON: {reward}')
+    );
+  }
+
+  getButtonTextArduino(): string {
+    const value = this.getItem<string>(this.KEYS.BUTTON_TEXT_ARDUINO);
+    return value || 'Press the button to roll!';
+  }
+
+  setButtonTextArduino(text: string): void {
+    this.setItem(this.KEYS.BUTTON_TEXT_ARDUINO, text);
+  }
+
+  watchButtonTextArduino(): Observable<string> {
+    return this.watch<string>(this.KEYS.BUTTON_TEXT_ARDUINO).pipe(
+      map(value => value || 'Press the button to roll!')
+    );
+  }
+
+  getNotificationAfterRoll(): string {
+    const value = this.getItem<string>(this.KEYS.NOTIFICATION_AFTER_ROLL);
+    return value || 'Thanks for playing!';
+  }
+
+  setNotificationAfterRoll(text: string): void {
+    this.setItem(this.KEYS.NOTIFICATION_AFTER_ROLL, text);
+  }
+
+  watchNotificationAfterRoll(): Observable<string> {
+    return this.watch<string>(this.KEYS.NOTIFICATION_AFTER_ROLL).pipe(
+      map(value => value || 'Thanks for playing!')
+    );
+  }
+
+  getShowButtonText(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL);
+    return value !== null ? value : true;
+  }
+
+  setShowButtonText(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_BUTTON_TEXT_ROLL, show);
+  }
+
+  watchShowButtonText(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL).pipe(
+      map(value => value !== null ? value : true)
+    );
+  }
+
+  getShowButtonTextRoll(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL);
+    return value !== null ? value : true;
+  }
+
+  setShowButtonTextRoll(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_BUTTON_TEXT_ROLL, show);
+  }
+
+  watchShowButtonTextRoll(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL).pipe(
+      map(value => value !== null ? value : true)
+    );
+  }
+
+  getShowNotificationRolling(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_NOTIFICATION_ROLLING);
+    return value !== null ? value : true;
+  }
+
+  setShowNotificationRolling(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_NOTIFICATION_ROLLING, show);
+  }
+
+  watchShowNotificationRolling(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_NOTIFICATION_ROLLING).pipe(
+      map(value => value !== null ? value : true)
+    );
+  }
+
+  getShowNotificationWin(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_NOTIFICATION_WIN);
+    return value !== null ? value : true;
+  }
+
+  setShowNotificationWin(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_NOTIFICATION_WIN, show);
+  }
+
+  watchShowNotificationWin(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_NOTIFICATION_WIN).pipe(
+      map(value => value !== null ? value : true)
+    );
+  }
+
+  getShowButtonTextArduino(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ARDUINO);
+    return value !== null ? value : true;
+  }
+
+  setShowButtonTextArduino(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_BUTTON_TEXT_ARDUINO, show);
+  }
+
+  watchShowButtonTextArduino(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ARDUINO).pipe(
+      map(value => value !== null ? value : true)
+    );
+  }
+
+  getShowNotificationAfterRoll(): boolean {
+    const value = this.getItem<boolean>(this.KEYS.SHOW_NOTIFICATION_AFTER_ROLL);
+    return value !== null ? value : false;
+  }
+
+  setShowNotificationAfterRoll(show: boolean): void {
+    this.setItem(this.KEYS.SHOW_NOTIFICATION_AFTER_ROLL, show);
+  }
+
+  watchShowNotificationAfterRoll(): Observable<boolean> {
+    return this.watch<boolean>(this.KEYS.SHOW_NOTIFICATION_AFTER_ROLL).pipe(
+      map(value => value !== null ? value : false)
     );
   }
 }
