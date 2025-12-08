@@ -4,11 +4,26 @@
       <div class="prizes-section">
         <div class="section-header">
           <h2>Prize Combinations</h2>
-          <span class="saved-indicator" [class.visible]="showSaved">
-            ✓ Prizes saved
-          </span>
+          <div class="header-actions">
+            <span class="saved-indicator" [class.visible]="showSaved">
+              ✓ Prizes saved
+            </span>
+            <span class="error-message" *ngIf="errorMessage">
+              ⚠ {{ errorMessage }}
+            </span>
+          </div>
         </div>
         <p class="info-text">Define prizes for winning combinations. Use item names or "*" for any item.</p>
+        
+        <div class="prizes-actions">
+          <button class="action-button import-button" (click)="importPrizes()">
+            <span class="button-icon">📥</span> Import Prizes
+          </button>
+          <button class="action-button export-button" (click)="exportPrizes()">
+            <span class="button-icon">📤</span> Export Prizes
+          </button>
+        </div>
+
         <app-prize-list></app-prize-list>
         <button class="add-button" (click)="openAddPrizeModal()">Add prize</button>
       </div>

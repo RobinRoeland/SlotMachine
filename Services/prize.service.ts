@@ -54,6 +54,27 @@ export class PrizeService {
     return (this.storage.getPityOdds() || {})[prizeIndex] || 1;
   }
 
+  getAllPityOdds(): PityOdds {
+    return this.storage.getPityOdds() || {};
+  }
+
+  importPrizes(prizes: Prize[], pityOdds: PityOdds): void {
+    // Set prizes
+    this.storage.setPrizes(prizes);
+
+    // Ensure all prizes have pity odds
+    const completePityOdds: PityOdds = { ...pityOdds };
+    prizes.forEach((_, index) => {
+      if (completePityOdds[index] === undefined) {
+        completePityOdds[index] = 1;
+      }
+    });
+
+    // Set pity odds
+    this.storage.setPityOdds(completePityOdds);
+    this.showSavedIndicator();
+  }
+
   addPrize(prize: Prize): void {
     const prizes = [...(this.storage.getPrizes() || []), prize];
     this.storage.setPrizes(prizes);
