@@ -3,9 +3,19 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 import { ItemsService, SlotItem } from './items.service';
+import { FileService } from './file.service';
 
 export interface OddsMap {
   [itemName: string]: number;
+}
+
+export interface OddsExportData {
+  odds: OddsMap;
+  rollerCount: number;
+  pityValue: number;
+  pityEnabled: boolean;
+  exportDate: string;
+  version: string;
 }
 
 @Injectable({
@@ -30,7 +40,8 @@ export class OddsService {
 
   constructor(
     private storage: StorageService,
-    private itemsService: ItemsService
+    private itemsService: ItemsService,
+    private fileService: FileService
   ) {
     // Use observables directly from storage service and items service
     this.items$ = this.itemsService.items$;
@@ -124,5 +135,93 @@ export class OddsService {
     setTimeout(() => {
       this.savedSettingsSubject.next(false);
     }, 2000);
+  }
+
+  /**
+   * Export odds and related settings to JSON file
+   */
+  exportOdds(): void {
+    try {
+      const items = this.itemsService.getItems();
+      const currentOdds = this.storage.getOdds() || {};
+      
+      // Build per-item odds with defaults
+      const itemOdds: OddsMap = {};
+      items.forEach((item: SlotItem) => {
+        itemOdds[item.name] = currentOdds[item.name] || 1;
+      });
+      
+      const exportData: OddsExportData = {
+        odds: itemOdds,
+        rollerCount: this.storage.getRollerCount(),
+        pityValue: this.storage.getPityValue(),
+        pityEnabled: this.storage.getPityEnabled(),
+        exportDate: new Date().toISOString(),
+        version: '1.0'
+      };
+      
+      this.fileService.exportJSON(exportData, `odds-export-${Date.now()}.json`);
+    } catch (error: any) {
+      this.errorMessageSubject.next(`Export failed: ${error.message || String(error)}`);
+    }
+  }
+
+  /**
+   * Import odds and related settings from JSON file
+   */
+  async importOdds(): Promise<void> {
+    try {
+      const data = await this.fileService.importJSON();
+      
+      // Validate the imported data
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid odds data format');
+      }
+
+      const oddsData = data as OddsExportData;
+      
+      // Import odds if present, only for items that currently exist
+      if (oddsData.odds && typeof oddsData.odds === 'object') {
+        const currentItems = this.itemsService.getItems();
+        const currentOdds = this.storage.getOdds() || {};
+        const newOdds: OddsMap = {};
+        
+        // Keep existing odds for items not in import
+        currentItems.forEach((item: SlotItem) => {
+          if (oddsData.odds[item.name] !== undefined) {
+            // Use imported odds if available
+            newOdds[item.name] = oddsData.odds[item.name];
+          } else if (currentOdds[item.name] !== undefined) {
+            // Keep existing odds if item not in import
+            newOdds[item.name] = currentOdds[item.name];
+          } else {
+            // Default to 1 if neither exists
+            newOdds[item.name] = 1;
+          }
+        });
+        
+        this.storage.setOdds(newOdds);
+      }
+      
+      // Import roller count if present and valid
+      if (typeof oddsData.rollerCount === 'number' && oddsData.rollerCount >= 1 && oddsData.rollerCount <= 10) {
+        this.storage.setRollerCount(oddsData.rollerCount);
+      }
+      
+      // Import pity value if present and valid
+      if (typeof oddsData.pityValue === 'number' && oddsData.pityValue >= 0 && oddsData.pityValue <= 1000) {
+        this.storage.setPityValue(oddsData.pityValue);
+      }
+      
+      // Import pity enabled if present
+      if (typeof oddsData.pityEnabled === 'boolean') {
+        this.storage.setPityEnabled(oddsData.pityEnabled);
+      }
+      
+      this.showSavedOddsIndicator();
+      this.errorMessageSubject.next('');
+    } catch (error: any) {
+      this.errorMessageSubject.next(`Import failed: ${error.message || String(error)}`);
+    }
   }
 }

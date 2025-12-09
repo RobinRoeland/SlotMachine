@@ -634,4 +634,108 @@
   }
 }
 
+// Data Management Styles
+.data-management-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 12px 0;
+
+  .helper-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+  }
+
+  .data-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .action-item {
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-accent);
+      margin: 0 0 8px 0;
+    }
+
+    .action-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 0 0 16px 0;
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .export-button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+
+  .import-button {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+  }
+
+  .data-warning {
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.6;
+
+    strong {
+      font-weight: 700;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: #f59e0b;
+      color: #fbbf24;
+    }
+  }
+}
+
 

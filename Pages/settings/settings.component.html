@@ -397,6 +397,38 @@
     </div>
     </app-settings-section>
 
+    <!-- Data Management Section -->
+    <app-settings-section
+    title="Data Management"
+    description="Export or import all application data including items, odds, prizes, and settings."
+    >
+    <div class="data-management-settings">
+        <p class="helper-text">Use these options to backup or restore your complete slot machine configuration.</p>
+        
+        <div class="data-actions">
+        <div class="action-item">
+            <h4>Export All Data</h4>
+            <p class="action-description">Download a complete backup of all items, odds, prizes, and settings to a JSON file.</p>
+            <button class="export-button" (click)="exportAllData()">
+            📥 Export All Data
+            </button>
+        </div>
+
+        <div class="action-item">
+            <h4>Import All Data</h4>
+            <p class="action-description">Restore a complete backup from a JSON file. This will replace all current data.</p>
+            <button class="import-button" (click)="importAllData()">
+            📤 Import All Data
+            </button>
+        </div>
+        </div>
+
+        <div class="data-warning">
+        ⚠️ <strong>Warning:</strong> Importing data will completely replace your current items, odds, prizes, and settings. Make sure to export your current data first if you want to keep it.
+        </div>
+    </div>
+    </app-settings-section>
+
     <!-- Tutorial Section -->
     <!--<app-settings-section
     title="Help & Tutorial"

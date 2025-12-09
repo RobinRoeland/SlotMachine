@@ -33,13 +33,7 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
   rollerCount: number = 4;
   isRolling: boolean = false;
   
-  // After roll notification
-  showAfterRollNotification: boolean = false;
-  afterRollNotificationText: string = '';
-  afterRollNotificationEnabled: boolean = false;
-  
   private rollRequestSubscription?: Subscription;
-  private settingsSubscription?: Subscription;
 
   constructor(
     private storage: StorageService,
@@ -54,12 +48,6 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
     
     // Load items
     this.items = this.itemsService.getItems();
-    
-    // Subscribe to settings for after-roll notification
-    this.settingsSubscription = this.settingsService.settings$.subscribe(settings => {
-      this.afterRollNotificationEnabled = settings.showNotificationAfterRoll;
-      this.afterRollNotificationText = settings.notificationAfterRoll || 'Thanks for playing!';
-    });
     
     // Subscribe to Arduino roll requests (event stream)
     this.rollRequestSubscription = this.arduinoService.rollRequest$.subscribe(() => {
@@ -76,9 +64,6 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.rollRequestSubscription) {
       this.rollRequestSubscription.unsubscribe();
-    }
-    if (this.settingsSubscription) {
-      this.settingsSubscription.unsubscribe();
     }
   }
 
@@ -140,27 +125,6 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
       // Notify controls of loss
       if (this.controlsComponent) {
         this.controlsComponent.handleLoss();
-      }
-    }
-
-    // Show after-roll notification if enabled
-    if (this.afterRollNotificationEnabled) {
-      if (winningPrize) {
-        // For wins: show after-roll notification after 5 seconds (last 5 seconds of total 10)
-        setTimeout(() => {
-          this.showAfterRollNotification = true;
-          // Hide after 5 seconds
-          setTimeout(() => {
-            this.showAfterRollNotification = false;
-          }, 5000);
-        }, 5000);
-      } else {
-        // For losses: show immediately for 5 seconds
-        this.showAfterRollNotification = true;
-        
-        setTimeout(() => {
-          this.showAfterRollNotification = false;
-        }, 5000);
       }
     }
 

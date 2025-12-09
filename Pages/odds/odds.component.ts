@@ -33,4 +33,12 @@ export class OddsComponent extends BaseComponent {
   resetOdds(): void {
     this.oddsService.resetToEqual();
   }
+
+  exportOdds(): void {
+    this.oddsService.exportOdds();
+  }
+
+  async importOdds(): Promise<void> {
+    await this.oddsService.importOdds();
+  }
 }

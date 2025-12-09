@@ -1,0 +1,24 @@
+{
+  "prizes": [
+    {
+      "pattern": [
+        "Alternatief",
+        "Alternatief",
+        "Alternatief"
+      ],
+      "reward": "Free goodie"
+    },
+    {
+      "pattern": [
+        "Kite",
+        "Kite",
+        "Kite"
+      ],
+      "reward": "Vliegertje"
+    }
+  ],
+  "pityOdds": {
+    "0": 1,
+    "1": 1
+  }
+}

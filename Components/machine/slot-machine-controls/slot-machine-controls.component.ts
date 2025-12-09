@@ -22,22 +22,31 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
   @Output() rollStart = new EventEmitter<void>();
 
   isRolling: boolean = false;
-  rollButtonText: string = 'ROLL';
   rollButtonDisabled: boolean = false;
-  rollButtonClass: string = '';
   showArduinoInstruction: boolean = false;
-  arduinoInstructionText: string = 'Press the button to roll!';
-  arduinoInstructionClass: string = '';
 
-  // Button text templates from settings
-  private buttonTextRoll: string = 'ROLL';
-  private notificationTextRolling: string = 'ROLLING...';
-  private notificationTextWin: string = 'YOU WON: {reward}';
-  private buttonTextArduino: string = 'Press the button to roll!';
-  private showButtonTextRoll: boolean = true;
-  private showNotificationTextRolling: boolean = true;
-  private showNotificationTextWin: boolean = true;
-  private showButtonTextArduino: boolean = true;
+  // Notification overlays
+  showRollingNotification: boolean = false;
+  showWinNotification: boolean = false;
+  showAfterRollNotificationOverlay: boolean = false;
+  isInWinState: boolean = false;
+  rollingNotificationText: string = '';
+  winNotificationText: string = '';
+  afterRollNotificationText: string = '';
+
+  // Button text from settings
+  rollButtonText: string = '';
+  arduinoInstructionText: string = '';
+  
+  // Settings flags and templates
+  private notificationTextRolling: string = '';
+  private notificationTextWin: string = '';
+  private notificationTextAfterRoll: string = '';
+  public showButtonTextRoll: boolean = true;
+  private showNotificationRolling: boolean = true;
+  private showNotificationWin: boolean = true;
+  public showButtonTextArduino: boolean = true;
+  private showAfterRollNotification: boolean = true;
 
   // Arduino Controller (if available)
   private arduinoController: any = null;
@@ -62,23 +71,15 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(settings => {
         this.showButtonTextRoll = settings.showButtonTextRoll;
-        this.showNotificationTextRolling = settings.showNotificationRolling;
-        this.showNotificationTextWin = settings.showNotificationWin;
+        this.showNotificationRolling = settings.showNotificationRolling;
+        this.showNotificationWin = settings.showNotificationWin;
         this.showButtonTextArduino = settings.showButtonTextArduino;
-        this.buttonTextRoll = settings.buttonTextRoll || 'Roll';
-        this.notificationTextRolling = settings.notificationRolling || 'Rolling...';
-        this.notificationTextWin = settings.notificationWin || 'You won: {reward}!';
-        this.buttonTextArduino = settings.buttonTextArduino || 'Press the button to roll!';
-        
-        // Update current button text if not rolling or winning
-        if (!this.isRolling && this.rollButtonClass !== 'win-state') {
-          this.rollButtonText = this.showButtonTextRoll ? this.buttonTextRoll : '';
-        }
-        
-        // Update Arduino instruction text
-        if (this.showArduinoInstruction && !this.isRolling && this.arduinoInstructionClass !== 'win-state') {
-          this.arduinoInstructionText = this.showButtonTextArduino ? this.buttonTextArduino : '';
-        }
+        this.rollButtonText = settings.buttonTextRoll;
+        this.notificationTextRolling = settings.notificationRolling;
+        this.notificationTextWin = settings.notificationWin;
+        this.arduinoInstructionText = settings.buttonTextArduino;
+        this.showAfterRollNotification = settings.showNotificationAfterRoll;
+        this.notificationTextAfterRoll = settings.notificationAfterRoll;
       });
 
     // Check if Arduino control is enabled in settings using StorageService
@@ -88,29 +89,15 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
       // Subscribe to ArduinoService status to control instruction text
       this.statusSubscription = this.arduinoService.status$.subscribe(statusInfo => {
         this.showArduinoInstruction = statusInfo.status === 'connected';
-        // Keep the instruction text stable; it will be updated during roll/win/loss states
-        this.arduinoInstructionText = this.showArduinoInstruction ? (this.showButtonTextArduino ? this.buttonTextArduino : '') : (this.showButtonTextArduino ? this.buttonTextArduino : '');
-        this.arduinoInstructionClass = '';
       });
 
-      // Legacy fallback: if window ArduinoController exists, keep hooking it but prefer service events
-      if ((window as any).ArduinoController && (window as any).ArduinoUI) {
-        this.arduinoController = new (window as any).ArduinoController();
-        const arduinoUI = new (window as any).ArduinoUI(this.arduinoController);
-        arduinoUI.initialize();
-
-        // Set up status change callback for legacy controller
-        this.arduinoController.onStatusChange((status: string) => {
-          this.showArduinoInstruction = status === 'connected';
-        });
-
-        // Set up roll callback: legacy controller forwards presses to UI only
-        this.arduinoController.onRoll(() => {
-          if (!this.rollButtonDisabled && this.items && this.items.length > 0) {
-            this.onRollClick();
-          }
-        });
-      }
+      // Subscribe to Arduino roll requests
+      this.arduinoService.rollRequest$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        console.log('[Arduino rollRequest] Received');
+        if (!this.rollButtonDisabled && this.items && this.items.length > 0) {
+          this.onRollClick();
+        }
+      });
     }
   }
 
@@ -129,12 +116,12 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
 
     // Disable button during roll
     this.rollButtonDisabled = true;
-    this.rollButtonText = this.showNotificationTextRolling ? this.notificationTextRolling : '';
     this.isRolling = true;
-
-    // Update Arduino instruction
-    if (this.showArduinoInstruction) {
-      this.arduinoInstructionText = this.showNotificationTextRolling ? this.notificationTextRolling : '';
+    
+    // Show rolling notification if enabled and has text
+    if (this.showNotificationRolling && this.notificationTextRolling && this.notificationTextRolling.trim()) {
+      this.rollingNotificationText = this.notificationTextRolling;
+      this.showRollingNotification = true;
     }
 
     // Emit roll start event
@@ -142,18 +129,45 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
   }
 
   handleWin(reward: string): void {
-    // Format win text by replacing {reward} placeholder
-    const winText = this.showNotificationTextWin ? this.notificationTextWin.replace('{reward}', reward) : '';
-    
-    // Show win message
-    this.rollButtonText = winText;
-    this.rollButtonClass = 'win-state';
     this.isRolling = false;
-
-    // Update Arduino instruction for win
-    if (this.showArduinoInstruction) {
-      this.arduinoInstructionText = winText;
-      this.arduinoInstructionClass = 'win-state';
+    this.isInWinState = true;
+    
+    // Hide rolling notification
+    this.showRollingNotification = false;
+    
+    // Show win notification if enabled and has text
+    if (this.showNotificationWin && this.notificationTextWin && this.notificationTextWin.trim()) {
+      this.winNotificationText = this.notificationTextWin.replace('{reward}', reward);
+      this.showWinNotification = true;
+      
+      // Also show after-roll notification below win notification if enabled
+      if (this.showAfterRollNotification && this.notificationTextAfterRoll && this.notificationTextAfterRoll.trim()) {
+        this.afterRollNotificationText = this.notificationTextAfterRoll;
+        this.showAfterRollNotificationOverlay = true;
+      }
+      
+      // Hide both notifications and re-enable button after 10 seconds
+      setTimeout(() => {
+        this.showWinNotification = false;
+        this.showAfterRollNotificationOverlay = false;
+        this.isInWinState = false;
+        this.rollButtonDisabled = false;
+      }, 10000);
+    } else if (this.showAfterRollNotification && this.notificationTextAfterRoll && this.notificationTextAfterRoll.trim()) {
+      // No win notification but has after-roll notification
+      this.afterRollNotificationText = this.notificationTextAfterRoll;
+      this.showAfterRollNotificationOverlay = true;
+      
+      // Hide after 5 seconds and re-enable button
+      setTimeout(() => {
+        this.showAfterRollNotificationOverlay = false;
+        this.isInWinState = false;
+        this.rollButtonDisabled = false;
+      }, 5000);
+    } else {
+      // No notifications, immediately reset
+      this.isInWinState = false;
+      this.rollButtonDisabled = false;
     }
 
     // Send win result to Arduino (prefer ArduinoService if available)
@@ -162,22 +176,13 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
     } else if (this.arduinoController && this.arduinoController.isConnected) {
       this.arduinoController.sendResult(true, reward);
     }
-
-    // Reset after 10 seconds (5s win notification + 5s after-roll notification)
-    setTimeout(() => {
-      this.rollButtonDisabled = false;
-      this.rollButtonText = this.showButtonTextRoll ? this.buttonTextRoll : '';
-      this.rollButtonClass = '';
-      
-      if (this.showArduinoInstruction) {
-        this.arduinoInstructionText = this.showButtonTextArduino ? this.buttonTextArduino : '';
-        this.arduinoInstructionClass = '';
-      }
-    }, 10000);
   }
 
   handleLoss(): void {
     this.isRolling = false;
+
+    // Hide rolling notification
+    this.showRollingNotification = false;
 
     // Send lose result to Arduino (prefer ArduinoService if available)
     if (this.arduinoService && (this.arduinoService as any).getConnectionStatus && (this.arduinoService as any).getConnectionStatus()) {
@@ -186,13 +191,19 @@ export class SlotMachineControlsComponent implements OnInit, OnDestroy {
       this.arduinoController.sendResult(false);
     }
 
-    // Re-enable button
-    this.rollButtonDisabled = false;
-    this.rollButtonText = this.showButtonTextRoll ? this.buttonTextRoll : '';
-
-    // Restore Arduino instruction
-    if (this.showArduinoInstruction) {
-      this.arduinoInstructionText = this.showButtonTextArduino ? this.buttonTextArduino : '';
+    // Show after-roll notification if enabled
+    if (this.showAfterRollNotification && this.notificationTextAfterRoll && this.notificationTextAfterRoll.trim()) {
+      this.afterRollNotificationText = this.notificationTextAfterRoll;
+      this.showAfterRollNotificationOverlay = true;
+      
+      // Hide after 5 seconds and re-enable button
+      setTimeout(() => {
+        this.showAfterRollNotificationOverlay = false;
+        this.rollButtonDisabled = false;
+      }, 5000);
+    } else {
+      // No notification, immediately re-enable button
+      this.rollButtonDisabled = false;
     }
   }
 }

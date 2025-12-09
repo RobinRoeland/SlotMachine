@@ -1,3 +1,47 @@
+.roll-controls {
+    margin: 10px auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.rolling-notification,
+.win-notification,
+.after-roll-notification {
+    margin: 10px auto;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+    z-index: 100;
+    white-space: nowrap;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.rolling-notification {
+    background: var(--border-color);
+    box-shadow: 0 4px 15px var(--border-color);
+}
+
+.win-notification {
+    background: linear-gradient(135deg, #10b981 0%, #14c794 100%);
+    box-shadow: 0 4px 15px #14a77d;
+    animation: slideIn 0.3s ease-out, pulse 2s ease-in-out infinite;
+}
+
+.after-roll-notification {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
 #rollButton {
     padding: 15px 40px;
     font-size: 20px;
@@ -28,11 +72,6 @@
     animation: none;
 }
 
-#rollButton.win-state {
-    background: linear-gradient(135deg, #10b981 0%, #14c794 100%);
-    animation: none;
-}
-
 .arduino-instruction {
     padding: 15px 40px;
     font-size: 20px;
@@ -48,9 +87,26 @@
     z-index: 10;
 }
 
-.arduino-instruction.win-state {
-    background: linear-gradient(135deg, #10b981 0%, #14c794 100%);
-    animation: none;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
 }
 
 @keyframes pulse-glow {
@@ -67,6 +123,11 @@
 }
 /* Tablet */
 @media (max-width: 1024px) {
+    .rolling-notification,
+    .win-notification {
+        padding: 12px 35px;
+        font-size: 18px;
+    }
     
     #rollButton,
     .arduino-instruction {
@@ -77,6 +138,11 @@
 
 /* Mobile landscape */
 @media (max-width: 768px) {
+    .rolling-notification,
+    .win-notification {
+        padding: 10px 30px;
+        font-size: 16px;
+    }
     
     #rollButton,
     .arduino-instruction {
@@ -87,6 +153,12 @@
 
 /* Mobile portrait */
 @media (max-width: 480px) {
+    .rolling-notification,
+    .win-notification {
+        padding: 8px 25px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
     
     #rollButton,
     .arduino-instruction {

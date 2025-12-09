@@ -6,11 +6,6 @@
         (rollComplete)="onRollComplete($event)">
     </app-slot-machine-rollers>
     
-    <!-- After Roll Notification -->
-    <div class="after-roll-notification" *ngIf="showAfterRollNotification">
-        {{ afterRollNotificationText }}
-    </div>
-    
     <slot-machine-controls 
         [items]="items"
         (rollStart)="onRollStart()">

@@ -2,6 +2,22 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StorageService } from './storage.service';
+import { FileService } from './file.service';
+
+/**
+ * Full export data structure
+ */
+export interface FullExportData {
+  items: any[];
+  odds: { [key: string]: number };
+  prizes: any[];
+  pityOdds: { [key: number]: number };
+  rollerCount: number;
+  pityValue: number;
+  settings: AppSettings;
+  exportDate: string;
+  version: string;
+}
 
 /**
  * Settings model
@@ -50,9 +66,9 @@ export class SettingsService {
     showNotificationWin: true,
     showButtonTextArduino: true,
     showNotificationAfterRoll: false,
-    buttonTextRoll: 'ROLL',
-    notificationRolling: 'ROLLING...',
-    notificationWin: 'YOU WON: {reward}',
+    buttonTextRoll: 'Roll',
+    notificationRolling: 'Rolling...',
+    notificationWin: 'You won: {reward}!',
     buttonTextArduino: 'Press the button to roll!',
     notificationAfterRoll: 'Thanks for playing!'
   };
@@ -65,7 +81,7 @@ export class SettingsService {
   private savedSubject = new BehaviorSubject<boolean>(false);
   public saved$ = this.savedSubject.asObservable();
 
-  constructor(private storageService: StorageService) {
+  constructor(private storageService: StorageService, private fileService: FileService) {
 
     const hasSettings = Object.values(storageService.keys).every((key: string) => {
       const item = storageService.getItem(key);
@@ -263,5 +279,83 @@ export class SettingsService {
     // Save to storage service (this will trigger the observables)
     this.saveSettings(this.DEFAULT_SETTINGS);
     this.showSavedIndicator();
+  }
+
+  /**
+   * Export all application data (items, odds, prizes, settings) to JSON file
+   */
+  exportAllData(): void {
+    try {
+      const exportData: FullExportData = {
+        items: this.storageService.getItems(),
+        odds: this.storageService.getOdds(),
+        prizes: this.storageService.getPrizes(),
+        pityOdds: this.storageService.getPityOdds(),
+        rollerCount: this.storageService.getRollerCount(),
+        pityValue: this.storageService.getPityValue(),
+        settings: this.getSettings(),
+        exportDate: new Date().toISOString(),
+        version: '1.0'
+      };
+      
+      this.fileService.exportJSON(exportData, `slot-machine-full-export-${Date.now()}.json`);
+    } catch (error: any) {
+      throw new Error(`Export failed: ${error.message || String(error)}`);
+    }
+  }
+
+  /**
+   * Import all application data from JSON file
+   */
+  async importAllData(): Promise<void> {
+    try {
+      const data = await this.fileService.importJSON();
+      
+      // Validate the imported data
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid data format');
+      }
+
+      const fullData = data as FullExportData;
+      
+      // Import items if present
+      if (Array.isArray(fullData.items)) {
+        this.storageService.setItems(fullData.items);
+      }
+      
+      // Import odds if present
+      if (fullData.odds && typeof fullData.odds === 'object') {
+        this.storageService.setOdds(fullData.odds);
+      }
+      
+      // Import prizes if present
+      if (Array.isArray(fullData.prizes)) {
+        this.storageService.setPrizes(fullData.prizes);
+      }
+      
+      // Import pity odds if present
+      if (fullData.pityOdds && typeof fullData.pityOdds === 'object') {
+        this.storageService.setPityOdds(fullData.pityOdds);
+      }
+      
+      // Import roller count if present and valid
+      if (typeof fullData.rollerCount === 'number' && fullData.rollerCount >= 1 && fullData.rollerCount <= 10) {
+        this.storageService.setRollerCount(fullData.rollerCount);
+      }
+      
+      // Import pity value if present and valid
+      if (typeof fullData.pityValue === 'number' && fullData.pityValue >= 0 && fullData.pityValue <= 1000) {
+        this.storageService.setPityValue(fullData.pityValue);
+      }
+      
+      // Import settings if present
+      if (fullData.settings && typeof fullData.settings === 'object') {
+        this.saveSettings(fullData.settings);
+      }
+      
+      this.showSavedIndicator();
+    } catch (error: any) {
+      throw new Error(`Import failed: ${error.message || String(error)}`);
+    }
   }
 }

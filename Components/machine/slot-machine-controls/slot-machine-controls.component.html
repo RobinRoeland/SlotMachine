@@ -1,18 +1,30 @@
 <div class="roll-controls">
+    <!-- Rolling Notification -->
+    <div class="rolling-notification" *ngIf="showRollingNotification">
+        {{ rollingNotificationText }}
+    </div>
+    
+    <!-- Win Notification -->
+    <div class="win-notification" *ngIf="showWinNotification">
+        {{ winNotificationText }}
+    </div>
+    
+    <!-- After Roll Notification -->
+    <div class="after-roll-notification" *ngIf="showAfterRollNotificationOverlay">
+        {{ afterRollNotificationText }}
+    </div>
+    
     <button 
         id="rollButton"
-        *ngIf="!showArduinoInstruction"
+        *ngIf="!showArduinoInstruction && showButtonTextRoll && !isRolling && !isInWinState"
         [disabled]="rollButtonDisabled"
-        [class.win-state]="rollButtonClass === 'win-state'"
         (click)="onRollClick()">
         {{ rollButtonText }}
     </button>
     <div 
         id="arduinoInstruction" 
-        class="arduino-instruction" 
-        [class.win-state]="arduinoInstructionClass === 'win-state'"
-        *ngIf="showArduinoInstruction">
-        <!-- keep for accessibility / extra info; the button now shows the instruction when connected -->
+        class="arduino-instruction"
+        *ngIf="showArduinoInstruction && showButtonTextArduino && !isRolling && !isInWinState">
         {{ arduinoInstructionText }}
     </div>
 </div>

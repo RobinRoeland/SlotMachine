@@ -355,4 +355,18 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   closeTutorial(): void {
     this.showTutorialModal = false;
   }
+
+  /**
+   * Export all application data
+   */
+  exportAllData(): void {
+    this.settingsService.exportAllData();
+  }
+
+  /**
+   * Import all application data
+   */
+  async importAllData(): Promise<void> {
+    await this.settingsService.importAllData();
+  }
 }

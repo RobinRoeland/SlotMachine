@@ -13,6 +13,8 @@
         <app-odds-list></app-odds-list>
         <div class="odds-controls">
           <button (click)="resetOdds()">Reset to Equal</button>
+          <button (click)="exportOdds()" class="export-button">Export Odds</button>
+          <button (click)="importOdds()" class="import-button">Import Odds</button>
           <span 
             *ngIf="errorMessage$ | async as error" 
             class="odds-error">
