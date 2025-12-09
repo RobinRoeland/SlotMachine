@@ -1,0 +1,177 @@
+/* ============================================
+   RESPONSIVE SIZING SYSTEM
+   Centralized viewport-based sizing for all components
+   ============================================ */
+
+:root {
+    /* ====== BASE VIEWPORT SIZES ====== */
+    --viewport-width: 100vw;
+    --viewport-height: 100vh;
+    --content-width: min(90vw, 1400px);
+    
+    /* ====== LAYOUT SPACING ====== */
+    --spacing-xs: calc(var(--viewport-width) * 0.005);     /* ~7px on 1400px */
+    --spacing-sm: calc(var(--viewport-width) * 0.01);      /* ~14px on 1400px */
+    --spacing-md: calc(var(--viewport-width) * 0.015);     /* ~21px on 1400px */
+    --spacing-lg: calc(var(--viewport-width) * 0.025);     /* ~35px on 1400px */
+    --spacing-xl: calc(var(--viewport-width) * 0.04);      /* ~56px on 1400px */
+    
+    /* ====== SIDEBAR SIZING ====== */
+    --sidebar-width: clamp(200px, 15vw, 280px);
+    --sidebar-header-height: clamp(80px, 12vh, 140px);
+    --sidebar-logo-size: calc(var(--sidebar-width) * 0.8);
+    --sidebar-nav-padding: calc(var(--sidebar-width) * 0.05);
+    --sidebar-nav-gap: calc(var(--sidebar-width) * 0.04);
+    --sidebar-toggle-size: clamp(40px, 4vw, 60px);
+    
+    /* ====== PAGE HEADER ====== */
+    --header-height: clamp(50px, 10vh, 100px);
+    --header-font-size: clamp(24px, 4vw, 48px);
+    
+    /* ====== CONTROL PANEL ====== */
+    --control-panel-height: clamp(40px, 6vh, 80px);
+    
+    /* ====== SLOT MACHINE SIZING ====== */
+    --slot-machine-height: min(50vh, 100vw * 0.5);
+    --slot-machine-width: min(60vw, var(--slot-machine-height) * 1.6);
+    
+    /* Roller sizing - relative to machine */
+    --roller-width: calc(var(--slot-machine-width) / 5);
+    --roller-height: calc(var(--slot-machine-height) * 0.75);
+    --roller-gap: calc(var(--slot-machine-width) * 0.015);
+    --roller-padding: calc(var(--roller-height) * 0.04);
+    --roller-border-radius: calc(var(--roller-width) * 0.08);
+    
+    /* Item sizing - relative to roller */
+    --item-size: calc(var(--roller-width) * 0.4);
+    --item-gap: calc(var(--roller-height) * 0.04);
+    
+    /* Control sizing - relative to machine */
+    --control-gap: calc(var(--slot-machine-height) * 0.02);
+    --button-padding-v: calc(var(--slot-machine-height) * 0.025);
+    --button-padding-h: calc(var(--slot-machine-width) * 0.05);
+    --button-font-size: clamp(14px, calc(var(--slot-machine-width) * 0.025), 24px);
+    --button-border-radius: calc(var(--slot-machine-width) * 0.015);
+    
+    /* ====== CARD COMPONENTS ====== */
+    --card-padding: clamp(12px, 2vw, 24px);
+    --card-gap: clamp(8px, 1.5vw, 20px);
+    --card-border-radius: clamp(8px, 1.2vw, 16px);
+    --card-margin: clamp(12px, 2vw, 30px);
+    
+    /* ====== GRID LAYOUTS ====== */
+    --grid-gap: clamp(10px, 1.5vw, 20px);
+    --grid-item-min-size: clamp(90px, 12vw, 160px);
+    --grid-item-padding: clamp(8px, 1.5vw, 16px);
+    --grid-item-image-size: clamp(50px, 8vw, 100px);
+    
+    /* ====== MODAL/OVERLAY SIZING ====== */
+    --modal-width: min(90vw, 600px);
+    --modal-max-width: 90vw;
+    --modal-padding: clamp(16px, 3vw, 32px);
+    --modal-gap: clamp(12px, 2vw, 24px);
+    
+    /* ====== TYPOGRAPHY SCALE ====== */
+    --font-size-xs: clamp(11px, 1.2vw, 14px);
+    --font-size-sm: clamp(12px, 1.4vw, 16px);
+    --font-size-md: clamp(14px, 1.6vw, 18px);
+    --font-size-lg: clamp(16px, 2vw, 24px);
+    --font-size-xl: clamp(20px, 2.5vw, 32px);
+    --font-size-xxl: clamp(24px, 3.5vw, 48px);
+    
+    /* ====== FORM ELEMENTS ====== */
+    --input-height: clamp(36px, 5vh, 48px);
+    --input-padding: clamp(8px, 1.5vw, 16px);
+    --input-font-size: clamp(14px, 1.6vw, 18px);
+    --input-border-radius: clamp(6px, 1vw, 12px);
+    
+    /* ====== ICON SIZES ====== */
+    --icon-size-sm: clamp(16px, 2vw, 24px);
+    --icon-size-md: clamp(24px, 3vw, 36px);
+    --icon-size-lg: clamp(32px, 4vw, 48px);
+    
+    /* ====== BORDERS & SHADOWS ====== */
+    --border-width: clamp(1px, 0.15vw, 3px);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ====== TABLET ADJUSTMENTS ====== */
+@media (max-width: 1024px) {
+    :root {
+        --slot-machine-height: min(45vh, 100vw * 0.55);
+        --header-height: clamp(50px, 8vh, 80px);
+        --sidebar-width: clamp(150px, 18vw, 220px);
+    }
+}
+
+/* ====== MOBILE LANDSCAPE ====== */
+@media (max-width: 768px) {
+    :root {
+        --slot-machine-height: min(45vh, 100vw * 0.6);
+        --header-height: clamp(50px, 7vh, 70px);
+        --sidebar-width: clamp(120px, 20vw, 180px);
+        --content-width: 95vw;
+        
+        /* Tighter spacing on mobile */
+        --spacing-lg: calc(var(--viewport-width) * 0.02);
+        --spacing-xl: calc(var(--viewport-width) * 0.03);
+    }
+}
+
+/* ====== MOBILE PORTRAIT ====== */
+@media (max-width: 480px) {
+    :root {
+        --slot-machine-height: min(50vh, 100vw * 0.7);
+        --slot-machine-width: min(85vw, var(--slot-machine-height) * 1.4);
+        --header-height: clamp(40px, 6vh, 60px);
+        --sidebar-width: 100vw;
+        --content-width: 98vw;
+        
+        /* Very tight spacing on small mobile */
+        --spacing-sm: calc(var(--viewport-width) * 0.008);
+        --spacing-md: calc(var(--viewport-width) * 0.012);
+        --spacing-lg: calc(var(--viewport-width) * 0.018);
+        --spacing-xl: calc(var(--viewport-width) * 0.025);
+    }
+}
+
+/* ====== EXTRA SMALL SCREENS ====== */
+@media (max-width: 360px) {
+    :root {
+        --slot-machine-height: min(45vh, 100vw);
+        --header-height: clamp(35px, 5vh, 50px);
+        
+        /* Minimal spacing */
+        --spacing-xs: calc(var(--viewport-width) * 0.004);
+        --spacing-sm: calc(var(--viewport-width) * 0.006);
+        --spacing-md: calc(var(--viewport-width) * 0.01);
+    }
+}
+
+/* ====== UTILITY CLASSES ====== */
+.responsive-container {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-item-min-size), 1fr));
+    gap: var(--grid-gap);
+}
+
+.responsive-flex-gap-sm { gap: var(--spacing-sm); }
+.responsive-flex-gap-md { gap: var(--spacing-md); }
+.responsive-flex-gap-lg { gap: var(--spacing-lg); }
+
+.responsive-padding-sm { padding: var(--spacing-sm); }
+.responsive-padding-md { padding: var(--spacing-md); }
+.responsive-padding-lg { padding: var(--spacing-lg); }
+
+.responsive-margin-sm { margin: var(--spacing-sm); }
+.responsive-margin-md { margin: var(--spacing-md); }
+.responsive-margin-lg { margin: var(--spacing-lg); }

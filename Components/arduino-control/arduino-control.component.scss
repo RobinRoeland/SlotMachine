@@ -2,7 +2,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: var(--spacing-md);
+    height: var(--control-panel-height);
+    padding: 0 var(--spacing-md);
 
     &.disabled {
         opacity: 0.5;

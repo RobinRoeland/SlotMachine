@@ -1,20 +1,20 @@
 .roller {
-    padding: 20px 0;
+    padding: var(--roller-padding, 20px) 0;
     height: 100%;
-    max-height: 450px;
+    max-height: var(--roller-height, 450px);
     background: var(--card-background-solid);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border: 2px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: var(--roller-border-radius, 16px);
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: var(--item-gap, 18px);
     position: relative;
     overflow: hidden;
     justify-content: center;
-    min-width: 220px;
-    width: 220px;
+    min-width: var(--roller-width, 220px);
+    width: var(--roller-width, 220px);
     flex-shrink: 0;
 }
 
@@ -25,7 +25,7 @@
 .roller-content {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: var(--item-gap, 18px);
     align-items: center;
     will-change: transform;
 }
@@ -60,8 +60,8 @@
 }
 
 .roller img {
-    width: 90px;
-    height: 90px;
+    width: var(--item-size, 90px);
+    height: var(--item-size, 90px);
     padding: 3%;
     align-self: center;
     transition: all 0.3s ease;
@@ -99,116 +99,15 @@
     filter: none !important;
 }
 
-/* Tablet */
-@media (max-width: 1024px) {
-    .roller {
-        min-width: 180px;
-        width: 180px;
-        max-height: 350px;
-        padding: 15px 0;
-        gap: 14px;
-    }
-    
-    .roller-content {
-        gap: 14px;
-    }
-    
-    .roller img,
-    .roller img.center-item,
-    .roller img.edge-item {
-        width: 75px;
-        height: 75px;
-        max-width: 75px;
-        max-height: 75px;
-    }
-}
-
-/* Mobile landscape */
+/* Adjust gradient overlay height on small screens */
 @media (max-width: 768px) {
-    .roller {
-        min-width: 110px;
-        width: 110px;
-        max-height: 240px;
-        padding: 10px 0;
-        gap: 10px;
-        border-radius: 12px;
-    }
-    
-    .roller-content {
-        gap: 10px;
-    }
-    
-    .roller img,
-    .roller img.center-item,
-    .roller img.edge-item {
-        width: 48px;
-        height: 48px;
-        max-width: 48px;
-        max-height: 48px;
-    }
-    
     .roller::before,
     .roller::after {
         height: 30%;
     }
 }
 
-/* Mobile portrait */
-@media (max-width: 480px) {
-    .roller {
-        min-width: 70px;
-        width: 70px;
-        max-height: 200px;
-        padding: 8px 0;
-        gap: 7px;
-        border-radius: 10px;
-    }
-    
-    .roller-content {
-        gap: 7px;
-    }
-    
-    .roller img,
-    .roller img.center-item,
-    .roller img.edge-item {
-        width: 36px;
-        height: 36px;
-        max-width: 36px;
-        max-height: 36px;
-        padding: 2%;
-    }
-    
-    .roller::before,
-    .roller::after {
-        height: 30%;
-    }
-}
-
-/* Extra small screens */
 @media (max-width: 360px) {
-    .roller {
-        min-width: 60px;
-        width: 60px;
-        max-height: 170px;
-        padding: 6px 0;
-        gap: 6px;
-        border-radius: 8px;
-    }
-    
-    .roller-content {
-        gap: 6px;
-    }
-    
-    .roller img,
-    .roller img.center-item,
-    .roller img.edge-item {
-        width: 30px;
-        height: 30px;
-        max-width: 30px;
-        max-height: 30px;
-        padding: 1%;
-    }
-    
     .roller::before,
     .roller::after {
         height: 25%;

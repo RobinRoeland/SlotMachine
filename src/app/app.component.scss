@@ -5,8 +5,8 @@
 }
 
 side-bar {
-    flex: 0 0 15%;
-    min-width: 200px;
+    flex: 0 0 var(--sidebar-width);
+    min-width: var(--sidebar-width);
 }
 
 .content {
@@ -16,58 +16,24 @@ side-bar {
 
 .header {
     text-align: center;
-    height: 80px;
+    height: var(--header-height);
     color: var(--text-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--spacing-md);
 
     h1 {
-        font-size: 48px;
+        font-size: var(--header-font-size);
         font-weight: 300;
         letter-spacing: -0.5px;
+        margin: 0;
+        line-height: 1.2;
     }
 }
 
-/* Tablet and smaller screens */
-@media (max-width: 1024px) {
-    side-bar {
-        flex: 0 0 180px;
-        min-width: 180px;
-    }
-    
-    .content {
-        overflow-y: auto;
-    }
-}
-
-/* Mobile landscape and smaller tablets */
-@media (max-width: 768px) {
-    .header h1 {
-        font-size: 28px;
-    }
-    
-    .header {
-        height: 60px;
-    }
-    
-    side-bar {
-        flex: 0 0 150px;
-        min-width: 150px;
-    }
-    
-    .content {
-        overflow-y: auto;
-    }
-}
-
-/* Mobile portrait */
+/* Mobile portrait - sidebar becomes full overlay */
 @media (max-width: 480px) {
-    .header h1 {
-        font-size: 24px;
-    }
-    
-    .header {
-        height: 50px;
-    }
-    
     side-bar {
         position: fixed;
         left: 0;
@@ -81,7 +47,7 @@ side-bar {
     
     .content {
         overflow-y: auto;
-        padding-bottom: 20px;
+        padding-bottom: var(--spacing-lg);
     }
 }
 

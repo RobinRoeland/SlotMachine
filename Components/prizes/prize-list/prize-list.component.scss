@@ -1,84 +1,55 @@
 /* Prize Groups */
 .prize-group {
-  margin-bottom: 30px;
-  padding: 20px;
-  border: 3px solid var(--border-color);
-  border-radius: 16px;
+  margin-bottom: var(--card-margin);
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--card-border-radius);
   background: var(--card-background);
-  box-shadow: 0 4px 15px var(--border-color);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
 }
 
 .prize-group:hover {
   border-color: var(--border-color);
-  box-shadow: 0 6px 20px var(--border-color);
+  box-shadow: var(--shadow-lg);
 }
 
 .prize-group-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--border-color);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: var(--border-width) solid var(--border-color);
 }
 
 .prize-group-header h3 {
   margin: 0;
   color: var(--text-accent);
-  font-size: 20px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
 }
 
 .prize-group-header .prize-count {
   color: var(--color-secondary);
   font-weight: 600;
-  font-size: 14px;
-  padding: 6px 14px;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
   background: var(--border-color);
-  border-radius: 20px;
+  border-radius: calc(var(--card-border-radius) * 1.5);
 }
 
 .prize-group-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--card-gap);
 }
 
-/* Responsive Design */
+/* Mobile adjustments */
 @media (max-width: 768px) {
-  .prize-group {
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-
   .prize-group-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
-  }
-
-  .prize-group-header h3 {
-    font-size: 18px;
-  }
-
-  .prize-group-header .prize-count {
-    font-size: 13px;
-    padding: 5px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .prize-group {
-    padding: 12px;
-    margin-bottom: 15px;
-  }
-
-  .prize-group-header h3 {
-    font-size: 16px;
-  }
-
-  .prize-group-content {
-    gap: 10px;
+    gap: var(--spacing-sm);
   }
 }

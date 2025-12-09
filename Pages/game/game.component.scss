@@ -3,12 +3,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 2rem;
-    padding: 0 20px;
-    gap: 20px;
-    flex: 1;
-    height: 75%;
+    height: calc(100vh - var(--header-height) - var(--control-panel-height));
     min-height: 0;
+    overflow-y: auto;
 }
 
 .game-container {
@@ -16,88 +13,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: var(--spacing-md);
     flex: 1;
-    min-height: 0;
-}
-
-/* Large screens - prizes below slot machine */
-@media (max-width: 1600px) {
-    .game-layout {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        flex: 1;
-    }
-    
-    .game-container {
-        max-width: 800px;
-        flex: 1;
-        justify-content: center;
-    }
-}
-
-/* Tablet and smaller screens */
-@media (max-width: 1024px) {
-    .game-layout {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        padding: 0 15px;
-    }
-    
-    .game-container {
-        gap: 12px;
-    }
-}
-
-/* Mobile landscape and smaller tablets */
-@media (max-width: 768px) {
-    .game-layout {
-        margin-top: 1rem;
-        padding: 0 10px;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    
-    .game-container {
-        gap: 10px;
-    }
 }
 
 /* Mobile portrait */
 @media (max-width: 480px) {
     .game-layout {
-        margin-top: 0.5rem;
-        padding: 0 5px;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        min-height: 0;
-        overflow-x: hidden;
-        flex: 1;
-    }
-    
-    .game-container {
-        gap: 8px;
-        overflow: hidden;
-        flex: 1;
-        justify-content: center;
-    }
-}
-
-/* Extra small screens */
-@media (max-width: 360px) {
-    .game-layout {
-        margin-top: 0.5rem;
-        padding: 0 3px;
-        gap: 12px;
+        padding: var(--spacing-xs);
+        gap: var(--spacing-sm);
         overflow-x: hidden;
     }
     
     .game-container {
-        gap: 6px;
+        gap: var(--spacing-sm);
         overflow: hidden;
     }
 }

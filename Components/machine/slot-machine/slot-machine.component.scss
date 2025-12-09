@@ -1,10 +1,10 @@
 .slot-machine {
     height: auto;
-    max-height: 50vh;
+    max-height: var(--slot-machine-height);
     width: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--control-gap);
     align-items: center;
     margin: 0 auto;
     position: relative;
@@ -33,59 +33,28 @@
 /* Tablet */
 @media (max-width: 1024px) {
     .slot-machine {
-        height: 45vh;
-    }
-    
-    .after-roll-notification {
-        padding: 18px 45px;
-        font-size: 22px;
-        min-width: 220px;
+        --slot-machine-height: min(80vh, 100vw * 0.85);
     }
 }
 
 /* Mobile landscape */
 @media (max-width: 768px) {
     .slot-machine {
-        height: 40vh;
-        gap: 8px;
-    }
-    
-    .after-roll-notification {
-        padding: 16px 40px;
-        font-size: 20px;
-        min-width: 200px;
-        border-radius: 12px;
+        --slot-machine-height: min(75vh, 100vw * 0.9);
     }
 }
 
 /* Mobile portrait */
 @media (max-width: 480px) {
     .slot-machine {
-        height: auto;
-        max-height: 40vh;
-        gap: 5px;
-    }
-    
-    .after-roll-notification {
-        padding: 14px 35px;
-        font-size: 18px;
-        min-width: 180px;
-        border-radius: 10px;
+        --slot-machine-height: min(70vh, 100vw * 0.95);
+        --slot-machine-width: min(95vw, var(--slot-machine-height) * 1.4);
     }
 }
 
 /* Extra small screens */
 @media (max-width: 360px) {
     .slot-machine {
-        height: auto;
-        max-height: 35vh;
-        gap: 4px;
-    }
-    
-    .after-roll-notification {
-        padding: 12px 30px;
-        font-size: 16px;
-        min-width: 160px;
-        border-radius: 8px;
+        --slot-machine-height: min(65vh, 100vw);
     }
 }

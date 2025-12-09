@@ -16,7 +16,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--spacing-xs);
     background: var(--card-background);
     backdrop-filter: blur(10px);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
@@ -34,13 +34,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 0;
+    padding: var(--spacing-sm) 0;
     width: 100%;
+    height: var(--sidebar-header-height);
 }
 
 .sidebar .header .logo-container {
     background: var(--logo-background);
-    padding: 6px;
+    padding: var(--spacing-xs);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     width: 80%;
     display: flex;
@@ -57,21 +58,21 @@
 }
 
 .sidebar .header h1 {
-    font-size: 32px;
+    font-size: clamp(20px, 3vw, 32px);
     font-weight: 300;
     letter-spacing: 0.5px;
 }
 
 #toggleSidebar {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
     z-index: 1001;
     transition: left 300ms cubic-bezier(0.4, 0, 0.2, 1), 
                 opacity 200ms cubic-bezier(0.4, 0, 0.2, 1),
                 transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    width: 50px;
-    height: 50px;
+    width: var(--sidebar-toggle-size);
+    height: var(--sidebar-toggle-size);
     padding: 0;
     border: none;
     background: var(--card-background-solid);
@@ -100,7 +101,7 @@
 }
 
 #toggleSidebar[aria-expanded="true"] {
-    left: calc(100% + 10px);
+    left: calc(var(--sidebar-width) + var(--spacing-sm));
 }
 
 #toggleSidebar:hover,
@@ -113,8 +114,8 @@
 .nav {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    gap: 8px;
+    padding: var(--sidebar-nav-padding);
+    gap: var(--sidebar-nav-gap);
 }
 
 /* Collapsed sidebar: slide off screen */
@@ -136,9 +137,10 @@
     color: var(--text-accent);
     text-decoration: none;
     background: var(--card-background-solid);
-    padding: 10px 12px;
-    border-radius: 8px;
+    padding: var(--spacing-sm) calc(var(--spacing-sm) * 1.2);
+    border-radius: var(--input-border-radius);
     font-weight: 500;
+    font-size: var(--font-size-sm);
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
@@ -150,15 +152,15 @@
     left: 0;
     top: 0;
     height: 100%;
-    width: 3px;
+    width: var(--border-width);
     background: var(--color-primary-light);
-    transform: translateX(-3px);
+    transform: translateX(calc(-1 * var(--border-width)));
     transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav a:hover {
     background: var(--card-background-solid);
-    transform: translateX(3px);
+    transform: translateX(var(--border-width));
     box-shadow: 0 2px 8px var(--border-color);
 }
 
@@ -177,66 +179,7 @@
     transform: translateX(0);
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .sidebar .header {
-        padding: 8px 0;
-    }
-
-    .sidebar .header h1 {
-        font-size: 28px;
-    }
-
-    #toggleSidebar {
-        width: 45px;
-        height: 45px;
-    }
-
-    #toggleSidebar[aria-expanded="true"] {
-        left: calc(180px - 55px);
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-    }
-
-    .sidebar .header {
-        padding: 6px 0;
-    }
-
-    .sidebar .header h1 {
-        font-size: 24px;
-    }
-
-    .sidebar .header .logo-container {
-        width: 75%;
-        padding: 5px;
-    }
-
-    #toggleSidebar {
-        width: 40px;
-        height: 40px;
-        top: 8px;
-        left: 8px;
-    }
-
-    #toggleSidebar[aria-expanded="true"] {
-        left: calc(150px - 48px);
-    }
-
-    .nav {
-        padding: 8px;
-        gap: 6px;
-    }
-
-    .nav a {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-}
-
+/* Mobile portrait - sidebar becomes full screen overlay */
 @media (max-width: 480px) {
     .sidebar {
         width: 100%;
@@ -246,40 +189,17 @@
         z-index: 999;
     }
 
-    .sidebar .header {
-        padding: 5px 0;
-    }
-
-    .sidebar .header h1 {
-        font-size: 20px;
-    }
-
     .sidebar .header .logo-container {
         width: 70%;
-        padding: 4px;
         border-radius: 8px;
     }
 
     #toggleSidebar {
-        width: 35px;
-        height: 35px;
-        top: 6px;
-        left: 6px;
         position: fixed;
     }
 
     #toggleSidebar[aria-expanded="true"] {
-        left: calc(100% - 45px);
-    }
-
-    .nav {
-        padding: 6px;
-        gap: 5px;
-    }
-
-    .nav a {
-        padding: 6px 8px;
-        font-size: 13px;
-        border-radius: 6px;
+        left: calc(100% - var(--sidebar-toggle-size) - var(--spacing-md));
+        display: none; /* Hide when sidebar open on mobile */
     }
 }
