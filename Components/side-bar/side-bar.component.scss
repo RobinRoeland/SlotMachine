@@ -36,25 +36,24 @@
     justify-content: center;
     padding: var(--spacing-sm) 0;
     width: 100%;
-    height: var(--sidebar-header-height);
 }
 
 .sidebar .header .logo-container {
     background: var(--logo-background);
     padding: var(--spacing-xs);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    width: 80%;
+    max-width: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10%;
+    border-radius: 12px;
 }
 
 .sidebar .header .sidebar-logo {
     width: 100%;
-    height: auto;
-    object-fit: contain;
+    height: auto;    
     display: block;
+    border-radius: inherit;
 }
 
 .sidebar .header h1 {
