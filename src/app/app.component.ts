@@ -68,17 +68,19 @@ export class AppComponent {
 
     // Show tutorial if not completed AND we're on a game route
     if (!this.tutorialService.isTutorialCompleted()) {
-      // Show tutorial after a short delay for better UX and to allow components to initialize
+      // Show tutorial after a longer delay for GitHub Pages
       setTimeout(() => {
         const currentUrl = this.router.url;
         const game = this.gamesService.getGameByRoute(currentUrl);
         
         // Only show tutorial if we're on a game route
         if (game) {
-          this.tutorialService.loadTutorialForGame(game.id);
-          this.tutorialService.showTutorialModal();
+          const loaded = this.tutorialService.loadTutorialForGame(game.id);
+          if (loaded && this.tutorialService.steps.length > 0) {
+            this.tutorialService.showTutorialModal();
+          }
         }
-      }, 800);
+      }, 1200);
     }
   }
 
