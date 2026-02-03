@@ -7,89 +7,16 @@
     </span>
     </div>
 
-    <!-- Display Settings Section -->
+    <!-- General Settings Section -->
     <app-settings-section
-    title="Display Settings"
-    description="Configure what is displayed on the play page."
+    title="General Settings"
+    description="Configure the general appearance and branding of the application."
     >
-    <app-setting-item
-        title="Show Prizes List"
-        description="Display the list of available prizes on the right side of the play page."
-    >
-        <app-toggle-switch
-        [checked]="settings.showPrizesList"
-        (checkedChange)="onShowPrizesListChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <app-setting-item
-        title="Show Win Chances"
-        description="Display the probability of winning each prize in the prizes list."
-        [disabled]="isOddsDisabled"
-    >
-        <app-toggle-switch
-        [checked]="settings.showOdds"
-        [disabled]="isOddsDisabled"
-        (checkedChange)="onShowOddsChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-    </app-settings-section>
-
-    <!-- Pity System Section -->
-    <app-settings-section
-    title="Pity System"
-    description="Guarantee a win after a certain number of spins without winning."
-    >
-    <app-setting-item
-        title="Enable Pity System"
-        description="Automatically grant a win after reaching the pity threshold set in Edit Odds."
-    >
-        <app-toggle-switch
-        [checked]="settings.enablePitySystem"
-        (checkedChange)="onEnablePitySystemChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <app-setting-item
-        title="Show Pity Warning"
-        description="Display a warning message when the next roll is guaranteed to be a win."
-        [disabled]="!settings.enablePitySystem"
-    >
-        <app-toggle-switch
-        [checked]="settings.showPityWarning"
-        [disabled]="!settings.enablePitySystem"
-        (checkedChange)="onShowPityWarningChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-    </app-settings-section>
-
-    <!-- Arduino Control Section -->
-    <app-settings-section
-    title="Arduino Control"
-    description="Enable external Arduino control for the slot machine."
-    >
-    <app-setting-item
-        title="Enable Arduino Control"
-        description="Allow triggering rolls via Arduino board connected through USB. Requires a supported browser (Chrome, Edge, Opera)."
-        [class.disabled]="isMobile"
-    >
-        <app-toggle-switch
-        [checked]="settings.enableArduinoControl"
-        [disabled]="isMobile"
-        (checkedChange)="onEnableArduinoControlChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-    <div *ngIf="isMobile" class="arduino-disabled-note">
-        ⚠ Arduino control is not available on mobile devices
-    </div>
-    </app-settings-section>
-
-    <!-- Color Theme Section -->
-    <app-settings-section
-    title="Color Theme"
-    description="Choose the color theme for the application."
-    >
-    <div class="theme-settings">
+    <!-- Color Theme Subsection -->
+    <div class="subsection">
+        <h3 class="subsection-title">Color Theme</h3>
+        <p class="subsection-description">Choose the color theme for the application.</p>
+        <div class="theme-settings">
         <p class="helper-text">Select a color theme to change the appearance of the application.</p>
         
         <!-- Theme Options Grid -->
@@ -105,166 +32,16 @@
             <div class="selected-indicator">✓</div>
         </div>
         </div>
-    </div>
-    </app-settings-section>
-
-    <!-- Text Customization Section -->
-    <app-settings-section
-    title="Text Customization"
-    description="Customize what text and notifications appear during each game state. Toggle to show/hide text for each state."
-    >
-    <!-- Ready State Text -->
-    <app-setting-item
-        title="Ready to Roll State"
-        description="Show text when the game is ready and waiting for you to click roll."
-    >
-        <app-toggle-switch
-        [checked]="settings.showButtonTextRoll"
-        (checkedChange)="onShowButtonTextRollChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <div class="button-text-settings" *ngIf="settings.showButtonTextRoll">
-        <div class="text-input-group">
-        <label for="buttonTextRoll">Text to Display</label>
-        <input 
-            type="text" 
-            id="buttonTextRoll"
-            class="text-input"
-            [value]="settings.buttonTextRoll"
-            (blur)="onButtonTextRollChange($any($event.target).value)"
-            placeholder="ROLL"
-        />
-        <p class="input-hint">💡 Appears on the button when you can click to start rolling</p>
         </div>
     </div>
 
-    <hr class="button-text-divider" *ngIf="settings.showButtonTextRoll" />
+    <hr class="subsection-divider" />
 
-    <!-- Rolling State Text -->
-    <app-setting-item
-        title="Currently Rolling State"
-        description="Show text while the slot machine reels are actively spinning."
-    >
-        <app-toggle-switch
-        [checked]="settings.showNotificationRolling"
-        (checkedChange)="onShowNotificationRollingChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <div class="button-text-settings" *ngIf="settings.showNotificationRolling">
-        <div class="text-input-group">
-        <label for="notificationRolling">Text to Display</label>
-        <input 
-            type="text" 
-            id="notificationRolling"
-            class="text-input"
-            [value]="settings.notificationRolling"
-            (blur)="onNotificationRollingChange($any($event.target).value)"
-            placeholder="ROLLING..."
-        />
-        <p class="input-hint">💡 Appears while the reels are in motion (button is disabled)</p>
-        </div>
-    </div>
-
-    <hr class="button-text-divider" *ngIf="settings.showNotificationRolling" />
-
-    <!-- Win Notification -->
-    <app-setting-item
-        title="Win Result State"
-        description="Show a notification when a winning combination is hit and a prize is won."
-    >
-        <app-toggle-switch
-        [checked]="settings.showNotificationWin"
-        (checkedChange)="onShowNotificationWinChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <div class="button-text-settings" *ngIf="settings.showNotificationWin">
-        <div class="text-input-group">
-        <label for="notificationWin">Text to Display</label>
-        <input 
-            type="text" 
-            id="notificationWin"
-            class="text-input"
-            [value]="settings.notificationWin"
-            (blur)="onNotificationWinChange($any($event.target).value)"
-            placeholder="YOU WON: {reward}"
-        />
-        <p class="input-hint">💡 Appears as a notification when you win. Use "{{ '{reward}' }}" to dynamically show the prize name.</p>
-        </div>
-    </div>
-
-    <hr class="button-text-divider" *ngIf="settings.showNotificationWin" />
-
-    <!-- After Roll Notification -->
-    <app-setting-item
-        title="After Roll Notification"
-        description="Show a notification message after every roll is complete (win or loss)."
-    >
-        <app-toggle-switch
-        [checked]="settings.showNotificationAfterRoll"
-        (checkedChange)="onShowNotificationAfterRollChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <div class="button-text-settings" *ngIf="settings.showNotificationAfterRoll">
-        <div class="text-input-group">
-        <label for="notificationAfterRoll">Notification Text</label>
-        <input 
-            type="text" 
-            id="notificationAfterRoll"
-            class="text-input"
-            [value]="settings.notificationAfterRoll"
-            (blur)="onNotificationAfterRollChange($any($event.target).value)"
-            placeholder="Thanks for playing!"
-        />
-        <p class="input-hint">💡 Appears as a notification after every roll completes, regardless of the outcome</p>
-        </div>
-    </div>
-
-    <hr class="button-text-divider" *ngIf="settings.showNotificationAfterRoll" />
-
-    <!-- Arduino Instruction Text -->
-    <app-setting-item
-        title="Arduino Control State"
-        description="Show instruction text when external Arduino hardware control is active."
-        [disabled]="!settings.enableArduinoControl"
-    >
-        <app-toggle-switch
-        [checked]="settings.showButtonTextArduino"
-        [disabled]="!settings.enableArduinoControl"
-        (checkedChange)="onShowButtonTextArduinoChange($event)"
-        ></app-toggle-switch>
-    </app-setting-item>
-
-    <div class="button-text-settings" *ngIf="settings.showButtonTextArduino" [class.disabled]="!settings.enableArduinoControl">
-        <div class="text-input-group">
-        <label for="buttonTextArduino">Text to Display</label>
-        <input 
-            type="text" 
-            id="buttonTextArduino"
-            class="text-input"
-            [value]="settings.buttonTextArduino"
-            [disabled]="!settings.enableArduinoControl"
-            (blur)="onButtonTextArduinoChange($any($event.target).value)"
-            placeholder="Press the button to roll!"
-        />
-        <p class="input-hint">💡 Appears when waiting for Arduino physical button press</p>
-        </div>
-    </div>
-
-    <div *ngIf="!settings.enableArduinoControl" class="arduino-disabled-note">
-        ⚠ Enable Arduino Control in settings above to customize this text
-    </div>
-    </app-settings-section>
-
-    <!-- Company Branding Section -->
-    <app-settings-section
-    title="Company Branding"
-    description="Customize the company logo displayed throughout the application."
-    >
-    <div class="logo-settings">
+    <!-- Company Branding Subsection -->
+    <div class="subsection">
+        <h3 class="subsection-title">Company Branding</h3>
+        <p class="subsection-description">Customize the company logo displayed throughout the application.</p>
+        <div class="logo-settings">
         <!-- Logo Type Toggle -->
         <div class="logo-type-toggle">
         <button 
@@ -394,8 +171,61 @@
         </div>
         </div>
         </div>
+        </div>
     </div>
     </app-settings-section>
+
+    <!-- Game-Specific Settings (only shown when in game context) -->
+    <ng-container *ngIf="shouldShowGameSettings() && gamesService.getCurrentGame() as currentGame">
+    <app-settings-section
+        [title]="currentGame.name + ' Settings'"
+        [description]="'Configure settings specific to ' + currentGame.name + '.'">
+        
+        <!-- Group settings by their group property -->
+        <ng-container *ngFor="let group of getGameSettingsGroups(currentGame)">
+        <div class="game-settings-group" *ngIf="group">
+            <h3 class="group-title">{{ group }}</h3>
+            
+            <ng-container *ngFor="let setting of getGameSettingsByGroup(currentGame, group)">
+            <!-- Toggle Setting -->
+            <app-setting-item
+                *ngIf="setting.type === 'toggle'"
+                [title]="setting.label"
+                [description]="setting.description"
+                [class.disabled]="isMobile && setting.id === 'prize-machine-enable-arduino'">
+                <app-toggle-switch
+                [checked]="getSettingValue(setting.id)"
+                [disabled]="isMobile && setting.id === 'prize-machine-enable-arduino'"
+                (checkedChange)="onGameSettingChange(setting.id, $event)">
+                </app-toggle-switch>
+            </app-setting-item>
+
+            <!-- Text Input Setting -->
+            <div *ngIf="setting.type === 'text'" class="button-text-settings">
+                <div class="text-input-group">
+                <label [for]="setting.id">{{ setting.label }}</label>
+                <input 
+                    type="text" 
+                    [id]="setting.id"
+                    class="text-input"
+                    [value]="getSettingValue(setting.id)"
+                    (blur)="onGameSettingChange(setting.id, $any($event.target).value)"
+                    [placeholder]="setting.value"
+                />
+                <p class="input-hint">{{ setting.description }}</p>
+                </div>
+            </div>
+            </ng-container>
+
+            <!-- Arduino disabled note -->
+            <div *ngIf="group === 'Arduino Control' && isMobile" class="arduino-disabled-note">
+                ⚠ Arduino control is not available on mobile devices
+            </div>
+        </div>
+        <hr class="group-divider" *ngIf="!isLastGroup(currentGame, group)" />
+        </ng-container>
+    </app-settings-section> <!-- Close game settings section -->
+    </ng-container> <!-- Close ngIf shouldShowGameSettings -->
 
     <!-- Data Management Section -->
     <app-settings-section
@@ -429,21 +259,17 @@
     </div>
     </app-settings-section>
 
-    <!-- Tutorial Section -->
-    <!--<app-settings-section
+    <!-- Tutorial Section (only shown when in game context and tutorial exists) -->
+    <app-settings-section
+    *ngIf="shouldShowGameSettings() && hasTutorial() && gamesService.getCurrentGame() as currentGame"
     title="Help & Tutorial"
-    description="Access the interactive tutorial to learn how to use the application."
-    >
+    [description]="'Access the interactive tutorial to learn how to use ' + currentGame.name + '.'">
     <app-setting-item
-        title="Show Tutorial"
-        description="Reopen the getting started tutorial that guides you through adding items and prizes."
-    >
+        [title]="'Show ' + currentGame.name + ' Tutorial'"
+        [description]="'Reopen the getting started tutorial that guides you through ' + currentGame.name + '.'">
         <button class="tutorial-button" (click)="showTutorial()">
         📚 Start Tutorial
         </button>
     </app-setting-item>
     </app-settings-section>
-</div>-->
-
-<!-- Tutorial Modal -->
-<!--<tutorial-modal *ngIf="showTutorialModal" (close)="closeTutorial()"></tutorial-modal>-->
+</div>

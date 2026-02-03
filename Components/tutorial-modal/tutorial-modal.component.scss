@@ -27,9 +27,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: transparent; // Transparent by default
   pointer-events: none; // Allow clicks through - cutout will handle highlighting
   z-index: 10000;
+  transition: background 0.3s ease;
+  
+  &.darkened {
+    background: rgba(0, 0, 0, 0.8); // Dark background for centered tooltips
+  }
 }
 
 .spotlight-cutout {
@@ -73,6 +78,9 @@
   
   &.centered {
     position: fixed;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     max-width: 600px;
     max-height: 90vh;
   }

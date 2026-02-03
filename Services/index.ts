@@ -12,6 +12,7 @@ export * from './items.service';
 export * from './odds.service';
 export * from './prize.service';
 export * from './settings.service';
+export * from './games.service';
 export * from './theme.service';
 export * from './tutorial.service';
 export * from './arduino.service';

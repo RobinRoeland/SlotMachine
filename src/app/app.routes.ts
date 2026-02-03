@@ -1,11 +1,17 @@
 import { Routes } from '@angular/router';
 import { ItemEditorComponent } from '../../Pages/item-editor/item-editor.component';
-import { GameComponent } from '../../Pages/game/game.component';
+import { GameComponent } from '../../Components/game/game.component';
+import { HomeComponent } from '../../Pages/home/home.component';
 import { PrizesComponent } from '../../Pages/prizes/prizes.component';
 import { OddsComponent } from '../../Pages/odds/odds.component';
 import { SettingsComponent } from '../../Pages/settings/settings.component';
 
 export const routes: Routes = [
+  {
+    path: 'home',
+    component: HomeComponent,
+    title: 'Games'
+  },
   { 
     path: 'game', 
     component: GameComponent,
@@ -33,7 +39,7 @@ export const routes: Routes = [
   },
   { 
     path: '', 
-    redirectTo: '/game', 
+    redirectTo: '/home', 
     pathMatch: 'full' 
   }
 ];

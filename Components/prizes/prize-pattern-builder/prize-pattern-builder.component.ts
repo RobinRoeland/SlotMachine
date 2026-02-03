@@ -50,6 +50,15 @@ export class PrizePatternBuilderComponent implements OnInit, OnChanges {
     if (this.selectedSlot) {
       this.selectedSlot.item = item;
       this.emitPattern();
+      
+      // Dispatch input event for tutorial detection
+      // Find the pattern slot element and dispatch the event
+      const slotElements = document.querySelectorAll('.pattern-slot');
+      if (slotElements && slotElements[this.selectedSlot.index]) {
+        const slotElement = slotElements[this.selectedSlot.index] as HTMLElement;
+        const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+        slotElement.dispatchEvent(inputEvent);
+      }
     }
     this.closeItemPicker();
   }

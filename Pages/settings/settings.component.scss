@@ -4,6 +4,75 @@
   padding: 0 20px 40px;
 }
 
+// Subsection Styles
+.subsection {
+  margin: 16px 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.subsection-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-accent);
+  margin: 0 0 8px 0;
+}
+
+.subsection-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+}
+
+.subsection-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0;
+  opacity: 0.5;
+}
+
+// Game Settings Group Styles
+.game-settings-group {
+  margin: 0;
+  
+  .group-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-accent);
+    margin: 0 0 4px 0;
+  }
+  
+  .group-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+  }
+}
+
+.group-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0;
+  opacity: 0.5;
+}
+
+.legacy-settings {
+  .group-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-accent);
+    margin: 0 0 4px 0;
+  }
+  
+  .group-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+  }
+}
+
 // Logo Settings Styles
 .logo-settings {
   display: flex;

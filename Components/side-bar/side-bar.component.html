@@ -19,10 +19,22 @@
     </div>
   </div>
   <nav class="nav">
-    <a routerLink="/game" routerLinkActive="active">Play</a>
-    <a routerLink="/edit-items" routerLinkActive="active">Edit Items</a>
-    <a routerLink="/edit-odds" routerLinkActive="active">Edit Odds</a>
-    <a routerLink="/edit-prizes" routerLinkActive="active">Edit Prizes</a>
-    <a routerLink="/settings" routerLinkActive="active">Settings</a>
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">🏠 Home</a>
+    
+    <div class="nav-divider" *ngIf="showGameNav"></div>
+    <div class="nav-section-title" *ngIf="showGameNav">{{ currentGameName }}</div>
+    
+    <ng-container *ngIf="showGameNav">
+      <a *ngFor="let item of navigationItems" 
+         [routerLink]="item.route" 
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: false}">
+        <span *ngIf="item.icon" class="nav-icon">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    </ng-container>
+    
+    <div class="nav-divider"></div>
+    <a routerLink="/settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">⚙️ Settings</a>
   </nav>
 </div>
