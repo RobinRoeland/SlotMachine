@@ -1,10 +1,10 @@
-# RRGameSystem
-
+# RRGameSystem 
 **Check out a demo of our project at: [Github Pages](https://robinroeland.github.io/RRGameSystem/)!**
+
+**Copyright © 2026 Robin Roeland. All rights reserved.**
 
 ---
 
-**Copyright © 2026 Robin Roeland. All rights reserved.**
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
 
