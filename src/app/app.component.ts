@@ -68,20 +68,33 @@ export class AppComponent {
 
     // Show tutorial if not completed AND we're on a game route
     if (!this.tutorialService.isTutorialCompleted()) {
-      // Show tutorial after a longer delay for GitHub Pages
-      setTimeout(() => {
-        const currentUrl = this.router.url;
-        const game = this.gamesService.getGameByRoute(currentUrl);
-        
-        // Only show tutorial if we're on a game route
-        if (game) {
-          const loaded = this.tutorialService.loadTutorialForGame(game.id);
-          if (loaded && this.tutorialService.steps.length > 0) {
-            this.tutorialService.showTutorialModal();
-          }
-        }
-      }, 1200);
+      // Try to show tutorial with retry logic for slow hosts (e.g., GitHub Pages)
+      this.tryShowTutorial(0);
     }
+  }
+
+  private tryShowTutorial(attempt: number): void {
+    const maxAttempts = 5;
+    const delay = 500 + (attempt * 300); // Progressive delay: 500ms, 800ms, 1100ms, 1400ms, 1700ms
+    
+    setTimeout(() => {
+      const currentUrl = this.router.url;
+      const game = this.gamesService.getGameByRoute(currentUrl);
+      
+      // Only show tutorial if we're on a game route
+      if (game) {
+        const loaded = this.tutorialService.loadTutorialForGame(game.id);
+        if (loaded && this.tutorialService.steps.length > 0) {
+          this.tutorialService.showTutorialModal();
+        } else if (attempt < maxAttempts - 1) {
+          // Retry if tutorial wasn't loaded successfully
+          this.tryShowTutorial(attempt + 1);
+        }
+      } else if (attempt < maxAttempts - 1) {
+        // Retry if game not found yet
+        this.tryShowTutorial(attempt + 1);
+      }
+    }, delay);
   }
 
   closeTutorial() {
