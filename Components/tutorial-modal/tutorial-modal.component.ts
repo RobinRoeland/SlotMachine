@@ -4,6 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { TutorialService, TutorialStep } from '../../Services/tutorial.service';
+import { GameTutorialService } from '../../Services/game-tutorial.service';
 import { SafeHtmlPipe } from '../../Pipes/safe-html.pipe';
 
 @Component({
@@ -43,6 +44,7 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private tutorialService: TutorialService,
+    private gameTutorialService: GameTutorialService,
     private router: Router
   ) {
     this.steps = this.tutorialService.steps;
@@ -104,6 +106,37 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     
     const step = this.currentStepData;
     
+    // Look ahead to check if future steps are already completed
+    // If a future step is completed, skip current and intermediate steps
+    const stepsToSkip = this.checkAheadForCompletedSteps();
+    if (stepsToSkip > 0) {
+      this.isAdvancing = false;
+      (this as any)._nextStepTimeout = null;
+      // Skip multiple steps at once
+      this.currentStep += stepsToSkip;
+      if (this.currentStep >= this.totalSteps) {
+        this.completeTutorial();
+        return;
+      }
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.setupCurrentStep();
+      }, 100);
+      return;
+    }
+    
+    // Check if current step is already completed, skip it
+    // But NEVER skip if it's an input step (user must see the feedback)
+    const isCurrentCompleted = this.isStepCompleted(step);
+    if (isCurrentCompleted && step.actionType !== 'input') {
+      this.isAdvancing = false;
+      (this as any)._nextStepTimeout = null;
+      setTimeout(() => {
+        this.nextStep();
+      }, 100);
+      return;
+    }
+    
     // Check if we're on the right route
     if (step.route && !this.router.url.includes(step.route)) {
       // Not on the right page yet - show centered tooltip with navigation instruction
@@ -132,81 +165,241 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       return;
     }
     
+    // If this is a navigation step and we're already on the page, auto-advance
+    if (step.actionType === 'navigate' && step.route && this.router.url.includes(step.route)) {
+      // Reset isAdvancing flag and clear debounce timeout to ensure we can advance
+      this.isAdvancing = false;
+      (this as any)._nextStepTimeout = null;
+      setTimeout(() => {
+        this.nextStep();
+      }, 300);
+      return;
+    }
+    
     if (step.targetSelector && step.placement !== 'center') {
       // Find the target element
       setTimeout(() => {
         const element = this.findElement(step.targetSelector!);
-        if (element) {
-          this.highlightedElement = element;
-          this.showSpotlight = true;
-          this.updateSpotlight(element);
-          this.positionTooltip(element, step.placement || 'bottom');
+        
+        // If element not found by findElement, check if it exists anywhere on the page
+        if (!element) {
+          // Try basic querySelector to see if element exists at all
+          const basicElement = document.querySelector(step.targetSelector!) as HTMLElement;
           
-          // Set up dynamic repositioning
-          this.setupDynamicRepositioning(element, step.placement || 'bottom');
-          
-          // Add click listener if needed
-          if (step.waitForAction && step.actionType === 'click') {
-            this.setupClickListener(element);
+          // Check if element is in a modal or interactive context - if so, don't do visibility checks
+          if (basicElement && this.gameTutorialService.isInModalContext(basicElement, step.targetSelector)) {
+            this.showSpotlight = false;
+            this.centerTooltip();
+            
+            // For completion check, use goalSelector if it exists (for input actions)
+            let elementToCheck = basicElement;
+            if (step.actionType === 'input' && step.goalSelector) {
+              const goalElement = document.querySelector(step.goalSelector) as HTMLElement;
+              if (goalElement) {
+                elementToCheck = goalElement;
+              }
+            }
+            
+            // Still set up event listeners if needed
+            if (this.isActionCompleted(step, elementToCheck)) {
+              this.isAdvancing = false;
+              (this as any)._nextStepTimeout = null;
+              setTimeout(() => {
+                this.nextStep();
+              }, 300);
+              return;
+            }
+            
+            // Determine the element to attach event listeners to
+            const goalElement = step.goalSelector 
+              ? this.findElement(step.goalSelector) || document.querySelector(step.goalSelector) as HTMLElement || basicElement
+              : basicElement;
+            
+            if (step.waitForAction && step.actionType === 'input') {
+              this.setupInputListener(goalElement);
+            }
+            
+            this.cdr.detectChanges();
+            return;
           }
           
-          // Add hover listener if needed (for sidebar or element hover detection)
-          if (step.waitForAction && step.actionType === 'hover') {
-            this.setupHoverListener(element);
+          if (basicElement) {
+            // Check if element is reasonably visible (at least 50% in viewport)
+            const rect = basicElement.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+            
+            // Calculate how much of the element is visible
+            const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+            const visibleWidth = Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0);
+            const elementArea = rect.width * rect.height;
+            const visibleArea = Math.max(0, visibleHeight) * Math.max(0, visibleWidth);
+            const visibilityRatio = elementArea > 0 ? visibleArea / elementArea : 0;
+            
+            // If element is at least 50% visible, use it without scroll step
+            if (visibilityRatio >= 0.5) {
+              // Use the basicElement even though findElement couldn't find it
+              setTimeout(() => {
+                this.highlightedElement = basicElement;
+                this.showSpotlight = true;
+                this.updateSpotlight(basicElement);
+                this.positionTooltip(basicElement, step.placement || 'bottom');
+                this.setupDynamicRepositioning(basicElement, step.placement || 'bottom');
+                
+                if (this.isActionCompleted(step, basicElement)) {
+                  this.isAdvancing = false;
+                  (this as any)._nextStepTimeout = null;
+                  setTimeout(() => {
+                    this.nextStep();
+                  }, 300);
+                  return;
+                }
+                
+                // Add click listener if needed
+                if (step.waitForAction && step.actionType === 'click') {
+                  this.setupClickListener(basicElement);
+                }
+                
+                // Add hover listener if needed
+                if (step.waitForAction && step.actionType === 'hover') {
+                  this.setupHoverListener(basicElement);
+                }
+                
+                // Add input listener if needed
+                if (step.waitForAction && step.actionType === 'input') {
+                  this.setupInputListener(basicElement);
+                }
+                
+                // Add scroll listener if needed
+                if (step.waitForAction && step.actionType === 'scroll') {
+                  this.setupScrollListener(basicElement);
+                }
+                
+                this.cdr.detectChanges();
+              }, 200);
+              return;
+            }
+            
+            // Element exists but is less than 50% visible - check if we should insert scroll step
+            // Don't insert scroll steps for elements that will appear through interaction
+            // (e.g., items in a modal that opens when you click a pattern slot)
+            if (this.gameTutorialService.isInModalContext(basicElement, step.targetSelector)) {
+              // Just center the tooltip and wait for user interaction
+              this.showSpotlight = false;
+              this.centerTooltip();
+              this.cdr.detectChanges();
+              return;
+            }
+            
+            // Check if we've already inserted a scroll step for this selector
+            const alreadyHasScrollStep = this.currentStep > 0 && 
+                                        this.steps[this.currentStep - 1]?.actionType === 'scroll' &&
+                                        this.steps[this.currentStep - 1]?.targetSelector === step.targetSelector;
+            
+            if (alreadyHasScrollStep) {
+              // Just setup the scroll listener without inserting
+              this.setupScrollListener(basicElement);
+              this.showSpotlight = false;
+              this.centerTooltip();
+              this.cdr.detectChanges();
+              return;
+            }
+            
+            const scrollStep: TutorialStep = {
+              title: 'Scroll to Continue',
+              content: `Scroll down to find the highlighted element on the page.`,
+              targetSelector: step.targetSelector,
+              placement: step.placement,
+              route: step.route,
+              waitForAction: true,
+              actionType: 'scroll'
+            };
+            
+            // Insert the scroll step before the current step
+            this.steps.splice(this.currentStep, 0, scrollStep);
+            this.totalSteps = this.steps.length;
+            
+            // Setup the scroll listener for the newly inserted step
+            this.setupScrollListener(basicElement);
+            this.showSpotlight = false;
+            this.centerTooltip();
+            this.cdr.detectChanges();
+            return;
+          } else {
+            // Element not found at all, center the tooltip
+            this.centerTooltip();
+            this.cdr.detectChanges();
+            return;
           }
-          
-          // Add input listener if needed
-          if (step.waitForAction && step.actionType === 'input') {
-            this.setupInputListener(element);
-          }
-          
-          this.cdr.detectChanges(); // Force update after setting up
-        } else {
-          // Element not found, center the tooltip
-          this.centerTooltip();
-          this.cdr.detectChanges();
         }
-      }, 300);
-    } else {
-      // Center placement - still show dark overlay
-      // If there's a targetSelector (like 'body'), show the overlay
-      if (step.targetSelector) {
-        setTimeout(() => {
-          const element = this.findElement(step.targetSelector!);
-          if (element) {
+        
+        if (element) {
+          // Element is in viewport, proceed normally
+          // Wait for scroll to complete before highlighting
+          setTimeout(() => {
             this.highlightedElement = element;
             this.showSpotlight = true;
             this.updateSpotlight(element);
-            this.centerTooltip();
+            this.positionTooltip(element, step.placement || 'bottom');
             
-            // Set up dynamic repositioning even for centered tooltips
-            this.setupDynamicRepositioning(element, 'center');
+            // Set up dynamic repositioning
+            this.setupDynamicRepositioning(element, step.placement || 'bottom');
             
-            this.cdr.detectChanges();
-          } else {
-            this.showSpotlight = true; // Still show overlay even if element not found
-            this.centerTooltip();
-            this.cdr.detectChanges();
-          }
-        }, 300);
-      } else {
-        this.showSpotlight = false;
-        this.centerTooltip();
-        this.cdr.detectChanges(); // Force update
-      }
+            // Check if action has already been completed before setting up listeners
+            if (this.isActionCompleted(step, element)) {
+              this.isAdvancing = false;
+              (this as any)._nextStepTimeout = null;
+              setTimeout(() => {
+                this.nextStep();
+              }, 300);
+              return;
+            }
+            
+            // Determine the element to attach event listeners to
+            // Use goalSelector if provided, otherwise fall back to targetSelector
+            const goalElement = step.goalSelector 
+              ? this.findElement(step.goalSelector) || element
+              : element;
+            
+            // Add click listener if needed
+            if (step.waitForAction && step.actionType === 'click') {
+              this.setupClickListener(goalElement);
+            }
+            
+            // Add hover listener if needed (for sidebar or element hover detection)
+            if (step.waitForAction && step.actionType === 'hover') {
+              this.setupHoverListener(goalElement);
+            }
+            
+            // Add input listener if needed
+            if (step.waitForAction && step.actionType === 'input') {
+              this.setupInputListener(goalElement);
+            }
+            
+            // Add scroll listener if needed
+            if (step.waitForAction && step.actionType === 'scroll') {
+              this.setupScrollListener(goalElement);
+            }
+            
+            this.cdr.detectChanges(); // Force update after setting up
+          }, 200);
+        }
+      }, 300);
+    } else {
+      // Center placement - no spotlight, just centered tooltip with dark overlay
+      this.showSpotlight = false;
+      this.centerTooltip();
+      this.cdr.detectChanges(); // Force update
     }
   }
 
   findElement(selector: string): HTMLElement | null {
-    console.log('[Tutorial] Finding element with selector:', selector);
-    
     // Handle :has-text() pseudo-selector
     if (selector.includes(':has-text(')) {
       const match = selector.match(/^(.+):has-text\("([^"]+)"\)$/);
       if (match) {
         const [, baseSelector, text] = match;
         const elements = document.querySelectorAll(baseSelector);
-        console.log('[Tutorial] Found', elements.length, 'elements matching base selector');
         
         let topmost: HTMLElement | null = null;
         let topmostZ = -Infinity;
@@ -230,21 +423,17 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
               if (isAccessible) {
                 // Get computed z-index and position in stacking context
                 const zIndex = this.getEffectiveZIndex(el);
-                console.log('[Tutorial] Element', i, 'is accessible with z-index:', zIndex);
                 
                 if (zIndex > topmostZ) {
                   topmost = el;
                   topmostZ = zIndex;
                 }
-              } else {
-                console.log('[Tutorial] Element', i, 'is hidden behind another element');
               }
             }
           }
         }
         
         if (topmost) {
-          console.log('[Tutorial] Found topmost accessible element with z-index:', topmostZ);
           return topmost;
         }
       }
@@ -258,10 +447,7 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     let topmostZ = -Infinity;
 
     for (const sel of selectors) {
-      console.log('[Tutorial] Trying selector:', sel);
       const elements = document.querySelectorAll(sel);
-      console.log('[Tutorial] Found', elements.length, 'matching elements');
-
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement;
 
@@ -315,27 +501,20 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
           if (isAccessible) {
             // Get computed z-index and position in stacking context
             const zIndex = this.getEffectiveZIndex(element);
-            console.log('[Tutorial] Element', i, 'is accessible at z-index:', zIndex, 'position:', rect.top);
 
             if (zIndex > topmostZ) {
               topmost = element;
               topmostZ = zIndex;
             }
-          } else {
-            console.log('[Tutorial] Element', i, 'is hidden behind:', elementAtPoint?.tagName);
           }
-        } else {
-          console.log('[Tutorial] Element', i, 'is not visible');
         }
       }
     }
 
     if (topmost) {
-      console.log('[Tutorial] Returning topmost accessible element with z-index:', topmostZ);
       return topmost;
     }
 
-    console.log('[Tutorial] No accessible element found');
     return null;
   }
   
@@ -481,13 +660,52 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     };
   }
 
+  setupScrollListener(element: HTMLElement): void {
+    this.cleanup();
+    
+    const checkElementInView = () => {
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      
+      // Element must be fully visible within viewport
+      const isInViewport = (
+        rect.top >= 0 &&
+        rect.bottom <= viewportHeight &&
+        rect.left >= 0 &&
+        rect.right <= viewportWidth
+      );
+      
+      if (isInViewport && !this.isAdvancing) {
+        this.isAdvancing = true;
+        window.removeEventListener('scroll', checkElementInView, true);
+        setTimeout(() => {
+          this.nextStep();
+          this.isAdvancing = false;
+        }, 300);
+      }
+    };
+    
+    // Listen for scroll events on window and all scrollable containers
+    window.addEventListener('scroll', checkElementInView, true);
+  }
+
   setupClickListener(element: HTMLElement): void {
     // Clean up any existing listener first
     this.cleanup();
     
-    this.clickListener = (e: Event) => {
-      if (e.target === element || element.contains(e.target as Node)) {
-        // User clicked the target element
+    const currentStepIndex = this.currentStep; // Capture current step
+    const clickListener = (e: Event) => {
+      // Ignore if we've moved to a different step
+      if (this.currentStep !== currentStepIndex) {
+        document.removeEventListener('click', clickListener, true);
+        return;
+      }
+      
+      const clickedElement = e.target === element || element.contains(e.target as Node);
+      
+      // Check if user clicked the highlighted element OR if the goal is now achieved
+      if (clickedElement) {
         if (!this.isAdvancing) {
           this.isAdvancing = true;
           setTimeout(() => {
@@ -498,7 +716,8 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       }
     };
     
-    document.addEventListener('click', this.clickListener, true);
+    this.clickListener = clickListener;
+    document.addEventListener('click', clickListener, true);
   }
   
   setupHoverListener(element?: HTMLElement): void {
@@ -525,7 +744,14 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     }
 
     // Otherwise, listen for mouseover on the highlighted element
+    const currentStepIndex = this.currentStep; // Capture current step
     const hoverListener = (e: Event) => {
+      // Ignore if we've moved to a different step
+      if (this.currentStep !== currentStepIndex) {
+        element.removeEventListener('mouseover', hoverListener);
+        return;
+      }
+      
       if (!this.isAdvancing) {
         this.isAdvancing = true;
         setTimeout(() => {
@@ -569,17 +795,39 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Default: text input
+    // Default: text input or custom input events
+    const currentStepIndex = this.currentStep; // Capture current step
     const inputListener = (e: Event) => {
-      const input = e.target as HTMLInputElement;
-      // Check if input has some meaningful value (at least 2 characters)
-      if (input.value && input.value.trim().length >= 2) {
+      // Ignore if we've moved to a different step
+      if (this.currentStep !== currentStepIndex) {
+        element.removeEventListener('input', inputListener);
+        return;
+      }
+      
+      const target = e.target as HTMLElement;
+      
+      // Check if it's a real input element with a value
+      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+        // For actual input elements, check if input has meaningful value (at least 2 characters)
+        if (target.value && target.value.trim().length >= 2) {
+          if (!this.isAdvancing) {
+            this.isAdvancing = true;
+            setTimeout(() => {
+              this.nextStep();
+              this.isAdvancing = false;
+            }, 800); // Give user time to see what they typed
+          }
+          // Remove listener after detection
+          element.removeEventListener('input', inputListener);
+        }
+      } else {
+        // For other elements (like pattern slots), any input event is valid
         if (!this.isAdvancing) {
           this.isAdvancing = true;
           setTimeout(() => {
             this.nextStep();
             this.isAdvancing = false;
-          }, 800); // Give user time to see what they typed
+          }, 500);
         }
         // Remove listener after detection
         element.removeEventListener('input', inputListener);
@@ -657,11 +905,198 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       this.nextStep();
     }
   }
+
+  /**
+   * Get the action button text based on the step's actionType
+   */
+  getActionText(step: TutorialStep): string {
+    // If action is explicitly set, use it
+    if (step.action) {
+      return step.action;
+    }
+
+    // Generate action text based on actionType
+    if (step.waitForAction) {
+      switch (step.actionType) {
+        case 'click':
+          return 'Waiting for click...';
+        case 'navigate':
+          return 'Waiting for navigation...';
+        case 'input':
+          return 'Waiting for input...';
+        case 'hover':
+          return 'Waiting for hover...';
+        case 'scroll':
+          return 'Waiting for scroll...';
+        default:
+          return 'Continue';
+      }
+    }
+
+    return step.action || 'Continue';
+  }
+
+  /**
+   * Check if a step has already been completed
+   */
+  isStepCompleted(step: TutorialStep): boolean {
+    // Check if we need to be on a specific route
+    if (step.route && !this.router.url.includes(step.route)) {
+      // If actionType is navigate and we're already on the page, it's completed
+      if (step.actionType === 'navigate') {
+        return false; // We'll handle this separately in setupCurrentStep
+      }
+      return false; // Not on the right page, not completed
+    }
+
+    // For navigate actions, check if already on target page
+    if (step.actionType === 'navigate' && step.route && this.router.url.includes(step.route)) {
+      return true;
+    }
+
+    // Determine which selector to use for completion check
+    // For most actions, check the targetSelector (what's being highlighted)
+    // But for input actions, use goalSelector if it exists (what receives the input)
+    const selectorToCheck = (step.actionType === 'input' && step.goalSelector && step.goalSelector !== step.targetSelector) 
+      ? step.goalSelector 
+      : step.targetSelector;
+
+    // Find the element if there's a selector
+    if (selectorToCheck) {
+      // First try findElement (handles custom selectors like :has-text())
+      let element = this.findElement(selectorToCheck);
+      
+      // If findElement didn't find it and selector doesn't have custom pseudo-selectors, try basic querySelector
+      if (!element && !selectorToCheck.includes(':has-text(')) {
+        try {
+          element = document.querySelector(selectorToCheck) as HTMLElement;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      if (element) {
+        return this.isActionCompleted(step, element);
+      } else {
+        // Element not found - for input steps, this means not complete
+        if (step.actionType === 'input') {
+          return false;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Look ahead at the next 2 steps to see if any are already completed.
+   * Only skips if ALL intermediate steps are also completed.
+   * Returns the number of steps to skip (0 if none should be skipped)
+   * 
+   * IMPORTANT: Never skip if current step or any intermediate step is an input action
+   * Input steps require user feedback and should always be shown
+   */
+  checkAheadForCompletedSteps(): number {
+    const currentStep = this.steps[this.currentStep];
+    
+    // NEVER look ahead if current step is an input action
+    // Input steps must always be shown for user feedback
+    if (currentStep.actionType === 'input') {
+      return 0;
+    }
+    
+    const lookAheadSteps = 2;
+    
+    for (let i = 1; i <= lookAheadSteps; i++) {
+      const futureStepIndex = this.currentStep + i;
+      if (futureStepIndex >= this.totalSteps) {
+        break; // No more steps to check
+      }
+      
+      const futureStep = this.steps[futureStepIndex];
+      
+      // Check if this future step is completed
+      const isFutureStepCompleted = 
+        (futureStep.actionType === 'navigate' && futureStep.route && this.router.url.includes(futureStep.route)) ||
+        this.isStepCompleted(futureStep);
+      
+      if (isFutureStepCompleted) {
+        // Check if ALL intermediate steps (between current and future, exclusive) are also completed
+        // IMPORTANT: Never skip through input steps - they must be shown to user
+        let allIntermediateCompleted = true;
+        let hasInputStep = false;
+        
+        // Only check steps strictly between current and future (not including current or future)
+        for (let j = this.currentStep + 1; j < futureStepIndex; j++) {
+          const intermediateStep = this.steps[j];
+          
+          // Check if intermediate step is an input action
+          if (intermediateStep.actionType === 'input') {
+            hasInputStep = true;
+            allIntermediateCompleted = false;
+            break;
+          }
+          
+          if (!this.isStepCompleted(intermediateStep)) {
+            allIntermediateCompleted = false;
+            break;
+          }
+        }
+        
+        // Only skip if all intermediate steps are completed AND no input steps in between
+        if (allIntermediateCompleted && !hasInputStep) {
+          return i;
+        }
+      }
+    }
+    
+    return 0; // No future steps are completed with all intermediates complete
+  }
+
+  /**
+   * Check if an action for a specific element has been completed
+   */
+  isActionCompleted(step: TutorialStep, element: HTMLElement): boolean {
+    if (!step.waitForAction) {
+      return false;
+    }
+
+    // Check game-specific action completion first
+    const gameSpecificResult = this.gameTutorialService.checkGameSpecificActionCompletion(
+      this.tutorialService.currentGameId,
+      step, 
+      element, 
+      this.steps
+    );
+    
+    if (gameSpecificResult !== null) {
+      return gameSpecificResult;
+    }
+
+    // Fall back to generic action checks
+    switch (step.actionType) {
+      case 'input':
+        // Generic input element check
+        const inputElement = element as HTMLInputElement;
+        return !!(inputElement.value && inputElement.value.trim().length >= 2);
+
+      case 'hover':
+        if (step.targetSelector === '#toggleSidebar') {
+          const sidebar = document.querySelector('.sidebar');
+          return !!(sidebar && !sidebar.classList.contains('sidebar-collapsed'));
+        }
+        return false;
+
+      case 'navigate':
+        return !!(step.route && this.router.url.includes(step.route));
+
+      default:
+        return false;
+    }
+  }
   
   setupDynamicRepositioning(element: HTMLElement, placement: string): void {
     if (!this.isBrowser) return;
-    
-    console.log('[Tutorial] Setting up dynamic repositioning for placement:', placement);
     
     // Store the current placement
     this.currentPlacement = placement;
@@ -671,14 +1106,11 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     const needsSetup = !this.windowResizeListener || !this.resizeObserver || !this.mutationObserver;
     
     if (!needsSetup) {
-      console.log('[Tutorial] Observers already active, just updating placement');
       return;
     }
     
-    console.log('[Tutorial] Creating new observers');
     
     const updatePositions = () => {
-      console.log('[Tutorial] Updating positions - element exists:', !!this.highlightedElement);
       if (this.highlightedElement) {
         this.updateSpotlight(this.highlightedElement);
         this.positionTooltip(this.highlightedElement, this.currentPlacement);
@@ -688,43 +1120,35 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     
     // Watch for window resize
     this.windowResizeListener = () => {
-      console.log('[Tutorial] Window resized, updating positions');
       updatePositions();
     };
     window.addEventListener('resize', this.windowResizeListener);
-    console.log('[Tutorial] Window resize listener added');
     
     // Watch for scroll events
     this.scrollListener = () => {
-      console.log('[Tutorial] Scroll detected, updating positions');
       updatePositions();
     };
     window.addEventListener('scroll', this.scrollListener, true); // Use capture to catch all scrolls
-    console.log('[Tutorial] Scroll listener added');
     
     // Watch for element size changes (e.g., sidebar expanding/collapsing, modals opening)
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver((entries) => {
-        console.log('[Tutorial] ResizeObserver triggered, entries:', entries.length);
         updatePositions();
       });
       
       // Observe the highlighted element itself
       this.resizeObserver.observe(element);
-      console.log('[Tutorial] Observing element:', element.tagName, element.className);
       
       // Observe the sidebar since it affects layout
       const sidebar = document.querySelector('.sidebar');
       if (sidebar) {
         this.resizeObserver.observe(sidebar);
-        console.log('[Tutorial] Observing sidebar');
       }
       
       // Observe any modal containers
       const modal = element.closest('.modal, .modal-content, .modal-overlay');
       if (modal) {
         this.resizeObserver.observe(modal as HTMLElement);
-        console.log('[Tutorial] Observing modal container');
       }
       
       // Observe parent containers that might affect positioning
@@ -735,9 +1159,6 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
         parent = parent.parentElement;
         depth++;
       }
-      console.log('[Tutorial] Observing', depth, 'parent containers');
-    } else {
-      console.log('[Tutorial] ResizeObserver not available');
     }
     
     // Watch for DOM changes that might affect positioning
@@ -762,7 +1183,6 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
         }
         
         if (shouldUpdate) {
-          console.log('[Tutorial] MutationObserver detected change, updating positions');
           // Small delay to let animations complete
           setTimeout(() => updatePositions(), 100);
         }
@@ -775,7 +1195,6 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
           attributes: true,
           attributeFilter: ['class', 'style']
         });
-        console.log('[Tutorial] MutationObserver watching sidebar');
       }
       
       // Observe body for general layout changes (modals, overlays, etc.)
@@ -785,7 +1204,6 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
         attributes: true,
         attributeFilter: ['class', 'style']
       });
-      console.log('[Tutorial] MutationObserver watching body');
       
       // Observe the element's parent for changes
       if (element.parentElement) {
@@ -794,18 +1212,11 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
           attributes: true,
           attributeFilter: ['class', 'style']
         });
-        console.log('[Tutorial] MutationObserver watching element parent');
       }
-    } else {
-      console.log('[Tutorial] MutationObserver not available');
     }
-    
-    console.log('[Tutorial] Dynamic repositioning setup complete');
   }
   
   cleanupRepositioning(): void {
-    console.log('[Tutorial] Cleaning up repositioning observers');
-    
     if (this.windowResizeListener) {
       window.removeEventListener('resize', this.windowResizeListener);
       this.windowResizeListener = null;

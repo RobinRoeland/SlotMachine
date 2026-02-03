@@ -1,10 +1,4 @@
 <div class="modal-backdrop">
-  <!-- Dark overlay (always visible) -->
-  <div class="spotlight-overlay"></div>
-  
-  <!-- Spotlight cutout (only when highlighting specific element) -->
-  <div class="spotlight-cutout" *ngIf="showSpotlight" [ngStyle]="spotlightStyle"></div>
-
   <!-- Tutorial tooltip -->
   <div class="tutorial-tooltip" 
        [ngClass]="{'centered': !showSpotlight}"
@@ -35,7 +29,7 @@
       <!-- Waiting indicator -->
       <div class="waiting-indicator" *ngIf="currentStepData.waitForAction">
         <div class="pulse-dot"></div>
-        <span>{{ currentStepData.action }}</span>
+        <span>{{ getActionText(currentStepData) }}</span>
       </div>
     </div>
 
@@ -46,11 +40,17 @@
         (click)="onActionClick()"
         *ngIf="!currentStepData.waitForAction"
         [class.btn-success]="isLastStep">
-        {{ currentStepData.action }}
+        {{ getActionText(currentStepData) }}
         <span *ngIf="!isLastStep"> →</span>
       </button>
     </div>
   </div>
+
+  <!-- Dark overlay -->
+  <div class="spotlight-overlay" [class.darkened]="!showSpotlight"></div>
+  
+  <!-- Spotlight cutout (only when highlighting specific element) -->
+  <div class="spotlight-cutout" *ngIf="showSpotlight" [ngStyle]="spotlightStyle"></div>
 
   <!-- Pointer arrow (shows where to click) -->
   <div class="pointer-arrow" 

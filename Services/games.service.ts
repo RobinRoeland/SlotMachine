@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TutorialService } from './tutorial.service';
+import { GameTutorialService } from './game-tutorial.service';
+import { getSlotMachineTutorialSteps, checkSlotMachineCompletion } from './tutorials/slot-machine-tutorial';
+import { getSlotMachineSettings } from './settings/slot-machine-settings';
+import { getTestGameSettings } from './settings/test-game-settings';
 
 export interface NavItem {
   label: string;
@@ -49,40 +54,7 @@ export class GamesService {
         { label: 'Edit Prizes', route: '/edit-prizes', icon: '🏆', category: 'game' },
         { label: 'Settings', route: '/settings', icon: '⚙️', category: 'general' }
       ],
-      gameSettings: [
-        {
-          id: 'prize-machine-display-settings',
-          label: 'Show Prizes List',
-          description: 'Display the list of available prizes on the right side of the play page.',
-          type: 'toggle',
-          value: true,
-          group: 'Display Settings'
-        },
-        {
-          id: 'prize-machine-show-odds',
-          label: 'Show Win Chances',
-          description: 'Display the probability of winning each prize in the prizes list.',
-          type: 'toggle',
-          value: false,
-          group: 'Display Settings'
-        },
-        {
-          id: 'prize-machine-pity-system',
-          label: 'Enable Pity System',
-          description: 'Automatically grant a win after reaching the pity threshold set in Edit Odds.',
-          type: 'toggle',
-          value: false,
-          group: 'Pity System'
-        },
-        {
-          id: 'prize-machine-show-pity-warning',
-          label: 'Show Pity Warning',
-          description: 'Display a warning message when the next roll is guaranteed to be a win.',
-          type: 'toggle',
-          value: false,
-          group: 'Pity System'
-        }
-      ]
+      gameSettings: getSlotMachineSettings()
     },
     {
       id: 'test-game',
@@ -114,8 +86,94 @@ export class GamesService {
   private currentGameSubject = new BehaviorSubject<Game | null>(null);
   public currentGame$ = this.currentGameSubject.asObservable();
 
-  constructor() {
+  constructor(
+    private tutorialService: TutorialService,
+    private gameTutorialService: GameTutorialService
+  ) {
     this.loadGameStats();
+    this.registerGameTutorials();
+    this.loadGameSettings();
+  }
+
+  /**
+   * Register tutorials for all games
+   */
+  private registerGameTutorials(): void {
+    // Register slot machine tutorial
+    this.tutorialService.registerTutorial('slot-machine', getSlotMachineTutorialSteps);
+    this.gameTutorialService.registerCompletionChecker('slot-machine', checkSlotMachineCompletion);
+  }
+
+  /**
+   * Load saved game settings from localStorage
+   */
+  private loadGameSettings(): void {
+    this.games.forEach(game => {
+      if (game.gameSettings) {
+        const savedSettings = this.getGameSettingsFromStorage(game.id);
+        if (savedSettings) {
+          // Merge saved settings with defaults
+          game.gameSettings = game.gameSettings.map(setting => ({
+            ...setting,
+            value: savedSettings[setting.id] !== undefined ? savedSettings[setting.id] : setting.value
+          }));
+        }
+      }
+    });
+    this.gamesSubject.next([...this.games]);
+  }
+
+  /**
+   * Get game settings from localStorage
+   */
+  private getGameSettingsFromStorage(gameId: string): Record<string, any> | null {
+    try {
+      const key = `game_settings_${gameId}`;
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      console.error(`Error loading settings for game ${gameId}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Save game settings to localStorage
+   */
+  saveGameSettings(gameId: string, settingId: string, value: any): void {
+    const game = this.games.find(g => g.id === gameId);
+    if (!game || !game.gameSettings) return;
+
+    // Update the setting value in memory
+    const setting = game.gameSettings.find(s => s.id === settingId);
+    if (setting) {
+      setting.value = value;
+    }
+
+    // Save all settings for this game to localStorage
+    const key = `game_settings_${gameId}`;
+    const settingsToSave: Record<string, any> = {};
+    game.gameSettings.forEach(s => {
+      settingsToSave[s.id] = s.value;
+    });
+
+    try {
+      localStorage.setItem(key, JSON.stringify(settingsToSave));
+      this.gamesSubject.next([...this.games]);
+    } catch (error) {
+      console.error(`Error saving settings for game ${gameId}:`, error);
+    }
+  }
+
+  /**
+   * Get a specific setting value for a game
+   */
+  getGameSetting(gameId: string, settingId: string): any {
+    const game = this.games.find(g => g.id === gameId);
+    if (!game || !game.gameSettings) return undefined;
+
+    const setting = game.gameSettings.find(s => s.id === settingId);
+    return setting?.value;
   }
 
   getGames(): Game[] {
@@ -141,7 +199,6 @@ export class GamesService {
   recordGamePlayed(gameId: string): void {
     const game = this.games.find(g => g.id === gameId);
     if (game) {
-      game.playCount++;
       game.lastPlayed = new Date();
       this.saveGameStats();
       this.gamesSubject.next([...this.games]);
@@ -201,3 +258,4 @@ export class GamesService {
     return game?.navigationItems || [];
   }
 }
+getTestGameSettings()

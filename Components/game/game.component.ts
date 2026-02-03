@@ -4,6 +4,7 @@ import { SlotMachineComponent } from '../slot-machine/slot-machine/slot-machine.
 import { PrizesSidebarComponent } from '../prizes/prizes-sidebar/prizes-sidebar.component';
 import { ArduinoControlComponent } from '../arduino-control/arduino-control.component';
 import { SettingsService } from '../../Services/settings.service';
+import { GamesService } from '../../Services/games.service';
 
 @Component({
   selector: 'game',
@@ -22,7 +23,8 @@ export class GameComponent {
   public enableArduinoControl: boolean;
 
   constructor(
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private gamesService: GamesService
   ) {
     // Load current settings
     const settings = this.settingsService.getSettings();
@@ -30,5 +32,8 @@ export class GameComponent {
     // Apply settings to component state
     this.showPrizesSidebar = settings.showPrizesList;
     this.enableArduinoControl = settings.enableArduinoControl;
+
+    // Record that this game was played
+    this.gamesService.recordGamePlayed('slot-machine');
   }
 }

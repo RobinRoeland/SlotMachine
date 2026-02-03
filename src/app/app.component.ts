@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ThemeService } from '../../Services/theme.service';
 import { SettingsService } from '../../Services/settings.service';
 import { TutorialService } from '../../Services/tutorial.service';
+import { GamesService } from '../../Services/games.service';
 import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial-modal.component';
 
 @Component({
@@ -29,11 +30,17 @@ export class AppComponent {
     private activatedRoute: ActivatedRoute,
     private themeService: ThemeService,
     private settingsService: SettingsService,
-    private tutorialService: TutorialService
+    private tutorialService: TutorialService,
+    private gamesService: GamesService
   ) {
     // Initialize theme on app startup
     const currentTheme = this.settingsService.getSettings().colorTheme;
     this.themeService.applyTheme(currentTheme);
+
+    // Subscribe to tutorial modal visibility
+    this.tutorialService.showModal$.subscribe(show => {
+      this.showTutorial = show;
+    });
 
     // Subscribe to router events to get the current route's title
     this.router.events.pipe(
@@ -63,12 +70,16 @@ export class AppComponent {
     if (!this.tutorialService.isTutorialCompleted()) {
       // Show tutorial after a short delay for better UX
       setTimeout(() => {
-        this.showTutorial = true;
+        // Load tutorial for the current game (default to slot-machine for first-time users)
+        const currentGame = this.gamesService.getCurrentGame();
+        const gameId = currentGame?.id || 'slot-machine';
+        this.tutorialService.loadTutorialForGame(gameId);
+        this.tutorialService.showTutorialModal();
       }, 500);
     }
   }
 
   closeTutorial() {
-    this.showTutorial = false;
+    this.tutorialService.hideTutorialModal();
   }
 }

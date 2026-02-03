@@ -152,14 +152,14 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
+    // Resize image before storing to reduce memory usage
+    this.resizeImage(data.imageFile, 256, 256, (resizedDataUrl) => {
       try {
         const current = this.itemsService.getItems();
         
         current.push({
           name: data.name,
-          imageSrc: e.target.result
+          imageSrc: resizedDataUrl
         });
         
         // Auto-save the new item
@@ -170,9 +170,53 @@ export class ItemEditorComponent implements OnInit, OnDestroy {
       } catch (err: any) {
         this.addItemError = err.message || String(err);
       }
+    });
+  }
+
+  /**
+   * Resize an image file to a maximum width/height while maintaining aspect ratio
+   * @param file The image file to resize
+   * @param maxWidth Maximum width in pixels
+   * @param maxHeight Maximum height in pixels
+   * @param callback Function to call with the resized data URL
+   */
+  private resizeImage(file: File, maxWidth: number, maxHeight: number, callback: (dataUrl: string) => void): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        // Calculate new dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        // Create canvas and resize
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          // Convert to data URL with quality compression
+          const resizedDataUrl = canvas.toDataURL('image/png', 0.9);
+          callback(resizedDataUrl);
+        }
+      };
+      img.src = e.target.result;
     };
-    
-    reader.readAsDataURL(data.imageFile);
+    reader.readAsDataURL(file);
   }
 
   openDeleteModal() {

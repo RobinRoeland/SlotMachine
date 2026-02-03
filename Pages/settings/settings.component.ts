@@ -26,7 +26,7 @@ import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial
     SettingsSectionComponent,
     SettingItemComponent,
     ToggleSwitchComponent,
-    TutorialModalComponent
+    TutorialModalComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
@@ -35,7 +35,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   settings: AppSettings;
   showSaved = false;
   isMobile = false;
-  showTutorialModal = false;
   games: Game[] = [];
   
   // Logo toggle state: 'regular' or 'small'
@@ -56,7 +55,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   constructor(
     private settingsService: SettingsService,
-    private gamesService: GamesService,
+    public gamesService: GamesService,
     private themeService: ThemeService,
     private tutorialService: TutorialService,
     private router: Router,
@@ -352,16 +351,15 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Show the tutorial modal
    */
   showTutorial(): void {
+    // Load tutorial for the current game
+    const currentGame = this.gamesService.getCurrentGame();
+    if (currentGame) {
+      this.tutorialService.loadTutorialForGame(currentGame.id);
+    }
+    
     // Reset tutorial state to allow it to be shown again
     this.tutorialService.resetTutorial();
-    this.showTutorialModal = true;
-  }
-
-  /**
-   * Close the tutorial modal
-   */
-  closeTutorial(): void {
-    this.showTutorialModal = false;
+    this.tutorialService.showTutorialModal();
   }
 
   /**
@@ -383,6 +381,17 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   shouldShowGameSettings(): boolean {
     return this.gamesService.getCurrentGame() !== null;
+  }
+
+  /**
+   * Check if a tutorial exists for the current game
+   */
+  hasTutorial(): boolean {
+    const currentGame = this.gamesService.getCurrentGame();
+    if (!currentGame) return false;
+    
+    // Try to load the tutorial and check if it exists
+    return this.tutorialService.loadTutorialForGame(currentGame.id);
   }
 
   /**
@@ -415,35 +424,90 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   /**
    * Get setting value by ID (maps to existing settings)
    */
-  getSettingValue(settingId: string): boolean {
-    const idMap: Record<string, boolean> = {
+  getSettingValue(settingId: string): any {
+    // First check if it's a mapped global setting
+    const idMap: Record<string, any> = {
       'prize-machine-display-settings': this.settings.showPrizesList,
       'prize-machine-show-odds': this.settings.showOdds,
       'prize-machine-pity-system': this.settings.enablePitySystem,
-      'prize-machine-show-pity-warning': this.settings.showPityWarning
+      'prize-machine-show-pity-warning': this.settings.showPityWarning,
+      'prize-machine-enable-arduino': this.settings.enableArduinoControl,
+      'prize-machine-show-button-text-roll': this.settings.showButtonTextRoll,
+      'prize-machine-button-text-roll': this.settings.buttonTextRoll,
+      'prize-machine-show-notification-rolling': this.settings.showNotificationRolling,
+      'prize-machine-notification-rolling': this.settings.notificationRolling,
+      'prize-machine-show-notification-win': this.settings.showNotificationWin,
+      'prize-machine-notification-win': this.settings.notificationWin,
+      'prize-machine-show-notification-after-roll': this.settings.showNotificationAfterRoll,
+      'prize-machine-notification-after-roll': this.settings.notificationAfterRoll,
+      'prize-machine-show-button-text-arduino': this.settings.showButtonTextArduino,
+      'prize-machine-button-text-arduino': this.settings.buttonTextArduino
     };
-    return idMap[settingId] ?? false;
+    
+    if (idMap[settingId] !== undefined) {
+      return idMap[settingId];
+    }
+    
+    // Otherwise, get it from game-specific settings
+    const currentGame = this.gamesService.getCurrentGame();
+    if (currentGame) {
+      return this.gamesService.getGameSetting(currentGame.id, settingId);
+    }
+    
+    return false;
   }
 
   /**
    * Handle game setting change
    */
-  onGameSettingChange(settingId: string, value: boolean): void {
+  onGameSettingChange(settingId: string, value: any): void {
+    const currentGame = this.gamesService.getCurrentGame();
+    if (!currentGame) return;
+
+    // Check if this is a mapped global setting
     const idMap: Record<string, string> = {
       'prize-machine-display-settings': 'showPrizesList',
       'prize-machine-show-odds': 'showOdds',
       'prize-machine-pity-system': 'enablePitySystem',
-      'prize-machine-show-pity-warning': 'showPityWarning'
+      'prize-machine-show-pity-warning': 'showPityWarning',
+      'prize-machine-enable-arduino': 'enableArduinoControl',
+      'prize-machine-show-button-text-roll': 'showButtonTextRoll',
+      'prize-machine-button-text-roll': 'buttonTextRoll',
+      'prize-machine-show-notification-rolling': 'showNotificationRolling',
+      'prize-machine-notification-rolling': 'notificationRolling',
+      'prize-machine-show-notification-win': 'showNotificationWin',
+      'prize-machine-notification-win': 'notificationWin',
+      'prize-machine-show-notification-after-roll': 'showNotificationAfterRoll',
+      'prize-machine-notification-after-roll': 'notificationAfterRoll',
+      'prize-machine-show-button-text-arduino': 'showButtonTextArduino',
+      'prize-machine-button-text-arduino': 'buttonTextArduino'
     };
     
     const settingKey = idMap[settingId];
     if (settingKey) {
-      this.settingsService.updateSetting(settingKey as keyof AppSettings, value);
-      
-      // Special handling for pity system
-      if (settingId === 'prize-machine-pity-system' && !value) {
-        this.settingsService.updateSetting('showPityWarning', false);
+      // Handle global settings
+      // Validate text inputs
+      if (typeof value === 'string' && value.trim()) {
+        this.settingsService.updateSetting(settingKey as keyof AppSettings, value.trim());
+      } else if (typeof value === 'boolean') {
+        this.settingsService.updateSetting(settingKey as keyof AppSettings, value);
+        
+        // Special handling for pity system
+        if (settingId === 'prize-machine-pity-system' && !value) {
+          this.settingsService.updateSetting('showPityWarning', false);
+        }
+        
+        // Prevent enabling Arduino on mobile
+        if (settingId === 'prize-machine-enable-arduino' && value && this.isMobile) {
+          this.settingsService.updateSetting('enableArduinoControl', false);
+        }
       }
+    } else {
+      // Handle game-specific settings
+      if (typeof value === 'string') {
+        value = value.trim();
+      }
+      this.gamesService.saveGameSettings(currentGame.id, settingId, value);
     }
   }
 }

@@ -1,7 +1,52 @@
 .test-game {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   padding: 32px 16px;
+  gap: 24px;
+}
+
+.welcome-banner {
+  max-width: 720px;
+  width: 100%;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+  border: 2px solid var(--color-primary, #60a5fa);
+  padding: 24px;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-banner__content {
+  text-align: center;
+}
+
+.welcome-banner__icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.welcome-banner__title {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  color: var(--color-primary-light, #60a5fa);
+}
+
+.welcome-banner__message {
+  margin: 0;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.6;
 }
 
 .test-game__card {
