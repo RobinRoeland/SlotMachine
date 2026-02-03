@@ -1230,6 +1230,20 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     const maxAttempts = 5;
     const delay = 200 + (attempt * 150); // 200ms, 350ms, 500ms, etc.
     
+    // If trying to highlight sidebar navigation, expand the sidebar first
+    if (step.targetSelector && (step.targetSelector.includes('routerLink') || step.targetSelector.includes('.nav a'))) {
+      const sidebar = document.querySelector('.sidebar') as HTMLElement;
+      if (sidebar && sidebar.classList.contains('sidebar-collapsed')) {
+        // Expand sidebar by triggering hover/mouseenter
+        const toggleButton = document.querySelector('#toggleSidebar') as HTMLElement;
+        if (toggleButton) {
+          toggleButton.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+        }
+        // Also directly remove collapsed class as backup
+        sidebar.classList.remove('sidebar-collapsed');
+      }
+    }
+    
     setTimeout(() => {
       const element = this.findElement(step.targetSelector!);
       if (element) {
