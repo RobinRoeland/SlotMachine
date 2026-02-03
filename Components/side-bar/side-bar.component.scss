@@ -204,6 +204,29 @@
     transform: translateX(0);
 }
 
+/* Tutorial active state - highlight navigation items during tutorial */
+.nav a.tutorial-active {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(71, 89, 180, 0.4);
+    animation: tutorial-pulse 2s ease-in-out infinite;
+}
+
+.nav a.tutorial-active::before {
+    transform: translateX(0);
+    background: white;
+}
+
+@keyframes tutorial-pulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(71, 89, 180, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 16px rgba(71, 89, 180, 0.6);
+    }
+}
+
 /* Mobile portrait - sidebar becomes full screen overlay */
 @media (max-width: 480px) {
     .sidebar {

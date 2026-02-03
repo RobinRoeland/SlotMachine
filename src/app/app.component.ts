@@ -66,17 +66,19 @@ export class AppComponent {
     }
     this.pageTitle = route.snapshot.data['title'] || route.snapshot.title || '';
 
-    // Show tutorial if not completed AND a game is selected
+    // Show tutorial if not completed AND we're on a game route
     if (!this.tutorialService.isTutorialCompleted()) {
-      // Show tutorial after a short delay for better UX
+      // Show tutorial after a short delay for better UX and to allow components to initialize
       setTimeout(() => {
-        const currentGame = this.gamesService.getCurrentGame();
-        // Only show tutorial if a game is actually selected
-        if (currentGame) {
-          this.tutorialService.loadTutorialForGame(currentGame.id);
+        const currentUrl = this.router.url;
+        const game = this.gamesService.getGameByRoute(currentUrl);
+        
+        // Only show tutorial if we're on a game route
+        if (game) {
+          this.tutorialService.loadTutorialForGame(game.id);
           this.tutorialService.showTutorialModal();
         }
-      }, 500);
+      }, 800);
     }
   }
 

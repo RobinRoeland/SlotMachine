@@ -1242,6 +1242,11 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
     // Clean up action listeners only (NOT repositioning observers)
     // Repositioning observers should stay active throughout the tutorial
     
+    // Remove tutorial-active class from previously highlighted element
+    if (this.highlightedElement) {
+      this.highlightedElement.classList.remove('tutorial-active');
+    }
+    
     if (this.clickListener) {
       document.removeEventListener('click', this.clickListener, true);
       this.clickListener = null;
