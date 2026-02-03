@@ -6,7 +6,7 @@ import { ItemsService } from '../../Services/items.service';
 import { ValidationService } from '../../Services/validation.service';
 import { FileService } from '../../Services/file.service';
 import { ItemsJsonEditorComponent } from '../../Components/item-editor/items-json-editor/items-json-editor.component';
-import { SlotMachineRollerComponent, Item } from '../../Components/machine/slot-machine-roller/slot-machine-roller.component';
+import { SlotMachineRollerComponent, Item } from '../../Components/slot-machine/slot-machine-roller/slot-machine-roller.component';
 import { ItemsGridComponent } from '../../Components/items/items-grid/items-grid.component';
 import { AddItemModalComponent, AddItemData } from '../../Components/item-editor/add-item-modal/add-item-modal.component';
 import { DeleteItemModalComponent } from '../../Components/item-editor/delete-item-modal/delete-item-modal.component';

@@ -1,0 +1,18 @@
+<section class="home">
+  <div class="games-grid" *ngIf="games$ | async as games">
+    <a class="game-card" *ngFor="let game of games; trackBy: trackByGameId" [routerLink]="game.route">
+      <div class="game-card__icon">{{ game.icon }}</div>
+      <div class="game-card__content">
+        <div class="game-card__header">
+          <h2>{{ game.name }}</h2>
+          <span class="game-card__plays">{{ game.playCount }} plays</span>
+        </div>
+        <p class="game-card__description">{{ game.description }}</p>
+        <div class="game-card__meta" *ngIf="game.lastPlayed">
+          Last played: {{ game.lastPlayed | date:'mediumDate' }}
+        </div>
+        <div class="game-card__cta">Open</div>
+      </div>
+    </a>
+  </div>
+</section>

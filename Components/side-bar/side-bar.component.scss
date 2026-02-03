@@ -117,6 +117,22 @@
     gap: var(--sidebar-nav-gap);
 }
 
+.nav-divider {
+    height: 1px;
+    background: var(--border-color, rgba(255, 255, 255, 0.12));
+    margin: var(--spacing-xs) 0;
+}
+
+.nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted, rgba(255, 255, 255, 0.5));
+    padding: var(--spacing-xs) calc(var(--spacing-sm) * 1.2);
+    margin-top: var(--spacing-xs);
+}
+
 /* Collapsed sidebar: slide off screen */
 .sidebar.sidebar-collapsed {
     transform: translateX(-100%);
@@ -143,6 +159,16 @@
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.nav-icon {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav a::before {

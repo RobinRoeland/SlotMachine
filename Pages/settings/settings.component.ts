@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { SettingsService, AppSettings } from '../../Services/settings.service';
+import { GamesService, Game } from '../../Services/games.service';
 import { ThemeService } from '../../Services/theme.service';
 import { TutorialService } from '../../Services/tutorial.service';
 import { BaseComponent } from '../../Services/base.component';
@@ -34,6 +36,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   showSaved = false;
   isMobile = false;
   showTutorialModal = false;
+  games: Game[] = [];
   
   // Logo toggle state: 'regular' or 'small'
   selectedLogoType: 'regular' | 'small' = 'regular';
@@ -53,12 +56,17 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   constructor(
     private settingsService: SettingsService,
+    private gamesService: GamesService,
     private themeService: ThemeService,
-    private tutorialService: TutorialService
+    private tutorialService: TutorialService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     super();
     // Initialize with current settings from service
     this.settings = this.settingsService.getSettings();
+    // Load available games
+    this.games = this.gamesService.getGames();
   }
 
   ngOnInit(): void {
@@ -368,5 +376,74 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   async importAllData(): Promise<void> {
     await this.settingsService.importAllData();
+  }
+
+  /**
+   * Check if we should show game-specific settings (when there's a current game context)
+   */
+  shouldShowGameSettings(): boolean {
+    return this.gamesService.getCurrentGame() !== null;
+  }
+
+  /**
+   * Get unique groups from game settings
+   */
+  getGameSettingsGroups(game: Game): string[] {
+    if (!game.gameSettings) return [];
+    const groups = game.gameSettings
+      .map(setting => setting.group)
+      .filter((group, index, self) => group && self.indexOf(group) === index);
+    return groups as string[];
+  }
+
+  /**
+   * Get settings for a specific group
+   */
+  getGameSettingsByGroup(game: Game, group: string) {
+    if (!game.gameSettings) return [];
+    return game.gameSettings.filter(setting => setting.group === group);
+  }
+
+  /**
+   * Check if this is the last group
+   */
+  isLastGroup(game: Game, group: string): boolean {
+    const groups = this.getGameSettingsGroups(game);
+    return groups.indexOf(group) === groups.length - 1;
+  }
+
+  /**
+   * Get setting value by ID (maps to existing settings)
+   */
+  getSettingValue(settingId: string): boolean {
+    const idMap: Record<string, boolean> = {
+      'prize-machine-display-settings': this.settings.showPrizesList,
+      'prize-machine-show-odds': this.settings.showOdds,
+      'prize-machine-pity-system': this.settings.enablePitySystem,
+      'prize-machine-show-pity-warning': this.settings.showPityWarning
+    };
+    return idMap[settingId] ?? false;
+  }
+
+  /**
+   * Handle game setting change
+   */
+  onGameSettingChange(settingId: string, value: boolean): void {
+    const idMap: Record<string, string> = {
+      'prize-machine-display-settings': 'showPrizesList',
+      'prize-machine-show-odds': 'showOdds',
+      'prize-machine-pity-system': 'enablePitySystem',
+      'prize-machine-show-pity-warning': 'showPityWarning'
+    };
+    
+    const settingKey = idMap[settingId];
+    if (settingKey) {
+      this.settingsService.updateSetting(settingKey as keyof AppSettings, value);
+      
+      // Special handling for pity system
+      if (settingId === 'prize-machine-pity-system' && !value) {
+        this.settingsService.updateSetting('showPityWarning', false);
+      }
+    }
   }
 }

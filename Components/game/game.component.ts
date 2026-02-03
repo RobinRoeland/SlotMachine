@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SlotMachineComponent } from '../../Components/machine/slot-machine/slot-machine.component';
-import { PrizesSidebarComponent } from '../../Components/prizes/prizes-sidebar/prizes-sidebar.component';
-import { ArduinoControlComponent } from '../../Components/arduino-control/arduino-control.component';
+import { SlotMachineComponent } from '../slot-machine/slot-machine/slot-machine.component';
+import { PrizesSidebarComponent } from '../prizes/prizes-sidebar/prizes-sidebar.component';
+import { ArduinoControlComponent } from '../arduino-control/arduino-control.component';
 import { SettingsService } from '../../Services/settings.service';
 
 @Component({
