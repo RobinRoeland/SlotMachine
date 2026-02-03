@@ -1,6 +1,6 @@
-# Arduino Slot Machine Control - Setup Guide
+# RRGameSystem - Arduino Control Setup Guide
 
-This guide explains how to control the slot machine using an Arduino board via USB serial connection.
+This guide explains how to control the slot machine game using an Arduino board via USB serial connection.
 
 ## Features
 

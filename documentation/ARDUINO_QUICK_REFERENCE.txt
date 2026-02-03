@@ -5,9 +5,9 @@
 ┌────────────────────────────────────────────────────────────────┐
 │ BROWSER SETUP                                                  │
 └────────────────────────────────────────────────────────────────┘
-  1. Open SlotMachine.html in Chrome/Edge/Opera
+  1. Open RRGameSystem in Chrome/Edge/Opera (http://localhost:4200)
   2. Go to Settings → Enable "Arduino Control"
-  3. Return to Prize Machine page
+  3. Return to Game page
   4. Click "Connect Arduino" button
   5. Select Arduino port from popup
   6. Wait for "Arduino Connected" status

@@ -1,6 +1,8 @@
 {
   "name": "slot-machine",
   "version": "0.0.0",
+  "author": "Robin Roeland",
+  "license": "UNLICENSED",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",

@@ -1,6 +1,10 @@
-# SlotMachine
+# RRGameSystem
 
-**Check out a demo of our project at: [Github Pages](https://robinroeland.github.io/SlotMachine/)!**
+**Check out a demo of our project at: [Github Pages](https://robinroeland.github.io/RRGameSystem/)!**
+
+---
+
+**Copyright © 2026 Robin Roeland. All rights reserved.**
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
 
@@ -26,26 +30,53 @@ The application uses a service-oriented architecture with the following core ser
 - **SettingsService** - Application settings management
 - **StorageService** - LocalStorage wrapper with observables
 
-## Development server
+## Quick Start
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+For first-time setup:
+```bash
+npm run setup
+```
+This will install all dependencies and automatically start the development server.
 
-## Code scaffolding
+## Development Server
+
+Run `npm start` or `npm run dev` for a dev server. The app will automatically open at `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+### Available Scripts
+
+- `npm start` - Start development server and open browser
+- `npm run dev` - Start development server
+- `npm run build` - Build the project for production
+- `npm run build:ghpages` - Build for GitHub Pages deployment
+- `npm run watch` - Build and watch for changes
+- `npm test` - Run unit tests
+- `npm run setup` - Install dependencies and start server
+
+## Code Scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/slot-machine/` directory.
 
-## Running unit tests
+## Testing
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+## Arduino Integration
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+This project supports Arduino control for triggering slot machine rolls and receiving results. For detailed setup instructions:
 
-## Further help
+- **[Arduino Setup Guide](documentation/ARDUINO_SETUP.md)** - Complete setup instructions
+- **[Arduino Quick Reference](documentation/ARDUINO_QUICK_REFERENCE.txt)** - Quick command reference
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Key features:
+- USB serial communication via Web Serial API
+- Real-time win/loss feedback
+- Browser-based connection (Chrome, Edge, Opera)
+- Easy toggle in application settings
+
+## Further Help
+
+To get more help on the Angular CLI use `ng help` or check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
