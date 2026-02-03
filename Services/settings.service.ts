@@ -237,25 +237,6 @@ export class SettingsService {
   }
 
   /**
-   * Update multiple settings at once
-   */
-  updateSettings(partialSettings: Partial<AppSettings>): void {
-    const currentSettings = this.settingsSubject.value;
-    const newSettings = { ...currentSettings, ...partialSettings };
-    
-    // If prizes list is disabled, also disable odds
-    if ('showPrizesList' in partialSettings && !partialSettings.showPrizesList) {
-      newSettings.showOdds = false;
-    }
-    
-    // Save to storage service (this will trigger the observables)
-    this.saveSettings(newSettings);
-    
-    // Show saved indicator
-    this.showSavedIndicator();
-  }
-
-  /**
    * Check if odds should be disabled (when prizes list is not shown)
    */
   isOddsDisabled(): boolean {
@@ -270,15 +251,6 @@ export class SettingsService {
     setTimeout(() => {
       this.savedSubject.next(false);
     }, 2000);
-  }
-
-  /**
-   * Reset all settings to defaults
-   */
-  resetToDefaults(): void {
-    // Save to storage service (this will trigger the observables)
-    this.saveSettings(this.DEFAULT_SETTINGS);
-    this.showSavedIndicator();
   }
 
   /**

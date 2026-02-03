@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, fromEvent, EMPTY } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, fromEvent } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /**
  * Centralized localStorage service that provides reactive access to localStorage data.
@@ -486,21 +486,6 @@ export class StorageService {
   watchNotificationAfterRoll(): Observable<string> {
     return this.watch<string>(this.KEYS.NOTIFICATION_AFTER_ROLL).pipe(
       map(value => value || 'Thanks for playing!')
-    );
-  }
-
-  getShowButtonText(): boolean {
-    const value = this.getItem<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL);
-    return value !== null ? value : true;
-  }
-
-  setShowButtonText(show: boolean): void {
-    this.setItem(this.KEYS.SHOW_BUTTON_TEXT_ROLL, show);
-  }
-
-  watchShowButtonText(): Observable<boolean> {
-    return this.watch<boolean>(this.KEYS.SHOW_BUTTON_TEXT_ROLL).pipe(
-      map(value => value !== null ? value : true)
     );
   }
 

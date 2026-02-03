@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 import { SettingsService, AppSettings } from '../../Services/settings.service';
 import { GamesService, Game } from '../../Services/games.service';
 import { ThemeService } from '../../Services/theme.service';
@@ -11,7 +10,6 @@ import { BaseComponent } from '../../Services/base.component';
 import { SettingsSectionComponent } from '../../Components/settings/settings-section/settings-section.component';
 import { SettingItemComponent } from '../../Components/settings/setting-item/setting-item.component';
 import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/toggle-switch.component';
-import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial-modal.component';
 
 /**
  * Settings page component
@@ -26,7 +24,6 @@ import { TutorialModalComponent } from '../../Components/tutorial-modal/tutorial
     SettingsSectionComponent,
     SettingItemComponent,
     ToggleSwitchComponent,
-    TutorialModalComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
@@ -58,7 +55,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     public gamesService: GamesService,
     private themeService: ThemeService,
     private tutorialService: TutorialService,
-    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     super();
@@ -102,137 +98,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    */
   get isOddsDisabled(): boolean {
     return this.settingsService.isOddsDisabled();
-  }
-
-  /**
-   * Handle show prizes list toggle
-   */
-  onShowPrizesListChange(value: boolean): void {
-    this.settingsService.updateSetting('showPrizesList', value);
-  }
-
-  /**
-   * Handle show odds toggle
-   */
-  onShowOddsChange(value: boolean): void {
-    this.settingsService.updateSetting('showOdds', value);
-  }
-
-  /**
-   * Handle enable pity system toggle
-   */
-  onEnablePitySystemChange(value: boolean): void {
-    this.settingsService.updateSetting('enablePitySystem', value);
-    
-    // If disabling pity system, also disable show pity warning
-    if (!value) {
-      this.settingsService.updateSetting('showPityWarning', false);
-    }
-  }
-
-  /**
-   * Handle show pity warning toggle
-   */
-  onShowPityWarningChange(value: boolean): void {
-    this.settingsService.updateSetting('showPityWarning', value);
-  }
-
-  /**
-   * Handle enable Arduino control toggle
-   */
-  onEnableArduinoControlChange(value: boolean): void {
-    // Prevent enabling on mobile devices
-    if (value && this.isMobile) {
-      return;
-    }
-    this.settingsService.updateSetting('enableArduinoControl', value);
-  }
-
-  /**
-   * Handle button text roll change
-   */
-  onButtonTextRollChange(value: string): void {
-    if (value && value.trim()) {
-      this.settingsService.updateSetting('buttonTextRoll', value.trim());
-    }
-  }
-
-  /**
-   * Handle notification rolling text change
-   */
-  onNotificationRollingChange(value: string): void {
-    if (value && value.trim()) {
-      this.settingsService.updateSetting('notificationRolling', value.trim());
-    }
-  }
-
-  /**
-   * Handle notification win text change
-   */
-  onNotificationWinChange(value: string): void {
-    if (value && value.trim()) {
-      this.settingsService.updateSetting('notificationWin', value.trim());
-    }
-  }
-
-  /**
-   * Handle button text Arduino change
-   */
-  onButtonTextArduinoChange(value: string): void {
-    if (value && value.trim()) {
-      this.settingsService.updateSetting('buttonTextArduino', value.trim());
-    }
-  }
-
-  /**
-   * Handle show button text toggle
-   */
-  onShowButtonTextChange(value: boolean): void {
-    this.settingsService.updateSetting('showButtonTextRoll', value);
-  }
-
-  /**
-   * Handle show button text roll toggle
-   */
-  onShowButtonTextRollChange(value: boolean): void {
-    this.settingsService.updateSetting('showButtonTextRoll', value);
-  }
-
-  /**
-   * Handle show notification rolling toggle
-   */
-  onShowNotificationRollingChange(value: boolean): void {
-    this.settingsService.updateSetting('showNotificationRolling', value);
-  }
-
-  /**
-   * Handle show notification win toggle
-   */
-  onShowNotificationWinChange(value: boolean): void {
-    this.settingsService.updateSetting('showNotificationWin', value);
-  }
-
-  /**
-   * Handle show button text Arduino toggle
-   */
-  onShowButtonTextArduinoChange(value: boolean): void {
-    this.settingsService.updateSetting('showButtonTextArduino', value);
-  }
-
-  /**
-   * Handle notification after roll text change
-   */
-  onNotificationAfterRollChange(value: string): void {
-    if (value && value.trim()) {
-      this.settingsService.updateSetting('notificationAfterRoll', value.trim());
-    }
-  }
-
-  /**
-   * Handle show notification after roll toggle
-   */
-  onShowNotificationAfterRollChange(value: boolean): void {
-    this.settingsService.updateSetting('showNotificationAfterRoll', value);
   }
 
   /**

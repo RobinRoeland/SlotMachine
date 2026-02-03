@@ -75,42 +75,4 @@ export class FileService {
       throw new Error(`Failed to export file: ${err.message || String(err)}`);
     }
   }
-
-  /**
-   * Read file as data URL (for images)
-   */
-  async readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e: any) => {
-        resolve(e.target.result);
-      };
-      
-      reader.onerror = () => {
-        reject(new Error('Failed to read file'));
-      };
-      
-      reader.readAsDataURL(file);
-    });
-  }
-
-  /**
-   * Read file as text
-   */
-  async readFileAsText(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e: any) => {
-        resolve(e.target.result);
-      };
-      
-      reader.onerror = () => {
-        reject(new Error('Failed to read file'));
-      };
-      
-      reader.readAsText(file);
-    });
-  }
 }

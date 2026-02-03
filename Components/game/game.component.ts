@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { SlotMachineComponent } from '../slot-machine/slot-machine/slot-machine.component';
 import { PrizesSidebarComponent } from '../prizes/prizes-sidebar/prizes-sidebar.component';
 import { ArduinoControlComponent } from '../arduino-control/arduino-control.component';
@@ -13,7 +12,6 @@ import { GamesService } from '../../Services/games.service';
     SlotMachineComponent,
     PrizesSidebarComponent,
     ArduinoControlComponent,
-    CommonModule,
   ],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'

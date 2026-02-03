@@ -4,7 +4,6 @@ import { TutorialService } from './tutorial.service';
 import { GameTutorialService } from './game-tutorial.service';
 import { getSlotMachineTutorialSteps, checkSlotMachineCompletion } from './tutorials/slot-machine-tutorial';
 import { getSlotMachineSettings } from './settings/slot-machine-settings';
-import { getTestGameSettings } from './settings/test-game-settings';
 
 export interface NavItem {
   label: string;
@@ -55,28 +54,6 @@ export class GamesService {
         { label: 'Settings', route: '/settings', icon: '⚙️', category: 'general' }
       ],
       gameSettings: getSlotMachineSettings()
-    },
-    {
-      id: 'test-game',
-      name: 'Test Game',
-      description: 'A simple placeholder game to verify multi-game support.',
-      route: '/test-game',
-      icon: '🧪',
-      playCount: 0,
-      navigationItems: [
-        { label: 'Play', route: '/test-game', icon: '🎮', category: 'game' },
-        { label: 'Settings', route: '/settings', icon: '⚙️', category: 'general' }
-      ],
-      gameSettings: [
-        {
-          id: 'test-game-show-banner',
-          label: 'Show Welcome Banner',
-          description: 'Toggle a placeholder banner for this test game.',
-          type: 'toggle',
-          value: true,
-          group: 'Display Settings'
-        }
-      ]
     }
   ];
 
@@ -205,12 +182,6 @@ export class GamesService {
     }
   }
 
-  addGame(game: Game): void {
-    this.games.push(game);
-    this.gamesSubject.next([...this.games]);
-    this.saveGameStats();
-  }
-
   private loadGameStats(): void {
     const statsJson = localStorage.getItem('game-stats');
     if (statsJson) {
@@ -258,4 +229,3 @@ export class GamesService {
     return game?.navigationItems || [];
   }
 }
-getTestGameSettings()

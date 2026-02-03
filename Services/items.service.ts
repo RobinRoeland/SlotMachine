@@ -49,27 +49,6 @@ export class ItemsService {
   }
 
   /**
-   * Get item image by name
-   */
-  getItemImage(name: string): string | undefined {
-    return this.getItemByName(name)?.imageSrc;
-  }
-
-  /**
-   * Check if an item exists
-   */
-  hasItem(name: string): boolean {
-    return this.getItems().some(item => item.name === name);
-  }
-
-  /**
-   * Get all item names
-   */
-  getItemNames(): string[] {
-    return this.getItems().map(item => item.name);
-  }
-
-  /**
    * Show saved indicator for 2 seconds
    */
   private showSavedIndicator(): void {
