@@ -66,15 +66,16 @@ export class AppComponent {
     }
     this.pageTitle = route.snapshot.data['title'] || route.snapshot.title || '';
 
-    // Show tutorial if not completed
+    // Show tutorial if not completed AND a game is selected
     if (!this.tutorialService.isTutorialCompleted()) {
       // Show tutorial after a short delay for better UX
       setTimeout(() => {
-        // Load tutorial for the current game (default to slot-machine for first-time users)
         const currentGame = this.gamesService.getCurrentGame();
-        const gameId = currentGame?.id || 'slot-machine';
-        this.tutorialService.loadTutorialForGame(gameId);
-        this.tutorialService.showTutorialModal();
+        // Only show tutorial if a game is actually selected
+        if (currentGame) {
+          this.tutorialService.loadTutorialForGame(currentGame.id);
+          this.tutorialService.showTutorialModal();
+        }
       }, 500);
     }
   }
