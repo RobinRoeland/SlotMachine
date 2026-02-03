@@ -147,20 +147,8 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       
       // If we need to highlight an element for navigation, try to find it
       if (step.targetSelector && step.actionType === 'navigate') {
-        setTimeout(() => {
-          const element = this.findElement(step.targetSelector!);
-          if (element) {
-            this.highlightedElement = element;
-            this.showSpotlight = true;
-            this.updateSpotlight(element);
-            this.positionTooltip(element, step.placement || 'bottom');
-            
-            // Set up dynamic repositioning for navigation elements too
-            this.setupDynamicRepositioning(element, step.placement || 'bottom');
-            
-            this.cdr.detectChanges(); // Force update after finding element
-          }
-        }, 300);
+        // Try multiple times with increasing delays for GitHub Pages
+        this.tryFindAndHighlightElement(step, 0);
       }
       return;
     }
@@ -1236,6 +1224,29 @@ export class TutorialModalComponent implements OnInit, OnDestroy {
       this.mutationObserver.disconnect();
       this.mutationObserver = null;
     }
+  }
+
+  private tryFindAndHighlightElement(step: TutorialStep, attempt: number): void {
+    const maxAttempts = 5;
+    const delay = 200 + (attempt * 150); // 200ms, 350ms, 500ms, etc.
+    
+    setTimeout(() => {
+      const element = this.findElement(step.targetSelector!);
+      if (element) {
+        this.highlightedElement = element;
+        this.showSpotlight = true;
+        this.updateSpotlight(element);
+        this.positionTooltip(element, step.placement || 'bottom');
+        
+        // Set up dynamic repositioning for navigation elements too
+        this.setupDynamicRepositioning(element, step.placement || 'bottom');
+        
+        this.cdr.detectChanges(); // Force update after finding element
+      } else if (attempt < maxAttempts - 1) {
+        // Element not found yet, retry
+        this.tryFindAndHighlightElement(step, attempt + 1);
+      }
+    }, delay);
   }
 
   private cleanup(): void {
