@@ -88,7 +88,7 @@ export function getSlotMachineTutorialSteps(): TutorialStep[] {
     {
       title: 'Navigate to Item Editor',
       content: 'Perfect! Now click on "Edit Items" in the sidebar to start adding items to your slot machine.',
-      targetSelector: 'nav.nav a[href="/edit-items"]',
+      targetSelector: 'nav.nav a[routerLink="/edit-items"], nav.nav a[href*="/edit-items"]',
       placement: 'right',
       route: '/edit-items',
       waitForAction: true,
@@ -142,7 +142,7 @@ export function getSlotMachineTutorialSteps(): TutorialStep[] {
     {
       title: 'Navigate to Prizes',
       content: 'Awesome! Your first item is created! Now let\'s set up a winning combination. Hover over the logo again to open the sidebar, then click on "Edit Prizes".',
-      targetSelector: 'nav.nav a[href="/edit-prizes"]',
+      targetSelector: 'nav.nav a[routerLink="/edit-prizes"], nav.nav a[href*="/edit-prizes"]',
       placement: 'right',
       route: '/edit-prizes',
       waitForAction: true,
@@ -290,7 +290,7 @@ export function getSlotMachineTutorialSteps(): TutorialStep[] {
     {
       title: 'Try Your Slot Machine!',
       content: 'Click on "Play" in the sidebar to test your machine and see if you can win your prize!',
-      targetSelector: 'nav.nav a[href="/game"]',
+      targetSelector: 'nav.nav a[routerLink="/game"], nav.nav a[href*="/game"]',
       placement: 'right',
       route: '/game',
       waitForAction: true,
