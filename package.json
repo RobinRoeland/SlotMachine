@@ -8,7 +8,7 @@
     "start": "ng serve --open",
     "dev": "ng serve",
     "build": "ng build",
-    "build:ghpages": "ng build --configuration production --base-href=/RRGameSystem/ --output-path docs",
+    "build:ghpages": "ng build --configuration production --base-href=/RRGameSystem/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:SlotMachine": "node dist/slot-machine/server/server.mjs",
