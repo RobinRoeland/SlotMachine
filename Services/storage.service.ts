@@ -32,6 +32,7 @@ export class StorageService {
     COMPANY_LOGO: 'settings_company_logo',
     COMPANY_LOGO_SMALL: 'settings_company_logo_small',
     COLOR_THEME: 'settings_color_theme',
+    CUSTOM_GRADIENT_COLORS: 'settings_custom_gradient_colors',
     BUTTON_TEXT_ROLL: 'settings_button_text_roll',
     NOTIFICATION_ROLLING: 'settings_notification_rolling',
     NOTIFICATION_WIN: 'settings_notification_win',
@@ -398,18 +399,33 @@ export class StorageService {
     );
   }
 
-  getColorTheme(): 'light' | 'medium-dark' | 'dark' {
-    const value = this.getItem<'light' | 'medium-dark' | 'dark'>(this.KEYS.COLOR_THEME);
+  getColorTheme(): 'light' | 'medium-dark' | 'dark' | 'custom' {
+    const value = this.getItem<'light' | 'medium-dark' | 'dark' | 'custom'>(this.KEYS.COLOR_THEME);
     return value || 'light';
   }
 
-  setColorTheme(theme: 'light' | 'medium-dark' | 'dark'): void {
+  setColorTheme(theme: 'light' | 'medium-dark' | 'dark' | 'custom'): void {
     this.setItem(this.KEYS.COLOR_THEME, theme);
   }
 
-  watchColorTheme(): Observable<'light' | 'medium-dark' | 'dark'> {
-    return this.watch<'light' | 'medium-dark' | 'dark'>(this.KEYS.COLOR_THEME).pipe(
+  watchColorTheme(): Observable<'light' | 'medium-dark' | 'dark' | 'custom'> {
+    return this.watch<'light' | 'medium-dark' | 'dark' | 'custom'>(this.KEYS.COLOR_THEME).pipe(
       map(value => value || 'light')
+    );
+  }
+
+  getCustomGradientColors(): string[] {
+    const value = this.getItem<string[]>(this.KEYS.CUSTOM_GRADIENT_COLORS);
+    return value || ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'];
+  }
+
+  setCustomGradientColors(colors: string[]): void {
+    this.setItem(this.KEYS.CUSTOM_GRADIENT_COLORS, colors);
+  }
+
+  watchCustomGradientColors(): Observable<string[]> {
+    return this.watch<string[]>(this.KEYS.CUSTOM_GRADIENT_COLORS).pipe(
+      map(value => value || ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'])
     );
   }
 

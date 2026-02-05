@@ -5,7 +5,7 @@ import { isPlatformBrowser } from '@angular/common';
  * Theme definition interface
  */
 export interface Theme {
-  name: 'light' | 'medium-dark' | 'dark';
+  name: 'light' | 'medium-dark' | 'dark' | 'custom';
   displayName: string;
   colors: {
     // Background gradients
@@ -126,21 +126,130 @@ export class ThemeService {
   /**
    * Get a theme by name
    */
-  getTheme(name: 'light' | 'medium-dark' | 'dark'): Theme {
+  getTheme(name: 'light' | 'medium-dark' | 'dark' | 'custom'): Theme {
     return this.themes.find(t => t.name === name) || this.themes[0];
   }
 
   /**
-   * Apply a theme to the document
-   * Only works in browser environment (not during SSR)
+   * Create a custom theme from gradient and color settings
    */
-  applyTheme(themeName: 'light' | 'medium-dark' | 'dark'): void {
-    // Check if we're in a browser environment
-    if (!isPlatformBrowser(this.platformId)) {
-      return; // Skip theme application during SSR
-    }
+  createCustomTheme(customTheme: {
+    gradientColors: string[];
+    primaryColor: string;
+    secondaryColor: string;
+    textPrimaryColor: string;
+    textSecondaryColor: string;
+    cardBackgroundColor: string;
+    borderColor: string;
+  }): Theme {
+    const gradientStops = customTheme.gradientColors.map((color, index) => {
+      const percent = (index / (customTheme.gradientColors.length - 1)) * 100;
+      return `${color} ${percent}%`;
+    }).join(', ');
+    
+    const bodyBackground = `linear-gradient(135deg, ${gradientStops})`;
+    
+    // Generate darker/lighter variants of primary color
+    const primaryDark = this.adjustColorBrightness(customTheme.primaryColor, -20);
+    const primaryLight = this.adjustColorBrightness(customTheme.primaryColor, 20);
+    const secondaryLight = this.adjustColorBrightness(customTheme.secondaryColor, 20);
+    
+    return {
+      name: 'custom',
+      displayName: 'Custom Theme',
+      colors: {
+        bodyBackground,
+        primary: customTheme.primaryColor,
+        primaryDark,
+        primaryLight,
+        secondary: customTheme.secondaryColor,
+        secondaryLight,
+        scrollbarThumb: `linear-gradient(135deg, ${customTheme.secondaryColor} 0%, ${secondaryLight} 100%)`,
+        scrollbarThumbHover: `linear-gradient(135deg, ${this.adjustColorBrightness(customTheme.secondaryColor, -10)} 0%, ${this.adjustColorBrightness(secondaryLight, -10)} 100%)`,
+        scrollbarThumbActive: `linear-gradient(135deg, ${this.adjustColorBrightness(customTheme.secondaryColor, -20)} 0%, ${this.adjustColorBrightness(secondaryLight, -20)} 100%)`,
+        textPrimary: customTheme.textPrimaryColor,
+        textSecondary: customTheme.textSecondaryColor,
+        textAccent: customTheme.primaryColor,
+        border: customTheme.borderColor,
+        cardBackground: `linear-gradient(135deg, ${customTheme.cardBackgroundColor} 0%, ${this.adjustColorBrightness(customTheme.cardBackgroundColor, -5)} 100%)`,
+        cardBackgroundSolid: customTheme.cardBackgroundColor,
+        logoBackground: bodyBackground,
+        hoverOverlay: this.hexToRgba(customTheme.primaryColor, 0.05),
+        previewGradient: bodyBackground
+      }
+    };
+  }
 
-    const theme = this.getTheme(themeName);
+  /**
+   * Adjust color brightness
+   */
+  private adjustColorBrightness(hex: string, percent: number): string {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    return '#' + (
+      0x1000000 +
+      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+      (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+      (B < 255 ? (B < 1 ? 0 : B) : 255)
+    ).toString(16).slice(1);
+  }
+
+  /**
+   * Convert hex color to rgba
+   */
+  private hexToRgba(hex: string, alpha: number): string {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = num >> 16;
+    const g = num >> 8 & 0x00FF;
+    const b = num & 0x0000FF;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /**
+   * Determine if a color is dark
+   */
+  private isColorDark(hexColor: string): boolean {
+    // Remove # if present
+    const hex = hexColor.replace('#', '');
+    
+    // Convert to RGB
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate perceived brightness
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    
+    return brightness < 128;
+  }
+
+  /**
+   * Apply a custom theme
+   */
+  applyCustomTheme(customTheme: {
+    gradientColors: string[];
+    primaryColor: string;
+    secondaryColor: string;
+    textPrimaryColor: string;
+    textSecondaryColor: string;
+    cardBackgroundColor: string;
+    borderColor: string;
+  }): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
+    const theme = this.createCustomTheme(customTheme);
+    this.applyThemeObject(theme);
+  }
+
+  /**
+   * Apply theme object directly
+   */
+  private applyThemeObject(theme: Theme): void {
     const root = document.documentElement;
 
     // Apply CSS custom properties
@@ -168,5 +277,19 @@ export class ThemeService {
 
     // Store theme name as data attribute for potential CSS targeting
     root.setAttribute('data-theme', theme.name);
+  }
+
+  /**
+   * Apply a theme to the document
+   * Only works in browser environment (not during SSR)
+   */
+  applyTheme(themeName: 'light' | 'medium-dark' | 'dark' | 'custom'): void {
+    // Check if we're in a browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // Skip theme application during SSR
+    }
+
+    const theme = this.getTheme(themeName);
+    this.applyThemeObject(theme);
   }
 }

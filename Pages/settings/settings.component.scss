@@ -465,6 +465,28 @@
         opacity: 1;
       }
     }
+
+    &.custom-theme-button {
+      border: dashed 2px var(--border-color);
+      .custom-preview {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .plus-icon {
+          font-size: 36px;
+          font-weight: 300;
+          color: var(--color-primary-light);
+        }
+      }
+
+      &:hover {
+        border-color: var(--color-primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 62, 142, 0.2);
+      }
+    }
   }
 }
 

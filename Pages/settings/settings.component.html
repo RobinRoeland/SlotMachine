@@ -7,6 +7,13 @@
     </span>
     </div>
 
+    <!-- Custom Theme Editor Modal -->
+    <app-custom-theme-editor 
+      [hidden]="!showCustomThemeEditor"
+      (close)="closeCustomThemeEditor()"
+      (save)="saveCustomTheme($event)"
+    ></app-custom-theme-editor>
+
     <!-- General Settings Section -->
     <app-settings-section
     title="General Settings"
@@ -25,10 +32,28 @@
             *ngFor="let theme of availableThemes"
             class="theme-option"
             [class.selected]="isThemeSelected(theme.name)"
-            (click)="selectTheme(theme.name)"
+            (click)="theme.name !== 'custom' && selectTheme(theme.name)"
         >
             <div class="theme-preview" [style.background]="theme.colors.previewGradient"></div>
             <div class="theme-name">{{ theme.displayName }}</div>
+            <div class="selected-indicator">✓</div>
+        </div>
+
+        <!-- Custom Theme Button -->
+        <div 
+            class="theme-option custom-theme-button"
+            [class.selected]="isThemeSelected('custom')"
+            (click)="selectCustomTheme()"
+        >
+            <div 
+              class="theme-preview custom-preview" 
+              [style.background]="getCustomGradientPreview()"
+              (click)="openCustomThemeEditor(); $event.stopPropagation()"
+              title="Click to edit custom theme"
+            >
+              <div class="plus-icon">+</div>
+            </div>
+            <div class="theme-name">Custom Theme</div>
             <div class="selected-indicator">✓</div>
         </div>
         </div>
