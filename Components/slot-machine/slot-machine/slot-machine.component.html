@@ -1,13 +1,23 @@
-<div class="slot-machine">
-    <app-slot-machine-rollers 
-        [items]="items"
-        [rollerCount]="rollerCount"
-        [isRolling]="isRolling"
-        (rollComplete)="onRollComplete($event)">
-    </app-slot-machine-rollers>
-    
-    <slot-machine-controls 
-        [items]="items"
-        (rollStart)="onRollStart()">
-    </slot-machine-controls>
+@if (enableArduinoControl) {
+    <arduino-control></arduino-control>
+}
+<div class="game-layout">
+    <div class="game-container">
+        <div class="slot-machine">
+                <app-slot-machine-rollers 
+                        [items]="items"
+                        [rollerCount]="rollerCount"
+                        [isRolling]="isRolling"
+                        (rollComplete)="onRollComplete($event)">
+                </app-slot-machine-rollers>
+        
+                <slot-machine-controls 
+                        [items]="items"
+                        (rollStart)="onRollStart()">
+                </slot-machine-controls>
+        </div>
+    </div>
+    @if (showPrizesSidebar) {
+        <prizes-sidebar></prizes-sidebar>
+    }
 </div>

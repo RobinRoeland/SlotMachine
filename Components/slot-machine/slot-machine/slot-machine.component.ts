@@ -2,11 +2,14 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlotMachineControlsComponent } from '../slot-machine-controls/slot-machine-controls.component'
 import { SlotMachineRollersComponent } from '../slot-machine-rollers/slot-machine-rollers.component'
+import { PrizesSidebarComponent } from '../../prizes/prizes-sidebar/prizes-sidebar.component';
+import { ArduinoControlComponent } from '../../arduino-control/arduino-control.component';
 import { Item } from '../slot-machine-roller/slot-machine-roller.component';
 import { StorageService } from '../../../Services/storage.service';
 import { ItemsService } from '../../../Services/items.service';
 import { ArduinoService } from '../../../Services/arduino.service';
 import { SettingsService } from '../../../Services/settings.service';
+import { GamesService } from '../../../Services/games.service';
 import { Subscription } from 'rxjs';
 
 export interface Prize {
@@ -20,7 +23,9 @@ export interface Prize {
   imports: [
     CommonModule,
     SlotMachineControlsComponent,
-    SlotMachineRollersComponent
+    SlotMachineRollersComponent,
+    PrizesSidebarComponent,
+    ArduinoControlComponent
   ],
   templateUrl: './slot-machine.component.html',
   styleUrl: './slot-machine.component.scss'
@@ -32,6 +37,8 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
   items: Item[] = [];
   rollerCount: number = 4;
   isRolling: boolean = false;
+  showPrizesSidebar: boolean;
+  enableArduinoControl: boolean;
   
   private rollRequestSubscription?: Subscription;
 
@@ -39,8 +46,14 @@ export class SlotMachineComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private itemsService: ItemsService,
     private arduinoService: ArduinoService,
-    private settingsService: SettingsService
-  ) {}
+    private settingsService: SettingsService,
+    private gamesService: GamesService
+  ) {
+    const settings = this.settingsService.getSettings();
+    this.showPrizesSidebar = settings.showPrizesList;
+    this.enableArduinoControl = settings.enableArduinoControl;
+    this.gamesService.recordGamePlayed('slot-machine');
+  }
 
   ngOnInit(): void {
     // Load roller count from StorageService

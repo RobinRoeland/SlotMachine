@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { ItemEditorComponent } from '../../Pages/item-editor/item-editor.component';
-import { GameComponent } from '../../Components/game/game.component';
+import { SlotMachineComponent } from '../../Components/slot-machine/slot-machine/slot-machine.component';
 import { HomeComponent } from '../../Pages/home/home.component';
 import { PrizesComponent } from '../../Pages/prizes/prizes.component';
 import { OddsComponent } from '../../Pages/odds/odds.component';
@@ -13,8 +13,8 @@ export const routes: Routes = [
     title: 'Games'
   },
   { 
-    path: 'game', 
-    component: GameComponent,
+    path: 'slotmachine', 
+    component: SlotMachineComponent,
     title: 'Prize Machine'
   },
   { 

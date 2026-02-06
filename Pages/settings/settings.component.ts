@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { takeUntil } from 'rxjs';
 import { SettingsService, AppSettings } from '../../Services/settings.service';
 import { GamesService, Game } from '../../Services/games.service';
@@ -10,6 +11,7 @@ import { BaseComponent } from '../../Services/base.component';
 import { SettingsSectionComponent } from '../../Components/settings/settings-section/settings-section.component';
 import { SettingItemComponent } from '../../Components/settings/setting-item/setting-item.component';
 import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/toggle-switch.component';
+import { CustomThemeEditorComponent, CustomTheme } from '../../Components/custom-theme-editor/custom-theme-editor.component';
 
 /**
  * Settings page component
@@ -24,9 +26,21 @@ import { ToggleSwitchComponent } from '../../Components/settings/toggle-switch/t
     SettingsSectionComponent,
     SettingItemComponent,
     ToggleSwitchComponent,
+    CustomThemeEditorComponent,
   ],
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ])
+    ])
+  ]
 })
 export class SettingsComponent extends BaseComponent implements OnInit {
   settings: AppSettings;
@@ -49,6 +63,10 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   // Available themes
   availableThemes = this.themeService.themes;
+
+  // Custom theme editor state
+  showCustomThemeEditor = false;
+  initialCustomTheme?: CustomTheme;
 
   constructor(
     private settingsService: SettingsService,
@@ -208,8 +226,99 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   /**
    * Check if a theme is currently selected
    */
-  isThemeSelected(themeName: 'light' | 'medium-dark' | 'dark'): boolean {
+  isThemeSelected(themeName: 'light' | 'medium-dark' | 'dark' | 'custom'): boolean {
     return this.settings.colorTheme === themeName;
+  }
+
+  /**
+   * Open custom theme editor
+   */
+  openCustomThemeEditor(): void {
+    // Load saved custom theme if it exists - create new object to trigger change detection
+    this.initialCustomTheme = {
+      name: this.settings.customTheme.name || 'Custom Theme',
+      gradientColors: [...(this.settings.customTheme.gradientColors || ['#667eea', '#764ba2', '#f093fb', '#4facfe'])],
+      primaryColor: this.settings.customTheme.primaryColor || '#667eea',
+      secondaryColor: this.settings.customTheme.secondaryColor || '#764ba2',
+      textPrimaryColor: this.settings.customTheme.textPrimaryColor || '#1e293b',
+      textSecondaryColor: this.settings.customTheme.textSecondaryColor || '#64748b',
+      cardBackgroundColor: this.settings.customTheme.cardBackgroundColor || '#ffffff',
+      borderColor: this.settings.customTheme.borderColor || '#e5e7eb'
+    };
+    this.showCustomThemeEditor = true;
+  }
+
+  /**
+   * Select custom theme (apply existing custom theme)
+   */
+  selectCustomTheme(): void {
+    if (this.settings.customTheme.gradientColors && this.settings.customTheme.gradientColors.length > 0) {
+      this.settingsService.updateSetting('colorTheme', 'custom');
+      this.themeService.applyCustomTheme({
+        gradientColors: this.settings.customTheme.gradientColors,
+        primaryColor: this.settings.customTheme.primaryColor,
+        secondaryColor: this.settings.customTheme.secondaryColor,
+        textPrimaryColor: this.settings.customTheme.textPrimaryColor,
+        textSecondaryColor: this.settings.customTheme.textSecondaryColor,
+        cardBackgroundColor: this.settings.customTheme.cardBackgroundColor,
+        borderColor: this.settings.customTheme.borderColor
+      });
+    } else {
+      // No custom theme exists, open editor
+      this.openCustomThemeEditor();
+    }
+  }
+
+  /**
+   * Close custom theme editor
+   */
+  closeCustomThemeEditor(): void {
+    this.showCustomThemeEditor = false;
+  }
+
+  /**
+   * Save and apply custom theme
+   */
+  saveCustomTheme(customTheme: CustomTheme): void {
+    // Store the custom theme data as single object
+    this.settingsService.updateSetting('colorTheme', 'custom');
+    this.settingsService.updateSetting('customTheme', {
+      name: customTheme.name || 'Custom Theme',
+      gradientColors: customTheme.gradientColors,
+      primaryColor: customTheme.primaryColor,
+      secondaryColor: customTheme.secondaryColor,
+      textPrimaryColor: customTheme.textPrimaryColor,
+      textSecondaryColor: customTheme.textSecondaryColor,
+      cardBackgroundColor: customTheme.cardBackgroundColor,
+      borderColor: customTheme.borderColor
+    });
+    
+    // Apply the custom theme
+    this.themeService.applyCustomTheme({
+      gradientColors: customTheme.gradientColors,
+      primaryColor: customTheme.primaryColor,
+      secondaryColor: customTheme.secondaryColor,
+      textPrimaryColor: customTheme.textPrimaryColor,
+      textSecondaryColor: customTheme.textSecondaryColor,
+      cardBackgroundColor: customTheme.cardBackgroundColor,
+      borderColor: customTheme.borderColor
+    });
+    
+    this.closeCustomThemeEditor();
+  }
+
+  /**
+   * Get the custom gradient preview for the + button
+   */
+  getCustomGradientPreview(): string {
+    if (this.settings.customTheme.gradientColors && this.settings.customTheme.gradientColors.length > 0) {
+      const stops = this.settings.customTheme.gradientColors.map((color, index) => {
+        const percent = (index / (this.settings.customTheme.gradientColors.length - 1)) * 100;
+        return `${color} ${percent}%`;
+      }).join(', ');
+      return `linear-gradient(135deg, ${stops})`;
+    }
+    return 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)';
   }
 
   /**

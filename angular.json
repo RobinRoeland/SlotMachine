@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "SlotMachine": {
+    "RRGameSystem": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "GameSystem:build:production"
+              "buildTarget": "RRGameSystem:build:production"
             },
             "development": {
-              "buildTarget": "GameSystem:build:development"
+              "buildTarget": "RRGameSystem:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "GameSystem:build"
+            "buildTarget": "RRGameSystem:build"
           }
         },
         "test": {

@@ -34,8 +34,21 @@ export class AppComponent {
     private gamesService: GamesService
   ) {
     // Initialize theme on app startup
-    const currentTheme = this.settingsService.getSettings().colorTheme;
-    this.themeService.applyTheme(currentTheme);
+    const settings = this.settingsService.getSettings();
+    if (settings.colorTheme === 'custom' && settings.customTheme.gradientColors && settings.customTheme.gradientColors.length > 0) {
+      // Apply saved custom theme with all colors
+      this.themeService.applyCustomTheme({
+        gradientColors: settings.customTheme.gradientColors,
+        primaryColor: settings.customTheme.primaryColor,
+        secondaryColor: settings.customTheme.secondaryColor,
+        textPrimaryColor: settings.customTheme.textPrimaryColor,
+        textSecondaryColor: settings.customTheme.textSecondaryColor,
+        cardBackgroundColor: settings.customTheme.cardBackgroundColor,
+        borderColor: settings.customTheme.borderColor
+      });
+    } else {
+      this.themeService.applyTheme(settings.colorTheme);
+    }
 
     // Subscribe to tutorial modal visibility
     this.tutorialService.showModal$.subscribe(show => {

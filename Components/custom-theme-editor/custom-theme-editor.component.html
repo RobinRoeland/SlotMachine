@@ -1,0 +1,228 @@
+<div class="modal-backdrop" @backdropAnimation>
+  <div class="modal-container wide-layout" @modalAnimation>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">🎨 Custom Theme Editor</h2>
+      <button class="close-btn" (click)="onClose()" title="Close">✕</button>
+    </div>
+
+    <!-- Theme Name Input -->
+    <div class="theme-name-section">
+      <label for="themeName">Theme Name</label>
+      <input 
+        type="text" 
+        id="themeName"
+        name="themeName"
+        class="theme-name-input"
+        [(ngModel)]="customTheme.name"
+      />
+    </div>
+
+    <!-- Two-Column Layout: Controls + Preview -->
+    <div class="editor-layout">
+      <!-- Left: Controls -->
+      <div class="controls-section">
+        <!-- Gradient Section -->
+        <div class="settings-section">
+          <h3 class="section-title">🌈 Background Gradient</h3>
+          <p class="section-description">Design your custom background gradient with multiple color stops.</p>
+          
+          <!-- Color Stops -->
+          <div class="color-stops">
+            <div class="color-stop" *ngFor="let color of customTheme.gradientColors; let i = index; trackBy: trackByIndex">
+              <label class="color-stop-label">Stop {{ i + 1 }}</label>
+              <input 
+                type="color" 
+                class="color-picker"
+                [value]="customTheme.gradientColors[i]"
+                (input)="updateGradientColor(i, $any($event.target).value)"
+                [name]="'gradientColor' + i"
+              />
+              <input 
+                type="text" 
+                class="color-hex"
+                [value]="customTheme.gradientColors[i]"
+                (input)="updateGradientColor(i, $any($event.target).value)"
+                [name]="'gradientColorHex' + i"
+                placeholder="#000000"
+              />
+              <button 
+                class="remove-color-btn"
+                (click)="removeGradientColor(i)"
+                [disabled]="customTheme.gradientColors.length <= 2"
+                title="Remove color stop"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Color Button -->
+          <button 
+            class="add-color-btn"
+            (click)="addGradientColor()"
+            [disabled]="customTheme.gradientColors.length >= 10"
+          >
+            ➕ Add Color Stop
+          </button>
+        </div>
+
+        <!-- Theme Colors Section -->
+        <div class="settings-section">
+          <h3 class="section-title">🎨 Theme Colors</h3>
+          <p class="section-description">Customize the theme colors for UI elements, text, and cards.</p>
+          
+          <div class="color-options">
+          <!-- Primary Color -->
+          <div class="color-option">
+            <label>Primary Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="primaryColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.primaryColor"
+              />
+              <input 
+                type="text" 
+                name="primaryColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.primaryColor"
+                placeholder="#667eea"
+              />
+            </div>
+            <p class="color-hint">Buttons, highlights, and primary actions</p>
+          </div>
+
+          <!-- Secondary Color -->
+          <div class="color-option">
+            <label>Secondary Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="secondaryColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.secondaryColor"
+              />
+              <input 
+                type="text" 
+                name="secondaryColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.secondaryColor"
+                placeholder="#764ba2"
+              />
+            </div>
+            <p class="color-hint">Secondary actions and accents</p>
+          </div>
+
+          <!-- Text Primary Color -->
+          <div class="color-option">
+            <label>Primary Text Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="textPrimaryColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.textPrimaryColor"
+              />
+              <input 
+                type="text" 
+                name="textPrimaryColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.textPrimaryColor"
+                placeholder="#1e293b"
+              />
+            </div>
+            <p class="color-hint">Main text color throughout the app</p>
+          </div>
+
+          <!-- Text Secondary Color -->
+          <div class="color-option">
+            <label>Secondary Text Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="textSecondaryColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.textSecondaryColor"
+              />
+              <input 
+                type="text" 
+                name="textSecondaryColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.textSecondaryColor"
+                placeholder="#64748b"
+              />
+            </div>
+            <p class="color-hint">Descriptions and less important text</p>
+          </div>
+
+          <!-- Card Background Color -->
+          <div class="color-option">
+            <label>Card Background Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="cardBackgroundColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.cardBackgroundColor"
+              />
+              <input 
+                type="text" 
+                name="cardBackgroundColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.cardBackgroundColor"
+                placeholder="#ffffff"
+              />
+            </div>
+            <p class="color-hint">Background for cards and panels</p>
+          </div>
+
+          <!-- Border Color -->
+          <div class="color-option">
+            <label>Border Color</label>
+            <div class="color-input-group">
+              <input 
+                type="color" 
+                name="borderColor"
+                class="color-picker-large"
+                [(ngModel)]="customTheme.borderColor"
+              />
+              <input 
+                type="text" 
+                name="borderColorHex"
+                class="color-hex-input"
+                [(ngModel)]="customTheme.borderColor"
+                placeholder="#e5e7eb"
+              />
+            </div>
+            <p class="color-hint">Borders and dividers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Live Preview -->
+    <div class="preview-section" [ngStyle]="getThemePreviewStyles()">
+        <div class="preview-label">Live Preview</div>
+        <!-- Simulated App Interface -->
+        <div class="app-preview">
+          <!-- Gradient Background -->
+          <div class="preview-gradient" [style.background]="getGradientPreview()"></div>
+          
+          <!-- App Preview (dummy app shell with home) -->
+          <div class="preview-content">
+            <app-preview class="preview-home-component"></app-preview>
+          </div>
+        </div>
+    </div>
+  </div>
+  
+  <!-- Modal Footer - Outside preview section to keep original theme colors -->
+  <div class="modal-footer-wrapper">
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="onClose()">Cancel</button>
+      <button class="save-btn" (click)="onSave()">✨ Apply Custom Theme</button>
+    </div>
+  </div>
+</div>
