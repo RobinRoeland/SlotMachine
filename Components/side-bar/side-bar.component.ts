@@ -100,6 +100,12 @@ export class SideBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  onNavClick(): void {
+    if (this.isMobile()) {
+      this.isCollapsed = true;
+    }
+  }
+
   private clearHoverTimeout() {
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout);

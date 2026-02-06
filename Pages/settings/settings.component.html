@@ -10,6 +10,7 @@
     <!-- Custom Theme Editor Modal -->
     <app-custom-theme-editor 
       [hidden]="!showCustomThemeEditor"
+      [initialTheme]="initialCustomTheme"
       (close)="closeCustomThemeEditor()"
       (save)="saveCustomTheme($event)"
     ></app-custom-theme-editor>
@@ -45,15 +46,15 @@
             [class.selected]="isThemeSelected('custom')"
             (click)="selectCustomTheme()"
         >
-            <div 
-              class="theme-preview custom-preview" 
-              [style.background]="getCustomGradientPreview()"
-              (click)="openCustomThemeEditor(); $event.stopPropagation()"
-              title="Click to edit custom theme"
+            <div
+                class="theme-preview custom-preview" 
+                [style.background]="getCustomGradientPreview()"
+                (click)="openCustomThemeEditor(); $event.stopPropagation()"
+                title="Click to edit custom theme"
             >
-              <div class="plus-icon">+</div>
+                <div class="plus-icon">+</div>
             </div>
-            <div class="theme-name">Custom Theme</div>
+            <div class="theme-name">{{ settings.customTheme.name || 'Custom Theme' }}</div>
             <div class="selected-indicator">✓</div>
         </div>
         </div>
@@ -292,9 +293,12 @@
     <app-setting-item
         [title]="'Show ' + currentGame.name + ' Tutorial'"
         [description]="'Reopen the getting started tutorial that guides you through ' + currentGame.name + '.'">
-        <button class="tutorial-button" (click)="showTutorial()">
+        <button class="tutorial-button" (click)="showTutorial()" [disabled]="isMobile">
         📚 Start Tutorial
         </button>
+        <div class="tutorial-disabled-note" *ngIf="isMobile">
+          ⚠ Tutorial is not available on mobile devices yet.
+        </div>
     </app-setting-item>
     </app-settings-section>
 </div>

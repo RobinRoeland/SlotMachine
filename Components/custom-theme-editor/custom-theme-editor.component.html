@@ -29,19 +29,21 @@
           
           <!-- Color Stops -->
           <div class="color-stops">
-            <div class="color-stop" *ngFor="let color of customTheme.gradientColors; let i = index">
+            <div class="color-stop" *ngFor="let color of customTheme.gradientColors; let i = index; trackBy: trackByIndex">
               <label class="color-stop-label">Stop {{ i + 1 }}</label>
               <input 
                 type="color" 
                 class="color-picker"
-                [value]="color"
+                [value]="customTheme.gradientColors[i]"
                 (input)="updateGradientColor(i, $any($event.target).value)"
+                [name]="'gradientColor' + i"
               />
               <input 
                 type="text" 
                 class="color-hex"
-                [value]="color"
-                (blur)="updateGradientColor(i, $any($event.target).value)"
+                [value]="customTheme.gradientColors[i]"
+                (input)="updateGradientColor(i, $any($event.target).value)"
+                [name]="'gradientColorHex' + i"
                 placeholder="#000000"
               />
               <button 
@@ -208,53 +210,19 @@
           <!-- Gradient Background -->
           <div class="preview-gradient" [style.background]="getGradientPreview()"></div>
           
-          <!-- Content Cards -->
+          <!-- App Preview (dummy app shell with home) -->
           <div class="preview-content">
-            <!-- Sample Card 1 -->
-            <div class="preview-card">
-              <div class="preview-card-header">
-                <span class="preview-dot primary"></span>
-                <h4>Sample Card</h4>
-              </div>
-              <p class="preview-text-primary">Your theme gradient appears here</p>
-              <p class="preview-text-secondary">Secondary text color example</p>
-              <button class="preview-btn primary">Primary Button</button>
-              <button class="preview-btn secondary">Secondary Button</button>
-            </div>
-
-            <!-- Sample Card 2 -->
-            <div class="preview-card">
-              <div class="preview-card-header">
-                <span class="preview-dot secondary"></span>
-                <h4>Settings Card</h4>
-              </div>
-              <p class="preview-text-primary">This shows how your theme applies</p>
-              <p class="preview-text-secondary">To the actual UI components</p>
-              <div class="preview-setting-item">
-                <span class="preview-text-primary">Setting Name</span>
-                <span class="preview-toggle"></span>
-              </div>
-            </div>
-
-            <!-- Sample Card 3 -->
-            <div class="preview-card">
-              <div class="preview-card-header">
-                <span class="preview-dot primary"></span>
-                <h4>Color Palette</h4>
-              </div>
-              <div class="preview-color-palette">
-                <div class="preview-color-swatch primary"></div>
-                <div class="preview-color-swatch secondary"></div>
-              </div>
-              <p class="preview-text-secondary">Your custom colors in action</p>
-            </div>
+            <app-preview class="preview-home-component"></app-preview>
           </div>
         </div>
-        <!-- Modal Footer -->
-        <div class="modal-footer">
-            <button class="cancel-btn" (click)="onClose()">Cancel</button>
-            <button class="save-btn" (click)="onSave()">✨ Apply Custom Theme</button>
-        </div>
+    </div>
+  </div>
+  
+  <!-- Modal Footer - Outside preview section to keep original theme colors -->
+  <div class="modal-footer-wrapper">
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="onClose()">Cancel</button>
+      <button class="save-btn" (click)="onSave()">✨ Apply Custom Theme</button>
     </div>
   </div>
 </div>

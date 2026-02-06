@@ -66,6 +66,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
   // Custom theme editor state
   showCustomThemeEditor = false;
+  initialCustomTheme?: CustomTheme;
 
   constructor(
     private settingsService: SettingsService,
@@ -233,6 +234,17 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Open custom theme editor
    */
   openCustomThemeEditor(): void {
+    // Load saved custom theme if it exists - create new object to trigger change detection
+    this.initialCustomTheme = {
+      name: this.settings.customTheme.name || 'Custom Theme',
+      gradientColors: [...(this.settings.customTheme.gradientColors || ['#667eea', '#764ba2', '#f093fb', '#4facfe'])],
+      primaryColor: this.settings.customTheme.primaryColor || '#667eea',
+      secondaryColor: this.settings.customTheme.secondaryColor || '#764ba2',
+      textPrimaryColor: this.settings.customTheme.textPrimaryColor || '#1e293b',
+      textSecondaryColor: this.settings.customTheme.textSecondaryColor || '#64748b',
+      cardBackgroundColor: this.settings.customTheme.cardBackgroundColor || '#ffffff',
+      borderColor: this.settings.customTheme.borderColor || '#e5e7eb'
+    };
     this.showCustomThemeEditor = true;
   }
 
@@ -240,16 +252,16 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Select custom theme (apply existing custom theme)
    */
   selectCustomTheme(): void {
-    if (this.settings.customGradientColors && this.settings.customGradientColors.length > 0) {
+    if (this.settings.customTheme.gradientColors && this.settings.customTheme.gradientColors.length > 0) {
       this.settingsService.updateSetting('colorTheme', 'custom');
       this.themeService.applyCustomTheme({
-        gradientColors: this.settings.customGradientColors,
-        primaryColor: '#667eea',
-        secondaryColor: '#764ba2',
-        textPrimaryColor: '#1e293b',
-        textSecondaryColor: '#64748b',
-        cardBackgroundColor: '#ffffff',
-        borderColor: '#e5e7eb'
+        gradientColors: this.settings.customTheme.gradientColors,
+        primaryColor: this.settings.customTheme.primaryColor,
+        secondaryColor: this.settings.customTheme.secondaryColor,
+        textPrimaryColor: this.settings.customTheme.textPrimaryColor,
+        textSecondaryColor: this.settings.customTheme.textSecondaryColor,
+        cardBackgroundColor: this.settings.customTheme.cardBackgroundColor,
+        borderColor: this.settings.customTheme.borderColor
       });
     } else {
       // No custom theme exists, open editor
@@ -268,9 +280,18 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Save and apply custom theme
    */
   saveCustomTheme(customTheme: CustomTheme): void {
-    // Store the custom theme data
+    // Store the custom theme data as single object
     this.settingsService.updateSetting('colorTheme', 'custom');
-    this.settingsService.updateSetting('customGradientColors', customTheme.gradientColors);
+    this.settingsService.updateSetting('customTheme', {
+      name: customTheme.name || 'Custom Theme',
+      gradientColors: customTheme.gradientColors,
+      primaryColor: customTheme.primaryColor,
+      secondaryColor: customTheme.secondaryColor,
+      textPrimaryColor: customTheme.textPrimaryColor,
+      textSecondaryColor: customTheme.textSecondaryColor,
+      cardBackgroundColor: customTheme.cardBackgroundColor,
+      borderColor: customTheme.borderColor
+    });
     
     // Apply the custom theme
     this.themeService.applyCustomTheme({
@@ -290,9 +311,9 @@ export class SettingsComponent extends BaseComponent implements OnInit {
    * Get the custom gradient preview for the + button
    */
   getCustomGradientPreview(): string {
-    if (this.settings.customGradientColors && this.settings.customGradientColors.length > 0) {
-      const stops = this.settings.customGradientColors.map((color, index) => {
-        const percent = (index / (this.settings.customGradientColors.length - 1)) * 100;
+    if (this.settings.customTheme.gradientColors && this.settings.customTheme.gradientColors.length > 0) {
+      const stops = this.settings.customTheme.gradientColors.map((color, index) => {
+        const percent = (index / (this.settings.customTheme.gradientColors.length - 1)) * 100;
         return `${color} ${percent}%`;
       }).join(', ');
       return `linear-gradient(135deg, ${stops})`;

@@ -290,9 +290,9 @@ export function getSlotMachineTutorialSteps(): TutorialStep[] {
     {
       title: 'Try Your Slot Machine!',
       content: 'Click on "Play" in the sidebar to test your machine and see if you can win your prize!',
-      targetSelector: 'nav.nav a[routerLink="/game"], nav.nav a[href*="/game"]',
+      targetSelector: 'nav.nav a[routerLink="/slotmachine"], nav.nav a[href*="/slotmachine"]',
       placement: 'right',
-      route: '/game',
+      route: '/slotmachine',
       waitForAction: true,
       actionType: 'navigate'
     },
@@ -308,7 +308,7 @@ export function getSlotMachineTutorialSteps(): TutorialStep[] {
                'Have fun and good luck! 🍀',
       action: 'Finish Tutorial',
       placement: 'center',
-      route: '/game',
+      route: '/slotmachine',
       actionType: 'none'
     }
   ];

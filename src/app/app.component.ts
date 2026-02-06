@@ -35,16 +35,16 @@ export class AppComponent {
   ) {
     // Initialize theme on app startup
     const settings = this.settingsService.getSettings();
-    if (settings.colorTheme === 'custom' && settings.customGradientColors && settings.customGradientColors.length > 0) {
-      // For now, apply custom gradient only. In future, load full custom theme data
+    if (settings.colorTheme === 'custom' && settings.customTheme.gradientColors && settings.customTheme.gradientColors.length > 0) {
+      // Apply saved custom theme with all colors
       this.themeService.applyCustomTheme({
-        gradientColors: settings.customGradientColors,
-        primaryColor: '#667eea',
-        secondaryColor: '#764ba2',
-        textPrimaryColor: '#1e293b',
-        textSecondaryColor: '#64748b',
-        cardBackgroundColor: '#ffffff',
-        borderColor: '#e5e7eb'
+        gradientColors: settings.customTheme.gradientColors,
+        primaryColor: settings.customTheme.primaryColor,
+        secondaryColor: settings.customTheme.secondaryColor,
+        textPrimaryColor: settings.customTheme.textPrimaryColor,
+        textSecondaryColor: settings.customTheme.textSecondaryColor,
+        cardBackgroundColor: settings.customTheme.cardBackgroundColor,
+        borderColor: settings.customTheme.borderColor
       });
     } else {
       this.themeService.applyTheme(settings.colorTheme);

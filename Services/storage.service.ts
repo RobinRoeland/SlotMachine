@@ -32,7 +32,7 @@ export class StorageService {
     COMPANY_LOGO: 'settings_company_logo',
     COMPANY_LOGO_SMALL: 'settings_company_logo_small',
     COLOR_THEME: 'settings_color_theme',
-    CUSTOM_GRADIENT_COLORS: 'settings_custom_gradient_colors',
+    CUSTOM_THEME: 'settings_custom_theme',
     BUTTON_TEXT_ROLL: 'settings_button_text_roll',
     NOTIFICATION_ROLLING: 'settings_notification_rolling',
     NOTIFICATION_WIN: 'settings_notification_win',
@@ -414,18 +414,36 @@ export class StorageService {
     );
   }
 
-  getCustomGradientColors(): string[] {
-    const value = this.getItem<string[]>(this.KEYS.CUSTOM_GRADIENT_COLORS);
-    return value || ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'];
+  getCustomTheme(): any {
+    const value = this.getItem<any>(this.KEYS.CUSTOM_THEME);
+    return value || {
+      name: 'Custom Theme',
+      gradientColors: ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'],
+      primaryColor: '#667eea',
+      secondaryColor: '#764ba2',
+      textPrimaryColor: '#1e293b',
+      textSecondaryColor: '#64748b',
+      cardBackgroundColor: '#ffffff',
+      borderColor: '#e5e7eb'
+    };
   }
 
-  setCustomGradientColors(colors: string[]): void {
-    this.setItem(this.KEYS.CUSTOM_GRADIENT_COLORS, colors);
+  setCustomTheme(theme: any): void {
+    this.setItem(this.KEYS.CUSTOM_THEME, theme);
   }
 
-  watchCustomGradientColors(): Observable<string[]> {
-    return this.watch<string[]>(this.KEYS.CUSTOM_GRADIENT_COLORS).pipe(
-      map(value => value || ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'])
+  watchCustomTheme(): Observable<any> {
+    return this.watch<any>(this.KEYS.CUSTOM_THEME).pipe(
+      map(value => value || {
+        name: 'Custom Theme',
+        gradientColors: ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'],
+        primaryColor: '#667eea',
+        secondaryColor: '#764ba2',
+        textPrimaryColor: '#1e293b',
+        textSecondaryColor: '#64748b',
+        cardBackgroundColor: '#ffffff',
+        borderColor: '#e5e7eb'
+      })
     );
   }
 

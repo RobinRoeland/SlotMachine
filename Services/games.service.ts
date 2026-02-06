@@ -43,11 +43,11 @@ export class GamesService {
       id: 'slot-machine',
       name: 'Prize Machine',
       description: 'A customizable slot machine game with prizes, odds, and Arduino integration',
-      route: '/game',
+      route: '/slotmachine',
       icon: '🎰',
       playCount: 0,
       navigationItems: [
-        { label: 'Play', route: '/game', icon: '🎮', category: 'game' },
+        { label: 'Play', route: '/slotmachine', icon: '🎮', category: 'game' },
         { label: 'Edit Items', route: '/edit-items', icon: '🎨', category: 'game' },
         { label: 'Edit Odds', route: '/edit-odds', icon: '📊', category: 'game' },
         { label: 'Edit Prizes', route: '/edit-prizes', icon: '🏆', category: 'game' },

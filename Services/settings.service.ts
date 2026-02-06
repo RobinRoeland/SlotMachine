@@ -20,6 +20,20 @@ export interface FullExportData {
 }
 
 /**
+ * Custom theme colors
+ */
+export interface CustomThemeColors {
+  name: string;
+  gradientColors: string[];
+  primaryColor: string;
+  secondaryColor: string;
+  textPrimaryColor: string;
+  textSecondaryColor: string;
+  cardBackgroundColor: string;
+  borderColor: string;
+}
+
+/**
  * Settings model
  */
 export interface AppSettings {
@@ -31,7 +45,7 @@ export interface AppSettings {
   companyLogo: string;
   companyLogoSmall: string;
   colorTheme: 'light' | 'medium-dark' | 'dark' | 'custom';
-  customGradientColors: string[];
+  customTheme: CustomThemeColors;
   showButtonTextRoll: boolean;
   showNotificationRolling: boolean;
   showNotificationWin: boolean;
@@ -62,7 +76,16 @@ export class SettingsService {
     companyLogo: 'assets/images/Slotmachine-Logo.png',
     companyLogoSmall: 'assets/images/slot-machine-colorful-neon-sign.jpg',
     colorTheme: 'light',
-    customGradientColors: ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'],
+    customTheme: {
+      name: 'Custom Theme',
+      gradientColors: ['#D4F1F4', '#E8F4F8', '#F3E8FF', '#E8D4FF'],
+      primaryColor: '#667eea',
+      secondaryColor: '#764ba2',
+      textPrimaryColor: '#1e293b',
+      textSecondaryColor: '#64748b',
+      cardBackgroundColor: '#ffffff',
+      borderColor: '#e5e7eb'
+    },
     showButtonTextRoll: true,
     showNotificationRolling: true,
     showNotificationWin: true,
@@ -123,7 +146,7 @@ export class SettingsService {
       this.storageService.watchCompanyLogo(),
       this.storageService.watchCompanyLogoSmall(),
       this.storageService.watchColorTheme(),
-      this.storageService.watchCustomGradientColors(),
+      this.storageService.watchCustomTheme(),
       this.storageService.watchShowButtonTextRoll(),
       this.storageService.watchShowNotificationRolling(),
       this.storageService.watchShowNotificationWin(),
@@ -135,7 +158,7 @@ export class SettingsService {
       this.storageService.watchButtonTextArduino(),
       this.storageService.watchNotificationAfterRoll(),
     ]).pipe(
-      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme, customGradientColors, showButtonTextRoll, showNotificationRolling, showNotificationWin, showButtonTextArduino, showNotificationAfterRoll, buttonTextRoll, notificationRolling, notificationWin, buttonTextArduino, notificationAfterRoll]) => ({
+      map(([showPrizesList, showOdds, enableArduinoControl, enablePitySystem, showPityWarning, companyLogo, companyLogoSmall, colorTheme, customTheme, showButtonTextRoll, showNotificationRolling, showNotificationWin, showButtonTextArduino, showNotificationAfterRoll, buttonTextRoll, notificationRolling, notificationWin, buttonTextArduino, notificationAfterRoll]) => ({
         showPrizesList,
         showOdds,
         enableArduinoControl,
@@ -144,7 +167,7 @@ export class SettingsService {
         companyLogo,
         companyLogoSmall,
         colorTheme,
-        customGradientColors,
+        customTheme,
         showButtonTextRoll,
         showNotificationRolling,
         showNotificationWin,
@@ -174,7 +197,7 @@ export class SettingsService {
       companyLogo: this.storageService.getCompanyLogo(),
       companyLogoSmall: this.storageService.getCompanyLogoSmall(),
       colorTheme: this.storageService.getColorTheme(),
-      customGradientColors: this.storageService.getCustomGradientColors(),
+      customTheme: this.storageService.getCustomTheme(),
       showButtonTextRoll: this.storageService.getShowButtonTextRoll(),
       showNotificationRolling: this.storageService.getShowNotificationRolling(),
       showNotificationWin: this.storageService.getShowNotificationWin(),
@@ -201,7 +224,7 @@ export class SettingsService {
     this.storageService.setCompanyLogo(settings.companyLogo);
     this.storageService.setCompanyLogoSmall(settings.companyLogoSmall);
     this.storageService.setColorTheme(settings.colorTheme);
-    this.storageService.setCustomGradientColors(settings.customGradientColors);
+    this.storageService.setCustomTheme(settings.customTheme);
     this.storageService.setShowButtonTextRoll(settings.showButtonTextRoll);
     this.storageService.setShowNotificationRolling(settings.showNotificationRolling);
     this.storageService.setShowNotificationWin(settings.showNotificationWin);
